@@ -1,0 +1,9 @@
+{
+    "username":"Unnatu",
+    "email":"Unnat@Unnate",
+    "password":"Unnatk",
+    "first_name":"Unnatfn",
+    "last_name":"Unnatln",
+    "DOB":"10-10-2001",
+    "phone":"Unnata"
+}

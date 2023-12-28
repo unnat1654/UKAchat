@@ -1,0 +1,449 @@
+@import "./functions";
+
+$font-weights-NS: (
+  "light": 100,
+  "regular": 300,
+  "semi-bold": 700,
+  "bold": 800,
+);
+
+.signup {
+  @include flexCenter(column);
+  border: rgb(225, 225, 225, 0.1) 1px solid;
+  border-radius: 10px;
+  padding: 40px;
+  max-width: 50vw;
+  width: fit-content;
+  margin: auto;
+  background-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+
+  @media screen and (min-width: $small) and (max-width: $medium) {
+    & {
+      width: fit-content;
+      max-width: none;
+    }
+  }
+
+  #{&}-heading {
+    color: white;
+    text-align: center;
+    font-weight: map-get($font-weights-NS, semi-bold);
+    font-size: 35px;
+    font-family: "Nunito Sans";
+  }
+  #{&}-subheading {
+    color: rgb(233, 233, 233);
+    text-align: center;
+    font-weight: map-get($font-weights-NS, regular);
+    font-size: 14px;
+    font-family: "poppins";
+    margin-top: 5px;
+  }
+  #{&}-form {
+    margin-top: 20px;
+    label {
+      color: rgb(233, 233, 233);
+      font-weight: map-get($font-weights-NS, regular);
+      font-size: 13px;
+      font-family: "poppins";
+    }
+    .form-input {
+      color: #c4c7cb;
+      width: 100%;
+      min-width: 30vw;
+      height: 50px;
+
+      @include flexCenter(row);
+      border: 1px #c9c9c9 solid;
+      border-radius: 5px;
+      padding: 10px;
+      padding-left: 15px;
+      margin-bottom: 10px;
+      font-size: 20px;
+      input {
+        border-width: 0px;
+        margin-left: 20px;
+        font-size: 15px;
+        width: 100%;
+        color: #e2e2e2;
+        background-color: inherit;
+
+        &:focus-within {
+          outline: none;
+          color: #ffffff;
+        }
+        &::placeholder {
+          color: rgb(175, 175, 175);
+        }
+      }
+      input:-webkit-autofill,
+      input:-webkit-autofill:focus {
+        transition: background-color 600000s 0s, color 600000s 0s;
+      }
+      input[data-autocompleted] {
+        background-color: transparent !important;
+      }
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        color: rgba(0, 0, 0, 0);
+        opacity: 1;
+        display: block;
+        background-repeat: no-repeat;
+        width: 25px;
+        height: 25px;
+        border-width: thin;
+      }
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        position: absolute;
+        left: 10%;
+      }
+      input::-webkit-datetime-edit-fields-wrapper {
+        position: relative;
+        left: 10%;
+      }
+      input::-webkit-datetime-edit {
+        position: relative;
+        left: 0%;
+      }
+      &:focus-within,
+      &:hover {
+        color: #ffffff;
+        border-color: #ffffff;
+      }
+    }
+  }
+  .input-conditions {
+    margin-block: 10px;
+    margin-left: 10px;
+    font-family: "Poppins";
+    div {
+      display: flex;
+      align-items: center;
+      color: #d3d3d3;
+      span {
+        margin-left: 10px;
+        font-size: 12px;
+      }
+    }
+  }
+  #{&}-button {
+    text-align: center;
+    width: 100%;
+    color: white;
+    background-color: #38c585;
+    border-width: 0px;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-family: "Poppins";
+  }
+  #{&}-redirect {
+    text-align: center;
+    font-family: "Poppins";
+    font-size: 13px;
+    color: white;
+    a {
+      text-decoration: none;
+      color: #38c585;
+    }
+  }
+}
+
+.login {
+  @include flexCenter(column);
+  border: rgb(225, 225, 225, 0.1) 1px solid;
+  border-radius: 10px;
+  padding: 40px;
+  max-width: 50vw;
+  width: fit-content;
+  margin: auto;
+  background-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+  @media screen and (min-width: $small) and (max-width: $medium) {
+    & {
+      width: fit-content;
+      max-width: none;
+    }
+  }
+
+  #{&}-heading {
+    color: #eaeaea;
+    text-align: center;
+    font-weight: map-get($font-weights-NS, semi-bold);
+    font-size: 35px;
+    font-family: "Nunito Sans";
+  }
+  #{&}-subheading {
+    color: #dcdcdc;
+    text-align: center;
+    font-weight: map-get($font-weights-NS, regular);
+    font-size: 14px;
+    font-family: "poppins";
+    margin-top: 5px;
+  }
+  #{&}-form {
+    margin-top: 20px;
+    label {
+      color: #d3d3d3;
+      font-weight: map-get($font-weights-NS, regular);
+      font-size: 13px;
+      font-family: "poppins";
+    }
+    .form-input {
+      color: #d3d3d3;
+      height: 50px;
+      width: 100%;
+      min-width: 30vw;
+      @include flexCenter(row);
+      border: 1px #d3d3d3 solid;
+      border-radius: 5px;
+      padding: 10px;
+      padding-left: 15px;
+      margin-bottom: 10px;
+      font-size: 20px;
+      input {
+        border-width: 0px;
+        margin-left: 20px;
+        font-size: 15px;
+        width: 100%;
+        color: #d9d9d9;
+        background-color: inherit;
+
+        &::placeholder {
+          color: rgb(175, 175, 175);
+        }
+        &:focus-within {
+          outline: none;
+          color: #ffffff;
+        }
+      }
+      &:focus-within,
+      &:hover {
+        color: #ffffff;
+        border-color: #fefefe;
+      }
+      input:-webkit-autofill,
+      input:-webkit-autofill:focus {
+        transition: background-color 600000s 0s, color 600000s 0s;
+      }
+      input[data-autocompleted] {
+        background-color: transparent !important;
+      }
+    }
+  }
+  .input-conditions1 {
+    margin-block: 10px;
+    margin-left: 10px;
+    font-family: "Poppins";
+    div {
+      display: flex;
+      align-items: center;
+      color: #d9d9d9;
+      span {
+        margin-left: 10px;
+        font-size: 12px;
+      }
+    }
+  }
+  #{&}-button {
+    text-align: center;
+    width: 100%;
+    color: white;
+    background-color: #38c585;
+    border-width: 0px;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 30px;
+    font-family: "Poppins";
+  }
+  #{&}-redirect1 {
+    margin-block: 15px;
+    text-align: center;
+    font-family: "Poppins";
+    font-size: 13px;
+    a {
+      text-decoration: none;
+      color: #38c585;
+    }
+  }
+  #{&}-redirect2 {
+    text-align: center;
+    font-family: "Poppins";
+    font-size: 13px;
+    color: rgb(226, 225, 225);
+    a {
+      text-decoration: none;
+      color: #38c585;
+    }
+  }
+}
+
+.forpass {
+  @include flexCenter(column);
+  border: rgb(225, 225, 225, 0.1) 1px solid;
+  border-radius: 10px;
+  padding: 40px;
+  max-width: 50vw;
+  width: fit-content;
+  margin: auto;
+  background-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+  @media screen and (min-width: $small) and (max-width: $medium) {
+    & {
+      width: fit-content;
+      max-width: none;
+    }
+  }
+
+  #{&}-heading {
+    color: #eaeaea;
+    text-align: center;
+    font-weight: map-get($font-weights-NS, semi-bold);
+    font-size: 35px;
+    font-family: "Nunito Sans";
+  }
+  #{&}-subheading {
+    color: #dcdcdc;
+    text-align: center;
+    font-weight: map-get($font-weights-NS, regular);
+    font-size: 14px;
+    font-family: "Poppins";
+    margin-top: 5px;
+  }
+  #{&}-form {
+    margin-top: 20px;
+    label {
+      color: #d3d3d3;
+      font-weight: map-get($font-weights-NS, regular);
+      font-size: 13px;
+      font-family: "Poppins";
+    }
+    .form-input {
+      color: #d3d3d3;
+      width: 100%;
+      min-width: 30vw;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      border: 1px #d3d3d3 solid;
+      border-radius: 5px;
+      padding: 10px;
+      padding-left: 15px;
+      margin-bottom: 10px;
+      font-size: 20px;
+      input {
+        border-width: 0px;
+        margin-left: 20px;
+        font-size: 15px;
+        width: 100%;
+        color: #d9d9d9;
+        background-color: inherit;
+
+        &::placeholder {
+          color: rgb(175, 175, 175);
+        }
+        &:focus-within {
+          outline: none;
+          color: #ffffff;
+        }
+      }
+      input:-webkit-autofill,
+      input:-webkit-autofill:focus {
+        transition: background-color 600000s 0s, color 600000s 0s;
+      }
+      input[data-autocompleted] {
+        background-color: transparent !important;
+      }
+      &:focus-within,
+      &:hover {
+        color: #ffffff;
+        border-color: #fefefe;
+      }
+    }
+  }
+  .input-conditions1 {
+    margin-block: 10px;
+    margin-left: 10px;
+    font-family: "Poppins";
+    div {
+      display: flex;
+      align-items: center;
+      color: #d9d9d9;
+      span {
+        margin-left: 10px;
+        font-size: 12px;
+      }
+    }
+  }
+  #{&}-button {
+    text-align: center;
+    width: 100%;
+    color: white;
+    background-color: #38c585;
+    border-width: 0px;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 30px;
+    font-family: "Poppins";
+    margin-top: 30px;
+  }
+  #{&}-redirect {
+    text-align: center;
+    font-family: "Poppins";
+    font-size: 13px;
+    color: rgb(226, 225, 225);
+    a {
+      text-decoration: none;
+      color: #38c585;
+    }
+  }
+}
+
+.upload-box {
+  position: relative;
+}
+
+.photoupload {
+  border-radius: 100px;
+  margin-block: 40px;
+}
+.profile-pic-label {
+  position: absolute;
+  top: 180px;
+  left: 130px;
+  font-size: 30px;
+  background-color: #38c585;
+  color: white;
+  width: fit-content;
+  padding: 10px 13px 6px 12px;
+  border-radius: 100%;
+}
+
+#dip {
+  opacity: 0;
+  position: absolute;
+  z-index: -1;
+}
+.signup-upload-buttons {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
+.signup-upload-button {
+  text-align: center;
+  width: 100%;
+  color: white;
+  background-color: #38c585;
+  border-width: 0px;
+  border-radius: 5px;
+  padding: 10px;
+  font-family: "Poppins";
+  margin: 30px 5px;
+}
+.skip-upload-button {
+  background-color: rgb(174, 174, 174);
+}

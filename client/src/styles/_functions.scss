@@ -1,0 +1,20 @@
+@mixin flexCenter($direction) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: $direction;
+}
+@keyframes shine {
+  0% {
+    background-position: 0;
+  }
+  100% {
+    background-position: 500px;
+  }
+}
+
+$small: 300px;
+$medium: 900px;
+
+$tablet-max: 1080px;
+$mobile-max: 480px;

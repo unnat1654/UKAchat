@@ -1,0 +1,22 @@
+@import "./functions";
+
+.create-group {
+  width: 100vw;
+  height: 100vh;
+  background-color: red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  #{&}-form {
+    width: fit-content;
+    height: 50vh;
+    background-color: pink;
+    &-icon {
+      color: green;
+    }
+    #icon {
+      display: none;
+    }
+  }
+}
