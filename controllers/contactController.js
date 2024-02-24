@@ -11,8 +11,8 @@ export const createRoomController = async (req, res) => {
     const user2 = req.body.contactId;
     const roomAlreadyExists = await chatRoomModel.findOne({
       $or: [
-        { user1, user2 },
-        { user1: user2, user2: user1 },
+        { "user1":user1, "user2":user2 },
+        { "user1": user2, "user2": user1 },
       ],
     });
     if (roomAlreadyExists) {
@@ -22,6 +22,7 @@ export const createRoomController = async (req, res) => {
         room: roomAlreadyExists._id,
       });
     }
+    else{
     const room = await new chatRoomModel({
       user1: user1,
       user2: user2,
@@ -31,6 +32,7 @@ export const createRoomController = async (req, res) => {
       message: "Room created successfully",
       room: room._id,
     });
+  }
   } catch (error) {
     console.log(error);
     res.status(500).send({

@@ -577,6 +577,7 @@
 .sidebar .sidebar-lower-buttons-icon {
   height: calc(25px + 1vw);
   width: calc(25px + 1vw);
+  border-radius: 100%;
 }
 
 .chatmenu {
@@ -719,8 +720,9 @@
   flex-shrink: 0;
 }
 .otherchats .otherchats-dp {
-  height: 40px;
-  width: 40px;
+  height: 45px;
+  width: 45px;
+  border-radius: 100%;
 }
 .otherchats .otherchats-chat {
   margin-left: 3%;
@@ -828,6 +830,7 @@
 .chat-navbar .chat-navbar-icon {
   height: calc(30px + 2vw);
   width: calc(30px + 2vw);
+  border-radius: 100%;
 }
 .chat-navbar .chat-navbar-phone {
   margin-left: auto;

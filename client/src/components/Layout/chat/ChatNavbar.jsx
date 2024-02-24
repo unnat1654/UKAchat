@@ -10,7 +10,7 @@ const ChatNavbar = ({ isCall }) => {
     <div className="chat-navbar">
       {!isCall && (activeChat?.photo ? <img src={activeChat?.photo} className="chat-navbar-icon" alt="Unable to load profile picture"/> :<UserIcon classNameProp="chat-navbar-icon" />)}
 
-      <span>{activeChat.username}</span>
+      <span>{activeChat?.username}</span>
       {!isCall && (
         <React.Fragment>
           <IoCallSharp className="chat-navbar-phone" />

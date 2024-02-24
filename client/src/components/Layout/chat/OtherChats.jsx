@@ -16,6 +16,8 @@ const OtherChats = ({ name, photo, notify, id, active}) => {
   const handleClick = async () => {
     //get room id and set Active chat context to clicked contact
     try {
+      if(activeChat?.c_id!=id){
+      
       const roomResponse = await axios.post(
         `${import.meta.env.VITE_SERVER}/contact/create-room`,{contactId: id}
       );
@@ -24,8 +26,9 @@ const OtherChats = ({ name, photo, notify, id, active}) => {
           `${import.meta.env.VITE_SERVER}/message/get-messages/${roomResponse?.data?.room}/1`
         );
         const recievedMessages = messages?.data?.messages;
-        setActiveChat({ room: roomResponse?.data?.room, messages:recievedMessages});
+        setActiveChat({c_id:id, room: roomResponse?.data?.room, messages:recievedMessages});
       }
+    }
     } catch (error) {
       console.log(error);
     }
@@ -39,7 +42,7 @@ const OtherChats = ({ name, photo, notify, id, active}) => {
       tiltMaxAngleX={1}
       className={`otherchats ${active ? "otherchats-active" : ""}`}
     >
-      {photo? <img src={photo} height="40px" width="40px" alt=""/> :<UserIcon size="40px" />}
+      {photo? <img src={photo} className="otherchats-dp" alt=""/> :<UserIcon size="45px" />}
       <div className="otherchats-chat">
         <span className="otherchats-chat-name">{name}</span>
         <span className="otherchats-chat-message">

@@ -87,6 +87,7 @@
     &-icon {
       height: calc(25px + 1vw);
       width: calc(25px + 1vw);
+      border-radius: 100%;
     }
   }
 }
@@ -215,8 +216,9 @@
     flex-shrink: 0;
   }
   #{&}-dp{
-    height:40px;
-    width:40px;
+    height:45px;
+    width:45px;
+    border-radius: 100%;
   }
   #{&}-chat {
     margin-left: 3%;
@@ -326,6 +328,7 @@
   #{&}-icon {
     height: calc(30px + 2vw);
     width: calc(30px + 2vw);
+    border-radius: 100%;
   }
   #{&}-phone {
     margin-left: auto;
