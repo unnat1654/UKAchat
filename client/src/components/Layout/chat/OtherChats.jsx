@@ -34,10 +34,10 @@ const OtherChats = ({ name, photo, notify, id, active}) => {
     getLastMessageInfo();
   }, []);
   return (
+    <div onClick={handleClick}>
     <Tilt
       tiltMaxAngleX={1}
       className={`otherchats ${active ? "otherchats-active" : ""}`}
-      onClick={handleClick}
     >
       {photo? <img src={photo} height="40px" width="40px" alt=""/> :<UserIcon size="40px" />}
       <div className="otherchats-chat">
@@ -55,6 +55,7 @@ const OtherChats = ({ name, photo, notify, id, active}) => {
         </span>
       </div>
     </Tilt>
+    </div>
   );
 };
 

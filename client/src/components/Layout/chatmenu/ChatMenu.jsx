@@ -64,15 +64,15 @@ const ChatMenu = () => {
       {JSON.stringify(activeChat)}
       <React.Fragment>
         {contactDetailsArray.map((c) => (
+          <div key={c._id} onClick={()=>{setActiveColor(c._id)}}>
           <OtherChats
             name={c.username}
-            photo={c.photo.secure_url}
+            photo={c?.photo?.secure_url}
             notify={c.online}
-            key={c._id}
             id={c._id}
             active={c._id===activeColor}
-            onClick={()=>{setActiveColor(c._id)}}
           />
+          </div>
         ))}
       </React.Fragment>
     </div>
