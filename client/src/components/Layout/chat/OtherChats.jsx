@@ -1,21 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import UserIcon from "../UserIcon";
 import Tilt from "react-parallax-tilt";
+import axios from "axios";
+import { useActiveChat } from "../../../context/activeChatContext";
 
-const OtherChats = ({ name, message, time, notify, active }) => {
-  const msg = message.slice(0, 20);
+const OtherChats = ({ name, photo, notify, id, active}) => {
+  const [activeChat, setActiveChat] = useActiveChat();
+  const [lastMessageInfo, setLastMessageInfo] = useState({});
+  const getLastMessageInfo = async () => {
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_SERVER}/message/get-last-message/${id}`
+    );
+    setLastMessageInfo(data?.lastMessageInfo);
+  };
+  const handleClick = async () => {
+    //get room id and set Active chat context to clicked contact
+    try {
+      const roomResponse = await axios.post(
+        `${import.meta.env.VITE_SERVER}/contact/create-room`,{contactId: id}
+      );
+      if (roomResponse?.data?.success) {
+        const messages = await axios.get(
+          `${import.meta.env.VITE_SERVER}/message/get-messages/${roomResponse?.data?.room}/1`
+        );
+        const recievedMessages = messages?.data?.messages;
+        setActiveChat({ room: roomResponse?.data?.room, messages:recievedMessages});
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getLastMessageInfo();
+  }, []);
   return (
     <Tilt
       tiltMaxAngleX={1}
       className={`otherchats ${active ? "otherchats-active" : ""}`}
+      onClick={handleClick}
     >
-      <UserIcon size="40px" />
+      {photo? <img src={photo} height="40px" width="40px" alt=""/> :<UserIcon size="40px" />}
       <div className="otherchats-chat">
         <span className="otherchats-chat-name">{name}</span>
-        <span className="otherchats-chat-message">{msg}...</span>
+        <span className="otherchats-chat-message">
+          {lastMessageInfo?.lastMessage?.slice(0, 20)}...
+        </span>
       </div>
       <div className="otherchats-info">
-        <span className="otherchats-info-time">{time}</span>
+        <span className="otherchats-info-time">
+          {lastMessageInfo?.timeSent}
+        </span>
         <span className="otherchats-info-notification">
           {notify ? <div className="notification"></div> : <div></div>}
         </span>

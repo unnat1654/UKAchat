@@ -6,6 +6,7 @@ const chatSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "userRooms",
     required: true,
+    index: -1,
   },
   sender: {
     type: mongoose.Schema.Types.ObjectId,
@@ -36,7 +37,6 @@ const chatSchema = new mongoose.Schema({
 });
 
 chatSchema.index({
-  room: 1,
-  createdAt: -1,
+  timeSent: -1,
 });
 export default mongoose.model("userChats", chatSchema, "userChats");

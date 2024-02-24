@@ -1,6 +1,7 @@
 import { cloudinary } from "../config/cloudinary.js";
 import chatModel from "../models/chatModel.js";
 
+//POST  /save-messages
 export const saveMessagesController = async (req, res) => {
   try {
     const { room, messages } = req.body;
@@ -19,9 +20,10 @@ export const saveMessagesController = async (req, res) => {
           room: room,
           message: element.message,
           sender: element.sender,
-          receiver: element.reciever,
+          receiver: element.receiver,
           timeSent: element.timeSent,
         };
+        itemToBeInserted.append(messageObject);
       } else if (element.data) {
         const { secure_url, public_id } = await cloudinary.uploader.upload(
           photo,
@@ -33,7 +35,7 @@ export const saveMessagesController = async (req, res) => {
           room: room,
           media: { public_id, secure_url },
           sender: element.sender,
-          receiver: element.reciever,
+          receiver: element.receiver,
           timeSent: element.timeSent,
         };
 
@@ -52,18 +54,33 @@ export const saveMessagesController = async (req, res) => {
   }
 };
 
+
+//GET  /get-last-message/:cid
 export const getLastMessageController = async (req, res) => {
-  const { room } = req.params;
+  const { cid } = req.params;
+  const userId = req.user._id;
   try {
-    const lastMessage = await chatModel.findOne({ room: room });
+    const lastMessage = await chatModel.findOne({
+      $or: [
+        { sender: cid, receiver: userId },
+        { sender: userId, receiver: cid },
+      ],
+    });
     if (lastMessage?.message) {
       res.status(200).send({
-        lastMessage: lastMessage.message,
+        success: true,
+        lastMessageInfo: {
+          lastMessage: lastMessage.message,
+          timeSent: lastMessage.timeSent,
+        },
       });
     } else if (lastMessage?.media) {
       res.status(200).send({
         success: true,
-        lastMessage: "File Shared",
+        lastMessageInfo: {
+          lastMessage: "File Shared",
+          timeSent: lastMessage.timeSent,
+        },
       });
     } else {
       res.status(200).send({
@@ -82,16 +99,17 @@ export const getLastMessageController = async (req, res) => {
 };
 
 //get 200 messages in a batch from a contact
+//GET  /get-messages/:room/:page
 export const getMessagesController = async (req, res) => {
   const { room, page } = req.params;
   try {
     const chatsPerPage = 200;
     const messages = await chatModel
       .find({ room: room })
-      .sort({ createdAt: -1 })
-      .skip((page + 1) * chatsPerPage)
+      .sort({ timeSent: -1 })
+      .skip((page - 1) * chatsPerPage)
       .limit(chatsPerPage)
-      .select("-room");
+      .select("-_id -room");
     if (messages) {
       res.status(200).send({
         success: true,

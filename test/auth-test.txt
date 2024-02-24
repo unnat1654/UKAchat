@@ -6,4 +6,25 @@
     "last_name":"Unnatln",
     "DOB":"10-10-2001",
     "phone":"Unnata"
+},
+{
+    DOB: "2023-12-13"
+    email: "gilgamesh@king.com"
+    first_name:"King"
+    last_name:"goat"
+    password:"gilgamesh@king.com1S"
+    phone:"3334445556"
+    photo:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqQ
+    username: "king123"
+}
+
+
+{
+  "username": "Rakesh3404",
+  "email": "rakeshji@gmail.com",
+  "password": "rakeshji@gmail.comA9",
+  "first_name": "Rakesh",
+  "last_name": "Jain",
+  "phone": "6969696969",
+  "DOB": "2005-06-09"
 }

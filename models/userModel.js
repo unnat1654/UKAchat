@@ -27,10 +27,6 @@ const userSchema = new mongoose.Schema({
       trim: true,
     },
   },
-  status: {
-    type: String,
-    maxLength: 100,
-  },
   DOB: {
     type: Date,
     required: true,
@@ -56,8 +52,8 @@ const userSchema = new mongoose.Schema({
       type: String,
     },
   },
-  online: {
-    type: Boolean,
+  lastOnline: {
+    type: Date,
   },
 });
 

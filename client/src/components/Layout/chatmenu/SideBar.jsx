@@ -9,8 +9,10 @@ import { PiUsersThreeBold } from "react-icons/pi";
 import { MdOutlineGroupAdd } from "react-icons/md";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
+import { useAuth } from "../../../context/authContext";
 
 const SideBar = () => {
+  const [auth, setAuth] = useAuth();
   return (
     <div className="sidebar">
       <div className="sidebar-upper-buttons">
@@ -47,7 +49,11 @@ const SideBar = () => {
       </div>
       <div className="sidebar-lower-buttons">
         <MdOutlineSettings className="sidebar-lower-buttons-setting" />
-        <UserIcon size="calc(25px + 1vw)" />
+        {auth?.user?.photo ? (
+          <img src={auth?.user?.photo} className="sidebar-lower-buttons-icon" />
+        ) : (
+          <UserIcon size="calc(25px + 1vw)" />
+        )}
       </div>
     </div>
   );

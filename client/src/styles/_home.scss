@@ -75,7 +75,7 @@
       font-size: calc(20px + 0.5vw);
       margin-block: 5px;
     }
-    .sidebar-lower-buttons-setting {
+    &-setting {
       transition: rotate 10s, color 2s, font-size 5s;
       margin-bottom: 20px;
       color: rgba(183, 183, 183, 0.274);
@@ -83,6 +83,10 @@
         rotate: 360deg;
         color: rgba(255, 255, 255, 0.824);
       }
+    }
+    &-icon {
+      height: calc(25px + 1vw);
+      width: calc(25px + 1vw);
     }
   }
 }
@@ -209,6 +213,10 @@
   * {
     @include flexCenter(column);
     flex-shrink: 0;
+  }
+  #{&}-dp{
+    height:40px;
+    width:40px;
   }
   #{&}-chat {
     margin-left: 3%;

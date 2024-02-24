@@ -26,7 +26,7 @@ const ProfilePictureUpload = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        `${import.meta.env.VITE_SERVER}/api/v0/auth/signup`,
+        `${import.meta.env.VITE_SERVER}/auth/signup`,
         {
           ...signupinfo.state,
           photo,

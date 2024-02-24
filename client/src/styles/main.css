@@ -565,14 +565,18 @@
   font-size: calc(20px + 0.5vw);
   margin-block: 5px;
 }
-.sidebar .sidebar-lower-buttons .sidebar-lower-buttons-setting {
+.sidebar .sidebar-lower-buttons-setting {
   transition: rotate 10s, color 2s, font-size 5s;
   margin-bottom: 20px;
   color: rgba(183, 183, 183, 0.274);
 }
-.sidebar .sidebar-lower-buttons .sidebar-lower-buttons-setting:hover {
+.sidebar .sidebar-lower-buttons-setting:hover {
   rotate: 360deg;
   color: rgba(255, 255, 255, 0.824);
+}
+.sidebar .sidebar-lower-buttons-icon {
+  height: calc(25px + 1vw);
+  width: calc(25px + 1vw);
 }
 
 .chatmenu {
@@ -713,6 +717,10 @@
   align-items: center;
   flex-direction: column;
   flex-shrink: 0;
+}
+.otherchats .otherchats-dp {
+  height: 40px;
+  width: 40px;
 }
 .otherchats .otherchats-chat {
   margin-left: 3%;

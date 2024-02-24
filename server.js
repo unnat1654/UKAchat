@@ -40,8 +40,8 @@ app.get("/home", (req, res) => {
 
 //routes
 app.use("/api/v0/auth", authRoutes);
-app.use("api/v0/contact", contactRoutes);
-app.use("api/v0/message", messageRoutes);
+app.use("/api/v0/contact", contactRoutes);
+app.use("/api/v0/message", messageRoutes);
 
 //port
 const PORT = process.env.PORT || 8080;

@@ -1,6 +1,6 @@
 export const sendMessage = (socket) => {
   socket.on("send-message", (room, msg) => {
-    socket.to(room).emit("recieve-message", msg);
+    socket.to(room).emit("receive-message", msg);
   });
 };
 

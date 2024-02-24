@@ -126,7 +126,6 @@ export const loginController = async (req, res) => {
           email: user.email,
           first_name: user.name.first_name,
           last_name: user.name.last_name,
-          status: user.status,
           DOB: user.DOB,
           photo: user.photo.secure_url,
         },

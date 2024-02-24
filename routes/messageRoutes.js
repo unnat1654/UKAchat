@@ -12,7 +12,7 @@ const router = Router();
 router.post("/save-messages", isLoggedIn, saveMessagesController);
 
 //get last message from a contact
-router.get("/get-last-message/:room", isLoggedIn, getLastMessageController);
+router.get("/get-last-message/:cid", isLoggedIn, getLastMessageController);
 
 //get 200 messages in a batch from a contact
 router.get("/get-messages/:room/:page", isLoggedIn, getMessagesController);

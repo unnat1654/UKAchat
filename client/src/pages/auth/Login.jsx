@@ -27,7 +27,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        `${import.meta.env.VITE_SERVER}/api/v0/auth/login`,
+        `${import.meta.env.VITE_SERVER}/auth/login`,
         {
           email,
           password,

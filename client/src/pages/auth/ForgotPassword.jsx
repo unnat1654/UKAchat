@@ -26,7 +26,7 @@ const ForgotPassword = () => {
     try {
       if (password === reEnterPassword) {
         const { data } = await axios.patch(
-          `${import.meta.env.VITE_SERVER}/api/v0/auth/forgot-password`,
+          `${import.meta.env.VITE_SERVER}/auth/forgot-password`,
           {
             email: email,
             new_password: password,
