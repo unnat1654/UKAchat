@@ -1,5 +1,4 @@
 import { Server } from "socket.io";
-import { sendMessage, joinRoom } from "../controllers/socketController.js";
 
 //socketio connection
 
@@ -11,7 +10,12 @@ export const socketEvents = (httpServer) => {
   });
   io.on("connection", (socket) => {
     console.log(socket.id);
-    joinRoom(socket);
-    sendMessage(socket);
+    socket.on("send-message", (room, msg) => {
+      socket.to(room).emit("receive-message", msg);
+    });
+    socket.on("join-room", (room) => {
+      socket.join(room);
+    });
+    
   });
 };

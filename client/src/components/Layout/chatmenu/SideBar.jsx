@@ -9,9 +9,10 @@ import { PiUsersThreeBold } from "react-icons/pi";
 import { MdOutlineGroupAdd } from "react-icons/md";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
+import {BsEnvelopePlus} from "react-icons/bs";
 import { useAuth } from "../../../context/authContext";
 
-const SideBar = () => {
+const SideBar = ({sideBarTab,setSideBarTab}) => {
   const [auth, setAuth] = useAuth();
   return (
     <div className="sidebar">
@@ -22,8 +23,18 @@ const SideBar = () => {
           trigger={"hover"}
           arrow={{ pointAtCenter: true }}
         >
-          <div>
+          <div onClick={()=>{setSideBarTab("chats")}}>
             <IoChatbubbleOutline />
+          </div>
+        </Tooltip>
+        <Tooltip
+          placement="right"
+          title={"Invites"}
+          trigger={"hover"}
+          arrow={{ pointAtCenter: true }}
+        >
+          <div onClick={()=>{setSideBarTab("invites")}}>
+            <BsEnvelopePlus />
           </div>
         </Tooltip>
         <Tooltip
@@ -32,7 +43,7 @@ const SideBar = () => {
           trigger={"hover"}
           arrow={{ pointAtCenter: true }}
         >
-          <div>
+          <div onClick={()=>{setSideBarTab("groups")}}>
             <PiUsersThreeBold />
           </div>
         </Tooltip>
@@ -42,7 +53,7 @@ const SideBar = () => {
           trigger={"hover"}
           arrow={{ pointAtCenter: true }}
         >
-          <div>
+          <div onClick={()=>{setSideBarTab("creategroup")}}>
             <MdOutlineGroupAdd />
           </div>
         </Tooltip>

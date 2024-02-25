@@ -7,12 +7,14 @@ import { useAuth } from "../../../context/authContext";
 import { useActiveChat } from "../../../context/activeChatContext";
 import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 
-const ChatMenu = () => {
+const ChatMenu = ({ sideBarTab }) => {
   const [searchInput, setSearchInput] = useState("");
-  const [contactDetailsArray,setContactDetailsArray] = useContactDetailsArray([]);
+  const [contactDetailsArray, setContactDetailsArray] = useContactDetailsArray(
+    []
+  );
   const [activeChat, setActiveChat] = useActiveChat();
   const [auth, setAuth] = useAuth();
-  const [activeColor,setActiveColor]=useState("");
+  const [activeColor, setActiveColor] = useState("");
 
   const getContactDetails = async () => {
     try {
@@ -50,31 +52,44 @@ const ChatMenu = () => {
   };
   return (
     <div className="chatmenu">
-      <Tilt className="chatmenu-search-bar">
-        <input
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          type="text"
-          placeholder="search for chat..."
-        />
-        <span onClick={handleSearch}>
-          <IoSearchOutline />
-        </span>
-      </Tilt>
-      {JSON.stringify(activeChat)}
-      <React.Fragment>
-        {contactDetailsArray.map((c) => (
-          <div key={c._id} onClick={()=>{setActiveColor(c._id)}}>
-          <OtherChats
-            name={c.username}
-            photo={c?.photo?.secure_url}
-            notify={c.online}
-            id={c._id}
-            active={c._id===activeColor}
-          />
-          </div>
-        ))}
-      </React.Fragment>
+      {sideBarTab == "chats" && (
+        <React.Fragment>
+          <Tilt className="chatmenu-search-bar">
+            <input
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              type="text"
+              placeholder="search for chat..."
+            />
+            <span onClick={handleSearch}>
+              <IoSearchOutline />
+            </span>
+          </Tilt>
+          {JSON.stringify(activeChat)}
+
+          <React.Fragment>
+            {contactDetailsArray.map((c) => (
+              <div
+                key={c._id}
+                onClick={() => {
+                  setActiveColor(c._id);
+                }}
+              >
+                <OtherChats
+                  name={c.username}
+                  photo={c?.photo?.secure_url}
+                  notify={c.online}
+                  id={c._id}
+                  active={c._id === activeColor}
+                />
+              </div>
+            ))}
+          </React.Fragment>
+        </React.Fragment>
+      )}
+      {sideBarTab == "invites" && (<React.Fragment>
+        {/* write code here */}
+        </React.Fragment>)}
     </div>
   );
 };
