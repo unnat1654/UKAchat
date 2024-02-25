@@ -6,6 +6,7 @@ import axios from "axios";
 import { useAuth } from "../../../context/authContext";
 import { useActiveChat } from "../../../context/activeChatContext";
 import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
+import Invites from "../invite/Invites";
 
 const ChatMenu = ({ sideBarTab }) => {
   const [searchInput, setSearchInput] = useState("");
@@ -87,9 +88,12 @@ const ChatMenu = ({ sideBarTab }) => {
           </React.Fragment>
         </React.Fragment>
       )}
-      {sideBarTab == "invites" && (<React.Fragment>
-        {/* write code here */}
-        </React.Fragment>)}
+      {sideBarTab == "invites" && (
+        <React.Fragment>
+          {/* write code here */}
+          <Invites sender="Rakesh3404" id="123" active="false"></Invites>
+        </React.Fragment>
+      )}
     </div>
   );
 };

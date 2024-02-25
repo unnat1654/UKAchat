@@ -8,7 +8,7 @@ import axios from "axios";
 import { ActiveChatProvider } from "../context/activeChatContext";
 import { ContactDetailsProvider } from "../context/ContactDetailsContext";
 const Layout = () => {
-  const [sideBarTab, setSideBarTab] =useState("chats");
+  const [sideBarTab, setSideBarTab] = useState("chats");
   const sendUserLastOnlineTime = async () => {
     try {
       await axios.patch(`${import.meta.env.VITE_SERVER}/contact/stay-online`);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { PiChatCircleDotsFill } from "react-icons/pi";
 import { HiMiniUserGroup } from "react-icons/hi2";
 import { AiFillSetting } from "react-icons/ai";
@@ -9,11 +9,12 @@ import { PiUsersThreeBold } from "react-icons/pi";
 import { MdOutlineGroupAdd } from "react-icons/md";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
-import {BsEnvelopePlus} from "react-icons/bs";
+import { BsEnvelopePlus } from "react-icons/bs";
 import { useAuth } from "../../../context/authContext";
 
-const SideBar = ({sideBarTab,setSideBarTab}) => {
+const SideBar = ({ sideBarTab, setSideBarTab }) => {
   const [auth, setAuth] = useAuth();
+  const [activeBtn, setActiveBtn] = useState("chats");
   return (
     <div className="sidebar">
       <div className="sidebar-upper-buttons">
@@ -23,7 +24,13 @@ const SideBar = ({sideBarTab,setSideBarTab}) => {
           trigger={"hover"}
           arrow={{ pointAtCenter: true }}
         >
-          <div onClick={()=>{setSideBarTab("chats")}}>
+          <div
+            onClick={() => {
+              setSideBarTab("chats");
+              setActiveBtn("chats");
+            }}
+            className={activeBtn == "chats" ? "active" : ""}
+          >
             <IoChatbubbleOutline />
           </div>
         </Tooltip>
@@ -33,7 +40,13 @@ const SideBar = ({sideBarTab,setSideBarTab}) => {
           trigger={"hover"}
           arrow={{ pointAtCenter: true }}
         >
-          <div onClick={()=>{setSideBarTab("invites")}}>
+          <div
+            onClick={() => {
+              setSideBarTab("invites");
+              setActiveBtn("invites");
+            }}
+            className={activeBtn == "invites" ? "active" : ""}
+          >
             <BsEnvelopePlus />
           </div>
         </Tooltip>
@@ -43,7 +56,13 @@ const SideBar = ({sideBarTab,setSideBarTab}) => {
           trigger={"hover"}
           arrow={{ pointAtCenter: true }}
         >
-          <div onClick={()=>{setSideBarTab("groups")}}>
+          <div
+            onClick={() => {
+              setSideBarTab("groups");
+              setActiveBtn("groups");
+            }}
+            className={activeBtn == "groups" ? "active" : ""}
+          >
             <PiUsersThreeBold />
           </div>
         </Tooltip>
@@ -53,7 +72,13 @@ const SideBar = ({sideBarTab,setSideBarTab}) => {
           trigger={"hover"}
           arrow={{ pointAtCenter: true }}
         >
-          <div onClick={()=>{setSideBarTab("creategroup")}}>
+          <div
+            onClick={() => {
+              setSideBarTab("creategroup");
+              setActiveBtn("creategroup");
+            }}
+            className={activeBtn == "creategroup" ? "active" : ""}
+          >
             <MdOutlineGroupAdd />
           </div>
         </Tooltip>

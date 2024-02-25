@@ -64,6 +64,9 @@
       color: rgba(255, 255, 255, 0.824);
       scale: 1.05;
     }
+    .active {
+      color: rgba(112, 248, 255, 0.4);
+    }
   }
   #{&}-lower-buttons {
     display: flex;
@@ -215,9 +218,9 @@
     @include flexCenter(column);
     flex-shrink: 0;
   }
-  #{&}-dp{
-    height:45px;
-    width:45px;
+  #{&}-dp {
+    height: 45px;
+    width: 45px;
     border-radius: 100%;
   }
   #{&}-chat {
@@ -591,5 +594,53 @@
   &.sent {
     margin-left: auto;
     background-color: rgba(61, 153, 179, 0.299);
+  }
+}
+
+.invites {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  margin: 10px 15px;
+  border-radius: 5px;
+  background-color: rgba(112, 108, 218, 0.043);
+  backdrop-filter: blur(10px);
+  color: rgb(215, 215, 215);
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  padding: 1% 5%;
+  flex-shrink: 0;
+  transition: all 1s;
+  min-width: fit-content;
+  &:hover {
+    color: white;
+  }
+  * {
+    @include flexCenter(column);
+    flex-shrink: 0;
+  }
+  #{&}-dp {
+    height: calc(35px + 0.4vw);
+    width: calc(35px + 0.4vw);
+    border-radius: 100%;
+  }
+  #{&}-chat {
+    margin-left: 3%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    &-name {
+      font-family: "Nunito Sans";
+      font-size: calc(12px + 0.4vw);
+    }
+  }
+  #{&}-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+  &-active {
+    background-color: rgba(34, 19, 32, 0.142);
   }
 }
