@@ -8,11 +8,9 @@ import { useActiveChat } from "../../../context/activeChatContext";
 import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 import Invites from "../invite/Invites";
 
-const ChatMenu = ({ sideBarTab }) => {
+const ChatMenu = ({ sideBarTab,setShowInviteBox}) => {
   const [searchInput, setSearchInput] = useState("");
-  const [contactDetailsArray, setContactDetailsArray] = useContactDetailsArray(
-    []
-  );
+  const [contactDetailsArray, setContactDetailsArray] = useContactDetailsArray();
   const [activeChat, setActiveChat] = useActiveChat();
   const [auth, setAuth] = useAuth();
   const [activeColor, setActiveColor] = useState("");
@@ -23,7 +21,7 @@ const ChatMenu = ({ sideBarTab }) => {
         `${import.meta.env.VITE_SERVER}/contact/get-contacts`
       );
       if (data?.success) {
-        setContactDetailsArray(data?.contactDetailsArray);
+        setContactDetailsArray({searchedNewUser:false, detailsArray:data?.contactDetailsArray});
       }
     } catch (error) {
       console.log(error);
@@ -39,11 +37,16 @@ const ChatMenu = ({ sideBarTab }) => {
 
   const handleSearch = async () => {
     try {
+      if(searchInput==""){
+        getContactDetails();
+        setShowInviteBox((prev)=>({...prev,isShow:false}));
+        return;
+      }
       const { data } = await axios.get(
         `${import.meta.env.VITE_SERVER}/contact/search-contact/${searchInput}`
       );
       if (data?.success) {
-        setContactDetailsArray([data?.contact]);
+        setContactDetailsArray({searchedNewUser:true, detailsArray:[data?.contact]});
       } else {
         console.log(data?.message);
       }
@@ -69,7 +72,7 @@ const ChatMenu = ({ sideBarTab }) => {
           {JSON.stringify(activeChat)}
 
           <React.Fragment>
-            {contactDetailsArray.map((c) => (
+            {contactDetailsArray?.detailsArray.map((c) => (
               <div
                 key={c._id}
                 onClick={() => {
@@ -82,6 +85,8 @@ const ChatMenu = ({ sideBarTab }) => {
                   notify={c.online}
                   id={c._id}
                   active={c._id === activeColor}
+                  searched={contactDetailsArray.searchedNewUser}
+                  setShowInviteBox={setShowInviteBox}
                 />
               </div>
             ))}

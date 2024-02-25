@@ -4,16 +4,15 @@ import ChatMain from "../chat/ChatMain";
 import CallMain from "../chat/callMain";
 import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 import { useActiveChat } from "../../../context/activeChatContext";
+import SendInvite from "../invite/sendInvite";
 
-const ChattingSection = () => {
+const ChattingSection = ({showInviteBox,setShowInviteBox}) => {
   const [isCall, setIsCall] = useState(false);
   const [activeChat, setActiveChat]= useActiveChat();
-  const [contactDetailsArray,setContactDetailsArray]=useContactDetailsArray([]);
+  const [contactDetailsArray,setContactDetailsArray]=useContactDetailsArray();
   useEffect(() => {
-    if(activeChat?.room){// && contactDetailsArray!=[]){
-      console.log("123");
-      const contactObject=contactDetailsArray.find((contactDetailsObject)=>contactDetailsObject._id==activeChat?.c_id);
-      console.log(contactObject);
+    if(activeChat?.room){
+      const contactObject=contactDetailsArray.detailsArray.find((contactDetailsObject)=>contactDetailsObject._id==activeChat?.c_id);
       if(contactObject){
         setActiveChat({...activeChat,username:contactObject.username,photo:contactObject?.photo?.secure_url})
       }
@@ -22,8 +21,10 @@ const ChattingSection = () => {
   }, [activeChat?.room]);
   return (
     <div className="chattingsection">
-      <ChatNavbar isCall={isCall} />
-      {isCall ? <CallMain /> : <ChatMain />}
+      {showInviteBox.isShow && <SendInvite inviteId={showInviteBox.searchedId} contactName={showInviteBox.searchedUsername}/>}
+      {!showInviteBox.isShow && 
+      <><ChatNavbar isCall={isCall} />
+      {isCall ? <CallMain /> : <ChatMain />}</>}
     </div>
   );
 };

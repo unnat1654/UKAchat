@@ -199,6 +199,7 @@
     }
   }
 }
+
 .otherchats {
   @include flexCenter(row);
   margin: 10px 15px;
@@ -267,6 +268,55 @@
     background-color: rgba(34, 19, 32, 0.142);
   }
 }
+
+.invites {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  margin: 10px 15px;
+  border-radius: 5px;
+  background-color: rgba(112, 108, 218, 0.043);
+  backdrop-filter: blur(10px);
+  color: rgb(215, 215, 215);
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  padding: 1% 5%;
+  flex-shrink: 0;
+  transition: all 1s;
+  min-width: fit-content;
+  &:hover {
+    color: white;
+  }
+  * {
+    @include flexCenter(column);
+    flex-shrink: 0;
+  }
+  #{&}-dp {
+    height: calc(35px + 0.4vw);
+    width: calc(35px + 0.4vw);
+    border-radius: 100%;
+  }
+  #{&}-chat {
+    margin-left: 3%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    &-name {
+      font-family: "Nunito Sans";
+      font-size: calc(12px + 0.4vw);
+    }
+  }
+  #{&}-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+  &-active {
+    background-color: rgba(34, 19, 32, 0.142);
+  }
+}
+
 .chattingsection {
   height: 100%;
   width: min-content;
@@ -597,50 +647,30 @@
   }
 }
 
-.invites {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
-  margin: 10px 15px;
-  border-radius: 5px;
-  background-color: rgba(112, 108, 218, 0.043);
-  backdrop-filter: blur(10px);
-  color: rgb(215, 215, 215);
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-  padding: 1% 5%;
-  flex-shrink: 0;
-  transition: all 1s;
-  min-width: fit-content;
-  &:hover {
+.sendinvitebox{
+  width:100%;
+  height:100%;
+  backdrop-filter: blur(20px);
+  text-align: center;
+  @include flexCenter(column);
+  #{&}-text{
+    font-size: calc(40px + 0.6vw);
+    font-family: Nunito Sans;
+    padding: 10%;
     color: white;
-  }
-  * {
-    @include flexCenter(column);
-    flex-shrink: 0;
-  }
-  #{&}-dp {
-    height: calc(35px + 0.4vw);
-    width: calc(35px + 0.4vw);
-    border-radius: 100%;
-  }
-  #{&}-chat {
-    margin-left: 3%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    &-name {
-      font-family: "Nunito Sans";
-      font-size: calc(12px + 0.4vw);
+    span {
+      font-size: calc(45px + 0.6vw);
+      color:#14ff97;
     }
   }
-  #{&}-buttons {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-  }
-  &-active {
-    background-color: rgba(34, 19, 32, 0.142);
+  #{&}-button{
+    padding: 25px;
+    font-size: calc(20px + 0.5vw);
+    font-family: poppins;
+    border-radius:10px;
+    border-width: 0px;
+    color:white;
+    background-color: #14ff97;
+    font-weight: bold;
   }
 }

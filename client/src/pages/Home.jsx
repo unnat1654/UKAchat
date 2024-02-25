@@ -8,7 +8,9 @@ import axios from "axios";
 import { ActiveChatProvider } from "../context/activeChatContext";
 import { ContactDetailsProvider } from "../context/ContactDetailsContext";
 const Layout = () => {
-  const [sideBarTab, setSideBarTab] = useState("chats");
+
+  const [sideBarTab, setSideBarTab] =useState("chats");
+  const [showInviteBox,setShowInviteBox]=useState({isShow:false,searchedId:"",searchedUsername:""});
   const sendUserLastOnlineTime = async () => {
     try {
       await axios.patch(`${import.meta.env.VITE_SERVER}/contact/stay-online`);
@@ -29,6 +31,7 @@ const Layout = () => {
     <ContactDetailsProvider>
       <ActiveChatProvider>
         <div className="layout">
+          
           <Tilt
             tiltMaxAngleX={2}
             tiltMaxAngleY={2}
@@ -36,9 +39,9 @@ const Layout = () => {
             trackOnWindow={true}
             className="main"
           >
-            <SideBar sideBarTab={sideBarTab} setSideBarTab={setSideBarTab} />
-            <ChatMenu sideBarTab={sideBarTab} />
-            <ChattingSection />
+            <SideBar sideBarTab={sideBarTab} setSideBarTab={setSideBarTab}/>
+            <ChatMenu sideBarTab={sideBarTab} setShowInviteBox={setShowInviteBox}/>
+            <ChattingSection showInviteBox={showInviteBox} setShowInviteBox={setShowInviteBox}/>
           </Tilt>
           <img src={background} alt="background" className="background" />
         </div>
