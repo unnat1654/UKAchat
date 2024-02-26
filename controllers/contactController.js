@@ -5,7 +5,7 @@ import chatModel from "../models/chatModel.js";
 import mongoose from "mongoose";
 
 // POST /create-room
-export const createRoomController = async (req, res) => {
+export const getRoomController = async (req, res) => {
   try {
     const user1 = req.user._id;
     const user2 = req.body.contactId;
@@ -23,15 +23,10 @@ export const createRoomController = async (req, res) => {
       });
     }
     else{
-    const room = await new chatRoomModel({
-      user1: user1,
-      user2: user2,
-    }).save();
-    res.status(201).send({
-      success: true,
-      message: "Room created successfully",
-      room: room._id,
-    });
+    res.status(404).send({
+      success:false,
+      message:"Room Not Found"
+    })
   }
   } catch (error) {
     console.log(error);
