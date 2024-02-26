@@ -8,12 +8,14 @@ import { useActiveChat } from "../../../context/activeChatContext";
 import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 import Invites from "../invite/Invites";
 
-const ChatMenu = ({ sideBarTab,setShowInviteBox}) => {
+const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
   const [searchInput, setSearchInput] = useState("");
-  const [contactDetailsArray, setContactDetailsArray] = useContactDetailsArray();
+  const [contactDetailsArray, setContactDetailsArray] =
+    useContactDetailsArray();
   const [activeChat, setActiveChat] = useActiveChat();
   const [auth, setAuth] = useAuth();
   const [activeColor, setActiveColor] = useState("");
+  const [invitesArray, setInvitesArray] = useState([]);
 
   const getContactDetails = async () => {
     try {
@@ -21,7 +23,10 @@ const ChatMenu = ({ sideBarTab,setShowInviteBox}) => {
         `${import.meta.env.VITE_SERVER}/contact/get-contacts`
       );
       if (data?.success) {
-        setContactDetailsArray({searchedNewUser:false, detailsArray:data?.contactDetailsArray});
+        setContactDetailsArray({
+          searchedNewUser: false,
+          detailsArray: data?.contactDetailsArray,
+        });
       }
     } catch (error) {
       console.log(error);
@@ -29,24 +34,46 @@ const ChatMenu = ({ sideBarTab,setShowInviteBox}) => {
   };
 
   //on component mount get contacts and set that user is online
+
+  const getInvites = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_SERVER}/request/show-requests`
+      );
+      if (data?.success) {
+        setInvitesArray(data?.invites);
+        console.log(invitesArray);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (auth?.token) {
-      getContactDetails();
+      if (sideBarTab == "invites") {
+        getInvites();
+      } else if (sideBarTab == "chats") {
+        getContactDetails();
+      }
     }
-  }, [auth]);
+  }, [auth, sideBarTab]);
 
   const handleSearch = async () => {
     try {
-      if(searchInput==""){
+      if (searchInput == "") {
         getContactDetails();
-        setShowInviteBox((prev)=>({...prev,isShow:false}));
+        setShowInviteBox((prev) => ({ ...prev, isShow: false }));
         return;
       }
       const { data } = await axios.get(
         `${import.meta.env.VITE_SERVER}/contact/search-contact/${searchInput}`
       );
       if (data?.success) {
-        setContactDetailsArray({searchedNewUser:true, detailsArray:[data?.contact]});
+        setContactDetailsArray({
+          searchedNewUser: true,
+          detailsArray: [data?.contact],
+        });
       } else {
         console.log(data?.message);
       }
@@ -96,7 +123,14 @@ const ChatMenu = ({ sideBarTab,setShowInviteBox}) => {
       {sideBarTab == "invites" && (
         <React.Fragment>
           {/* write code here */}
-          <Invites sender="Rakesh3404" id="123" active="false"></Invites>
+          {invitesArray.map((invite) => (
+            <Invites
+              key={invite._id}
+              photo={invite?.senderUserId?.photo?.secure_url}
+              sender={invite?.senderUserId?.username}
+              id={invite?.senderUserId}
+            ></Invites>
+          ))}
         </React.Fragment>
       )}
     </div>

@@ -48,7 +48,7 @@ export const sendRequestController = async (req, res) => {
       }
     } catch (error) {
       console.log(error);
-      res.status(500).send({
+      req.status(500).send({
         success: false,
         message: "Error while sending request",
         error,
@@ -65,7 +65,7 @@ export const showRequestsController = async (req, res) => {
       .find({
         recieverId: user,
       })
-      .sort({ timeSent: "des" })
+      .sort({ timeSent: -1 })
       .populate({ path: "senderUserId", select: "username photo" });
     if (!invites) {
       res.status(200).send({
@@ -100,10 +100,13 @@ export const handleRequestController = async (req, res) => {
   const user = req.user._id;
   const { senderId, senderType, isAccepted } = req.body;
   try {
-    const invite = await requestModel.findOneAndDelete({
+    const invite = await requestModel.find({
       senderUserId: senderId,
       recieverId: user,
     });
+
+    console.log(senderId);
+    console.log(invite);
     if (!invite) {
       res.status(404).send({
         success: false,
@@ -114,6 +117,7 @@ export const handleRequestController = async (req, res) => {
       res.status(200).send({
         success: true,
         message: "Invite Rejected",
+        body: req.body,
       });
     } else {
       const room = new chatRoomModel({

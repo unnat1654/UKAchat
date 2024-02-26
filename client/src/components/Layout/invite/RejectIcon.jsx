@@ -8,7 +8,7 @@ const RejectIcon = ({ size, top, left, z }) => {
   return (
     <CiCircleRemove
       style={{
-        color: "rgba(255, 0, 0, 0.5)",
+        color: "rgba(255, 0, 0)",
         backgroundColor: "transparent",
         height: size,
         width: size,
