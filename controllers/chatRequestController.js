@@ -1,5 +1,5 @@
-import {userModel} from "../models/userModel.js";
-import {requestModel} from "../models/requestModel.js";
+import userModel from "../models/userModel.js";
+import requestModel from "../models/requestModel.js";
 import chatRoomModel from "../models/chatRoomModel.js";
 
 //POST   /send-request
@@ -16,7 +16,7 @@ export const sendRequestController=async (req,res)=>{
                 });
             }
             else {
-                const invitesToSameUser=await requestModel.find({recieverId:sentToId});
+                const invitesToSameUser=await requestModel.find({$or:[{recieverId:sentToId},{recieverId:sentToId,senderUserId}]});
                 if(invitesToSameUser.length==50){
                     res.status(200).send({
                         success:false,

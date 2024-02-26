@@ -8,6 +8,7 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import chatRequestRoutes from "./routes/chatRequestRoutes.js";
 import connectDB from "./config/db.js";
 
 //configure env
@@ -42,6 +43,7 @@ app.get("/home", (req, res) => {
 app.use("/api/v0/auth", authRoutes);
 app.use("/api/v0/contact", contactRoutes);
 app.use("/api/v0/message", messageRoutes);
+app.use("/api/v0/request", chatRequestRoutes);
 
 //port
 const PORT = process.env.PORT || 8080;
