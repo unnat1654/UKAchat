@@ -124,7 +124,6 @@ export const searchContactContoller = async (req, res) => {
 export const getContactsController = async (req, res) => {
   const user = req.user._id;
   const userId = new mongoose.Types.ObjectId(user);
-  console.log(user);
   try {
     const rooms = await chatModel.aggregate([
       {
