@@ -10,7 +10,8 @@ import Invites from "../invite/Invites";
 
 const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
   const [searchInput, setSearchInput] = useState("");
-  const [contactDetailsArray, setContactDetailsArray] = useContactDetailsArray();
+  const [contactDetailsArray, setContactDetailsArray] =
+    useContactDetailsArray();
   const [activeChat, setActiveChat] = useActiveChat();
   const [auth, setAuth] = useAuth();
   const [activeColor, setActiveColor] = useState("");
@@ -48,13 +49,20 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
 
   useEffect(() => {
     if (auth?.token) {
-      if (sideBarTab === "invites") {
-        getInvites();
-      } else if (sideBarTab === "chats") {
-        getContactDetails();
-      }
+      getInvites();
+      getContactDetails();
     }
-  }, [auth?.token, sideBarTab]);
+  }, [auth?.token]);
+
+  useEffect(() => {
+    if (auth?.token && sideBarTab == "invites") {
+      getInvites();
+    }
+  }, [sideBarTab]);
+
+  useEffect(() => {
+    getContactDetails();
+  }, [invitesArray.length]);
 
   const handleSearch = async () => {
     try {
