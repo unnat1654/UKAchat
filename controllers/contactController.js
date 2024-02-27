@@ -11,8 +11,8 @@ export const getRoomController = async (req, res) => {
     const user2 = req.body.contactId;
     const roomAlreadyExists = await chatRoomModel.findOne({
       $or: [
-        { "user1":user1, "user2":user2 },
-        { "user1": user2, "user2": user1 },
+        { user1: user1, user2: user2 },
+        { user1: user2, user2: user1 },
       ],
     });
     if (roomAlreadyExists) {
@@ -21,13 +21,12 @@ export const getRoomController = async (req, res) => {
         message: "Room already exists",
         room: roomAlreadyExists._id,
       });
+    } else {
+      res.status(404).send({
+        success: false,
+        message: "Room Not Found",
+      });
     }
-    else{
-    res.status(404).send({
-      success:false,
-      message:"Room Not Found"
-    })
-  }
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -123,7 +122,7 @@ export const searchContactContoller = async (req, res) => {
 //GET  /get-contacts
 export const getContactsController = async (req, res) => {
   const user = req.user._id;
-  const limit=20;
+  const limit = 20;
   const userId = new mongoose.Types.ObjectId(user);
   try {
     const rooms = await chatModel.aggregate([
@@ -149,12 +148,10 @@ export const getContactsController = async (req, res) => {
       },
       { $limit: limit },
     ]);
-    console.log(rooms);
-    const contactDetailsArray = [];
-    if (rooms?.length != 0) {
-      contactDetailsArray = await contactIdFinder(rooms, user,limit);
-      // returing: {_id,username,photo:{securl_url,public_id}}
-    }
+
+    const contactDetailsArray = await contactIdFinder(rooms, userId, limit);
+    // returing: {_id,username,photo:{securl_url,public_id}}
+
     res.status(200).send({
       success: true,
       message: "First 20 Contacts Found Successfully",
@@ -173,7 +170,7 @@ export const getContactsController = async (req, res) => {
 //GET  /get-all-contacts
 export const getAllContactsController = async (req, res) => {
   const user = req.user._id;
-  const limit=null;
+  const limit = null;
   try {
     const rooms = await chatModel.aggregate([
       {
@@ -185,7 +182,7 @@ export const getAllContactsController = async (req, res) => {
       { $group: { _id: "$room" } },
       { $skip: 20 },
     ]);
-    const contactDetailsArray = await contactIdFinder(rooms, user,limit);
+    const contactDetailsArray = await contactIdFinder(rooms, user, limit);
     // returing: {_id,username,photo:{securl_url,public_id}}
     res.status(200).send({
       success: true,
