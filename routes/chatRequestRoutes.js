@@ -12,7 +12,7 @@ router.post("/send-request",isLoggedIn,sendRequestController);
 router.get("/show-requests",isLoggedIn,showRequestsController);
 
 // handle click of accept and decline invites and create room accordingly
-router.delete("/handle-request",isLoggedIn,handleRequestController);
+router.post("/handle-request",isLoggedIn,handleRequestController);
 
 
 export default router;

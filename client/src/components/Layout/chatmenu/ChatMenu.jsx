@@ -10,8 +10,7 @@ import Invites from "../invite/Invites";
 
 const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
   const [searchInput, setSearchInput] = useState("");
-  const [contactDetailsArray, setContactDetailsArray] =
-    useContactDetailsArray();
+  const [contactDetailsArray, setContactDetailsArray] = useContactDetailsArray();
   const [activeChat, setActiveChat] = useActiveChat();
   const [auth, setAuth] = useAuth();
   const [activeColor, setActiveColor] = useState("");
@@ -34,7 +33,6 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
   };
 
   //on component mount get contacts and set that user is online
-
   const getInvites = async () => {
     try {
       const { data } = await axios.get(
@@ -42,7 +40,6 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
       );
       if (data?.success) {
         setInvitesArray(data?.invites);
-        console.log(invitesArray);
       }
     } catch (error) {
       console.log(error);
@@ -51,13 +48,13 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
 
   useEffect(() => {
     if (auth?.token) {
-      if (sideBarTab == "invites") {
+      if (sideBarTab === "invites") {
         getInvites();
-      } else if (sideBarTab == "chats") {
+      } else if (sideBarTab === "chats") {
         getContactDetails();
       }
     }
-  }, [auth, sideBarTab]);
+  }, [auth?.token, sideBarTab]);
 
   const handleSearch = async () => {
     try {
@@ -129,6 +126,7 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
               photo={invite?.senderUserId?.photo?.secure_url}
               sender={invite?.senderUserId?.username}
               id={invite?.senderUserId}
+              setInvitesArray={setInvitesArray}
             ></Invites>
           ))}
         </React.Fragment>

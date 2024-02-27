@@ -123,6 +123,7 @@ export const searchContactContoller = async (req, res) => {
 //GET  /get-contacts
 export const getContactsController = async (req, res) => {
   const user = req.user._id;
+  const limit=20;
   const userId = new mongoose.Types.ObjectId(user);
   try {
     const rooms = await chatModel.aggregate([
@@ -141,17 +142,17 @@ export const getContactsController = async (req, res) => {
       },
       {
         $project: {
-          _id: 0, // Exclude _id field from the output
+          _id: 1, // Exclude _id field from the output
           sender: 1, // Include sender field
           receiver: 1, // Include receiver field
         },
       },
-      { $limit: 20 },
+      { $limit: limit },
     ]);
     console.log(rooms);
     const contactDetailsArray = [];
     if (rooms?.length != 0) {
-      contactDetailsArray = await contactIdFinder(rooms, user);
+      contactDetailsArray = await contactIdFinder(rooms, user,limit);
       // returing: {_id,username,photo:{securl_url,public_id}}
     }
     res.status(200).send({
@@ -172,6 +173,7 @@ export const getContactsController = async (req, res) => {
 //GET  /get-all-contacts
 export const getAllContactsController = async (req, res) => {
   const user = req.user._id;
+  const limit=null;
   try {
     const rooms = await chatModel.aggregate([
       {
@@ -183,7 +185,7 @@ export const getAllContactsController = async (req, res) => {
       { $group: { _id: "$room" } },
       { $skip: 20 },
     ]);
-    const contactDetailsArray = await contactIdFinder(rooms, user);
+    const contactDetailsArray = await contactIdFinder(rooms, user,limit);
     // returing: {_id,username,photo:{securl_url,public_id}}
     res.status(200).send({
       success: true,

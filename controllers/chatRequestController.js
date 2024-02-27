@@ -8,23 +8,23 @@ export const sendRequestController = async (req, res) => {
   const user = req.user._id;
   if ("chat" === sendType) {
     try {
-      const reciever = await userModel.findById({ _id: sentToId });
-      if (!reciever) {
+      const roomAlready = await chatRoomModel.findOne({$or:[{user1:sentToId,user2:user},{user2:sentToId, user1:user}]});
+      if (roomAlready) {
         res.status(404).send({
           success: false,
-          message: "User not found among registered Users",
+          message: "The invited user is already connected.",
         });
       }
       const invitesToContact = await requestModel.find({
         recieverId: sentToId,
       });
-      const UserInvitedAlready = await requestModel.find({
+      const UserInvitedAlready = await requestModel.findOne({
         $or: [
           { recieverId: sentToId, senderUserId: user },
           { senderUserId: sentToId, recieverId: user },
         ],
       });
-      if (UserInvitedAlready > 0) {
+      if (UserInvitedAlready) {
         res.status(200).send({
           success: false,
           message: "Invite already shared between both users",
@@ -34,7 +34,7 @@ export const sendRequestController = async (req, res) => {
           success: false,
           message: "Invited user has too many pending invites",
         });
-      } else {
+      } else{
         const invite = new requestModel({
           senderUserId: user,
           recieverId: sentToId,
@@ -48,7 +48,7 @@ export const sendRequestController = async (req, res) => {
       }
     } catch (error) {
       console.log(error);
-      req.status(500).send({
+      res.status(500).send({
         success: false,
         message: "Error while sending request",
         error,
@@ -100,26 +100,24 @@ export const handleRequestController = async (req, res) => {
   const user = req.user._id;
   const { senderId, senderType, isAccepted } = req.body;
   try {
-    const invite = await requestModel.find({
+    const invite = await requestModel.findOneAndDelete({
       senderUserId: senderId,
       recieverId: user,
     });
-
-    console.log(senderId);
-    console.log(invite);
     if (!invite) {
       res.status(404).send({
         success: false,
         message: "No invite Found",
       });
     }
-    if (!isAccepted) {
+    else if (isAccepted===false) {
       res.status(200).send({
         success: true,
         message: "Invite Rejected",
-        body: req.body,
+        body: invite,
       });
-    } else {
+    } 
+    else if (isAccepted===true) {
       const room = new chatRoomModel({
         user1: user,
         user2: senderId,

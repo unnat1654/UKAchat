@@ -5,19 +5,22 @@ import RejectIcon from "./RejectIcon";
 import AcceptIcon from "./AcceptIcon";
 import axios from "axios";
 
-const Invites = ({ sender, photo, id, active }) => {
+const Invites = ({ sender, photo, id, active,setInvitesArray}) => {
   const handleClick = () => {
     console.log("clicked");
   };
 
   const acceptInvite = async () => {
     try {
-      const { data } = await axios.delete(
+      const { data } = await axios.post(
         `${import.meta.env.VITE_SERVER}/request/handle-request`,
         { senderId: id, senderType: "chat", isAccepted: true }
       );
       if (data?.success) {
         console.log(data?.message);
+      }
+      if(data){
+        setInvitesArray((prev)=>(prev.filter(item=>item.senderUserId!==id)));
       }
     } catch (error) {
       console.log(error);
@@ -26,7 +29,7 @@ const Invites = ({ sender, photo, id, active }) => {
 
   const rejectInvite = async () => {
     try {
-      const { data } = await axios.delete(
+      const { data } = await axios.post(
         `${import.meta.env.VITE_SERVER}/request/handle-request`,
         { senderId: id, senderType: "chat", isAccepted: false }
       );
@@ -39,29 +42,27 @@ const Invites = ({ sender, photo, id, active }) => {
   };
 
   return (
-    <div onClick={handleClick}>
-      <Tilt
-        tiltMaxAngleX={1}
-        className={`invites ${active ? "invites-active" : ""}`}
-      >
-        {photo ? (
-          <img src={photo} className="invites-dp" alt="" />
-        ) : (
-          <UserIcon size="calc(35px + 0.4vw)" />
-        )}
-        <div className="invites-chat">
-          <span className="invites-chat-name">{id}</span>
+    <Tilt
+      tiltMaxAngleX={1}
+      className={`invites ${active ? "invites-active" : ""}`}
+    >
+      {photo ? (
+        <img src={photo} className="invites-dp" alt="" />
+      ) : (
+        <UserIcon size="calc(35px + 0.4vw)" />
+      )}
+      <div className="invites-chat">
+        <span className="invites-chat-name">{sender}</span>
+      </div>
+      <div className="invites-buttons">
+        <div className="accept-button" onClick={acceptInvite}>
+          <AcceptIcon />
         </div>
-        <div className="invites-buttons">
-          <div className="accept-button" onClick={acceptInvite}>
-            <AcceptIcon></AcceptIcon>
-          </div>
-          <div className="reject-button" onClick={rejectInvite}>
-            <RejectIcon></RejectIcon>
-          </div>
+        <div className="reject-button" onClick={rejectInvite}>
+          <RejectIcon />
         </div>
-      </Tilt>
-    </div>
+      </div>
+    </Tilt>
   );
 };
 
