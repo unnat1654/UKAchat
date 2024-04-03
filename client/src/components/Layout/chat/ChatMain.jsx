@@ -1,34 +1,47 @@
 import React, { useState, useRef, useEffect } from "react";
 import { IoAttachOutline, IoSend } from "react-icons/io5";
-import Message from "./Message";
+import MessageDisplay from "./MessageDisplay";
 import { useActiveChat } from "../../../context/activeChatContext";
 
-const ChatMain = () => {
-  const [messages, setMessages] = useState([]);
+const ChatMain = ({addLiveMessage}) => {
   const bottomRef = useRef(null);
   const [activeChat, setActiveChat] = useActiveChat();
+  const [typedMessage, setTypedMessage] = useState("");
+
+  const handleSend = () => {
+    if(typedMessage){
+      addLiveMessage(activeChat.online,activeChat.room,true,typedMessage,"",Date.now());
+    }
+  };
 
   useEffect(() => {
     //scroll to bottom every time messages change
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [activeChat.messages]);
 
   return (
     <div className="chatmain">
       <div className="chatmain-messages">
-        {activeChat?.messages?.map((m)=>(
-          <Message
-          message="Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nemo quas illo provident. Dolor fugiat possimus optio error id, ea placeat officiis perferendis omnis reiciendis, odio atque temporibus provident quo asperiores."
-          time="1:22am"
-          sent={true}
-        />
+        {activeChat?.messages?.map((m) => (
+          <MessageDisplay
+            message={m.text}
+            time={m.timeSent}
+            sent={m.sent}
+          />
         ))}
         <div ref={bottomRef} />
       </div>
       <div className="chatmain-sender">
         <IoAttachOutline />
-        <input type="text" placeholder="type a message..." />
-        <IoSend />
+        <input
+          type="text"
+          value={typedMessage}
+          onChange={(e) => {
+            setTypedMessage(e.target.value);
+          }}
+          placeholder="type a message..."
+        />
+        <IoSend onClick={handleSend} />
       </div>
     </div>
   );

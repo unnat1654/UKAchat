@@ -1,5 +1,6 @@
-import React from 'react'
-import axios from "axios"
+import React from 'react';
+import axios from "axios";
+import { LuUserPlus } from "react-icons/lu";
 const SendInvite = ({inviteId,contactName}) => {
   const handleClick=async()=>{
     try {
@@ -18,7 +19,7 @@ const SendInvite = ({inviteId,contactName}) => {
   return (
     <div className="sendinvitebox">
       <p className='sendinvitebox-text'>Aspire to chat with <span>{contactName}</span>? Click the button below to send an invite!</p>
-      <button onClick={handleClick} className='sendinvitebox-button'>Send Invite</button>
+      <button onClick={handleClick} className='sendinvitebox-button'><LuUserPlus className='sendinvitebox-button-icon' /><span>Invite</span></button>
     </div>
   )
 }

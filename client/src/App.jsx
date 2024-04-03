@@ -5,11 +5,7 @@ import Login from "./pages/auth/Login";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import UserInfo from "./pages/auth/UserInfo";
 import ProfilePictureUpload from "./pages/auth/ProfilePictureUpload";
-import Message from "./components/Layout/chat/message";
 import CreateGroup from "./pages/CreateGroup";
-import { useAuth } from "./context/authContext";
-import axios from "axios";
-import { useEffect } from "react";
 
 function App() {
   return (

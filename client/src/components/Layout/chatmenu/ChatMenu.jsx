@@ -19,13 +19,13 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
 
   const getContactDetails = async () => {
     try {
-      const { data } = await axios.get(
+      const contactDetails = await axios.get(
         `${import.meta.env.VITE_SERVER}/contact/get-contacts`
       );
-      if (data?.success) {
+      if (contactDetails?.data?.success) {
         setContactDetailsArray({
           searchedNewUser: false,
-          detailsArray: data?.contactDetailsArray,
+          detailsArray: contactDetails?.data?.contactDetailsArray,
         });
       }
     } catch (error) {
@@ -61,7 +61,9 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
   }, [sideBarTab]);
 
   useEffect(() => {
-    getContactDetails();
+    if (auth?.token) {
+      getContactDetails();
+    }
   }, [invitesArray.length]);
 
   const handleSearch = async () => {
@@ -101,7 +103,7 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
               <IoSearchOutline />
             </span>
           </Tilt>
-          {JSON.stringify(activeChat)}
+          {JSON.stringify(activeChat,null,"\t")}
 
           <React.Fragment>
             {contactDetailsArray?.detailsArray.map((c) => (
@@ -127,7 +129,6 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
       )}
       {sideBarTab == "invites" && (
         <React.Fragment>
-          {/* write code here */}
           {invitesArray.map((invite) => (
             <Invites
               key={invite._id}

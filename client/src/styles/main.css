@@ -1165,9 +1165,21 @@
   font-family: poppins;
   border-radius: 10px;
   border-width: 0px;
-  color: white;
-  background-color: #14ff97;
+  color: #eee;
+  background-color: #db7639;
   font-weight: bold;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+.sendinvitebox .sendinvitebox-button:hover {
+  background-color: #da5645;
+}
+.sendinvitebox .sendinvitebox-button-icon {
+  padding-right: 20px;
+  font-size: calc(50px + 0.5vw);
 }
 
 @keyframes shine {

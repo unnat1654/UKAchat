@@ -12,9 +12,12 @@ import { MdOutlineSettings } from "react-icons/md";
 import { BsEnvelopePlus } from "react-icons/bs";
 import { useAuth } from "../../../context/authContext";
 
-const SideBar = ({ sideBarTab, setSideBarTab }) => {
+const SideBar = ({ sideBarTab, setSideBarTab,setShowInviteBox }) => {
   const [auth, setAuth] = useAuth();
   const [activeBtn, setActiveBtn] = useState("chats");
+  const handleClick=()=>{
+    setShowInviteBox((prev)=>({...prev,isShow:false}));
+  }
   return (
     <div className="sidebar">
       <div className="sidebar-upper-buttons">
@@ -28,6 +31,7 @@ const SideBar = ({ sideBarTab, setSideBarTab }) => {
             onClick={() => {
               setSideBarTab("chats");
               setActiveBtn("chats");
+              handleClick();
             }}
             className={activeBtn == "chats" ? "active" : ""}
           >
@@ -44,6 +48,7 @@ const SideBar = ({ sideBarTab, setSideBarTab }) => {
             onClick={() => {
               setSideBarTab("invites");
               setActiveBtn("invites");
+              handleClick();
             }}
             className={activeBtn == "invites" ? "active" : ""}
           >
@@ -60,6 +65,7 @@ const SideBar = ({ sideBarTab, setSideBarTab }) => {
             onClick={() => {
               setSideBarTab("groups");
               setActiveBtn("groups");
+              handleClick();
             }}
             className={activeBtn == "groups" ? "active" : ""}
           >
@@ -76,6 +82,7 @@ const SideBar = ({ sideBarTab, setSideBarTab }) => {
             onClick={() => {
               setSideBarTab("creategroup");
               setActiveBtn("creategroup");
+              handleClick();
             }}
             className={activeBtn == "creategroup" ? "active" : ""}
           >

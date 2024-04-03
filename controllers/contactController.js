@@ -3,8 +3,10 @@ import chatRoomModel from "../models/chatRoomModel.js";
 import userModel from "../models/userModel.js";
 import chatModel from "../models/chatModel.js";
 import mongoose from "mongoose";
+import onlineUsers from "../helpers/onlineUsers.js";
+import {socketModule} from "../config/socket_config.js";
 
-// POST /create-room
+//POST /create-room
 export const getRoomController = async (req, res) => {
   try {
     const user1 = req.user._id;
@@ -37,46 +39,37 @@ export const getRoomController = async (req, res) => {
   }
 };
 
-//PATCH  /stay-online
-export const stayOnlineController = async (req, res) => {
+//GET /get-online-contacts
+export const getOnlineContactController = async (req, res) => {
   try {
     const user = req.user._id;
-    const lastOnline = Date.now();
-    await userModel.findByIdAndUpdate(user, {
-      lastOnline: lastOnline,
+    const activeUserRooms = [];
+    const onlineContacts = [];
+    const JoinedRooms = await chatRoomModel.find({
+      $or: [{ user1: user }, { user2: user }],
     });
-    res.sendStatus(200);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      success: false,
-      message: "Error while setting user online",
-      error,
-    });
-  }
-};
 
-//GET  /get-online/:contactId
-export const getContactOnlineController = async (req, res) => {
-  try {
-    const { contactId } = req.params;
-    const contact = await userModel.findById(contactId);
-    if (Date.now() - contact.lastOnline < 6000) {
-      res.status(200).send({
-        success: true,
-        online: true,
-      });
-    } else {
-      res.status(200).send({
-        success: true,
-        online: false,
-      });
-    }
+    await Promise.all(
+      JoinedRooms.map(async (room) => {
+        let contact = user == room.user2 ? room.user1 : room.user2;
+        const isonline = await onlineUsers.isOnline(contact);
+        if (isonline) {
+          activeUserRooms.push(room._id);
+          onlineContacts.push(contact);
+        }
+      })
+    );
+    res.status(200).send({
+      success: true,
+      message: "Active Rooms found Successfully",
+      activeUserRooms,
+      onlineContacts,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error while getting contact online status",
+      message: "Error while finding active rooms",
       error,
     });
   }
@@ -141,7 +134,7 @@ export const getContactsController = async (req, res) => {
       },
       {
         $project: {
-          _id: 1, // Exclude _id field from the output
+          _id: 1,
           sender: 1, // Include sender field
           receiver: 1, // Include receiver field
         },

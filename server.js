@@ -1,5 +1,4 @@
 import { createServer } from "http";
-import { socketEvents } from "./utilities/socket.js";
 import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
@@ -10,6 +9,9 @@ import contactRoutes from "./routes/contactRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import chatRequestRoutes from "./routes/chatRequestRoutes.js";
 import connectDB from "./config/db.js";
+import { connectRedis } from "./config/init_redis.js";
+import {socketModule} from "./config/socket_config.js";
+import socketEvents from "./controllers/socketController.js";
 
 //configure env
 dotenv.config();
@@ -30,7 +32,11 @@ app.use(
 connectDB();
 
 //connect to socket
-socketEvents(httpServer);
+socketModule.init(httpServer);
+socketEvents();
+
+//connect to redis
+connectRedis();
 
 //Welcome
 app.get("/home", (req, res) => {

@@ -7,7 +7,7 @@ export const isLoggedIn = (req, res, next) => {
       process.env.JWT_SECRET
     );
     req.user = decode;
-    next();
+    if(req.user){next();}
   } catch (error) {
     console.log(error);
     res.status(500).send({

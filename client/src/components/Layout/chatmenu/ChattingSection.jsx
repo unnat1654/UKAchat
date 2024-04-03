@@ -5,26 +5,94 @@ import CallMain from "../chat/callMain";
 import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 import { useActiveChat } from "../../../context/activeChatContext";
 import SendInvite from "../invite/sendInvite";
+import { useLiveMessages } from "../../../hooks/LiveMessagesHook";
+import { useAuth } from "../../../context/authContext";
+import axios from "axios";
+import { useSocket } from "../../../context/socketContext";
 
-const ChattingSection = ({showInviteBox,setShowInviteBox}) => {
+const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
   const [isCall, setIsCall] = useState(false);
-  const [activeChat, setActiveChat]= useActiveChat();
-  const [contactDetailsArray,setContactDetailsArray]=useContactDetailsArray();
-  useEffect(() => {
-    if(activeChat?.room){
-      const contactObject=contactDetailsArray.detailsArray.find((contactDetailsObject)=>contactDetailsObject._id==activeChat?.c_id);
-      if(contactObject){
-        setActiveChat({...activeChat,username:contactObject.username,photo:contactObject?.photo?.secure_url})
+  const [activeChat, setActiveChat] = useActiveChat();
+  const [auth,setAuth]=useAuth();
+  const socket=useSocket();
+  const [contactDetailsArray, setContactDetailsArray] =
+    useContactDetailsArray();  
+  const [liveMessages,addLiveMessage]=useLiveMessages(socket,activeChat,setActiveChat);
+  const [onlineUsers, setOnlineUsers] = useState({
+    onlineUserRooms: [],
+    onlineContacts: [],
+  });
+  const getOnlineUsers = async () => {
+    try {
+      const onlineUsersDetails = await axios.get(
+        `${import.meta.env.VITE_SERVER}/contact/get-online-contacts`
+      );
+      if (onlineUsersDetails?.data?.success) {
+        setOnlineUsers({
+          onlineUserRooms: onlineUsersDetails?.data?.activeUserRooms,
+          onlineContacts: onlineUsersDetails?.data?.onlineContacts,
+        });
+        socket.emit("join-room",{roomsArray:onlineUsersDetails?.data?.activeUserRooms});
+      } else {
+        console.log(onlineUsersDetails?.data?.message);
       }
+    } catch (error) {
+      console.log(error);
     }
-    
+  };
+  useEffect(() => {
+    if(auth?.token){
+      getOnlineUsers();
+    }
+  }, [auth?.token]);
+  useEffect(()=>{
+    const onPing=(prm)=>{
+      console.log(prm)
+    }
+    if(socket){
+    socket.on("ping",onPing);
+
+    return ()=> socket.off("ping");
+    }
+  },[socket]);
+
+  useEffect(() => {
+    const contactObject = contactDetailsArray.detailsArray.find(
+      (contactDetailsObject) => contactDetailsObject._id == activeChat?.c_id
+    );
+    let online = false; 
+    if (activeChat?.room && onlineUsers.onlineUserRooms.indexOf(activeChat.room) >= 0) {
+      online = true;
+    }
+    if (contactObject) {
+      const roomLiveMessages=liveMessages.get(activeChat.room);
+      setActiveChat((prev)=>({
+        ...prev,
+        username: contactObject.username,
+        photo: contactObject?.photo?.secure_url,
+        online: online,
+        messages:[...prev.messages,...(roomLiveMessages)?roomLiveMessages:""]
+      }));
+    }
   }, [activeChat?.room]);
   return (
     <div className="chattingsection">
-      {showInviteBox.isShow && <SendInvite inviteId={showInviteBox.searchedId} contactName={showInviteBox.searchedUsername}/>}
-      {!showInviteBox.isShow && 
-      <><ChatNavbar isCall={isCall} />
-      {isCall ? <CallMain /> : <ChatMain />}</>}
+      {showInviteBox.isShow && (
+        <SendInvite
+          inviteId={showInviteBox.searchedId}
+          contactName={showInviteBox.searchedUsername}
+        />
+      )}
+      {!showInviteBox.isShow && (
+        <>
+          <ChatNavbar isCall={isCall} />
+          {isCall ? (
+            <CallMain />
+          ) : (
+            <ChatMain addLiveMessage={addLiveMessage} onlineContacts={onlineUsers.onlineContacts} />
+          )}
+        </>
+      )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import chatRoomModel from "../models/chatRoomModel.js";
 import userModel from "../models/userModel.js";
 
-export const contactIdFinder = async (roomArray, userId, limit) => {
+export const contactIdFinder = async (roomArray , userId, limit) => {
   const contactIdArray = [];
   const contactIdArrayuser = [];
   const roomArrayLength = roomArray.length;
@@ -80,3 +80,6 @@ export const contactIdFinder = async (roomArray, userId, limit) => {
     };
   }
 };
+
+
+

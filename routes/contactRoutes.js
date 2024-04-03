@@ -3,22 +3,19 @@ import { isLoggedIn } from "../middlewares/authMiddlewares.js";
 import {
   getRoomController,
   getAllContactsController,
-  getContactOnlineController,
   getContactsController,
   searchContactContoller,
-  stayOnlineController,
+  getOnlineContactController,
 } from "../controllers/contactController.js";
 
 const router = Router();
 
-//set the user to online or offline in userModel
-router.patch("/stay-online", isLoggedIn, stayOnlineController);
 
 //find contact from _id
 router.get("/search-contact/:contactId", isLoggedIn, searchContactContoller);
 
-//get if a contact is online
-router.get("/get-online/:contactId", isLoggedIn, getContactOnlineController);
+//find all the contacts that are online
+router.get("/get-online-contacts",isLoggedIn, getOnlineContactController);
 
 //create a room to share and store messages if it does not exist else share the exist id
 router.post("/create-room", isLoggedIn, getRoomController);
