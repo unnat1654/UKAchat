@@ -14,6 +14,9 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
           { format, sent: false, text, file, timeSent },
         ])
       );
+      console.log(liveMessages);
+      console.log(room);
+      console.log(activeChat);
       if (room && room == activeChat?.room) {
         setActiveChat((prev) => ({
           ...prev,
@@ -26,12 +29,12 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
         console.log(room);
         console.log(activeChat?.room);
       }
-      if (socket) {
-        socket.on("recieve-message", onRecieveMessage);
-
-        return () => socket.off("recieve-message");
-      }
     };
+    if (socket) {
+      socket.on("recieve-message", onRecieveMessage);
+
+      return () => socket.off("recieve-message");
+    }
   }, [socket]);
 
   const addLiveMessage = (online, room, format, text, file, timeSent) => {
@@ -60,6 +63,7 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
             { format, sent: true, text, file, timeSent },
           ], //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date,}
         }));
+        console.log(activeChat);
       }
     } else {
       //TO DO:send message through http

@@ -25,7 +25,11 @@ const OtherChats = ({
     //get room id and set Active chat context to clicked contact
     try {
       if (searched) {
-        setShowInviteBox({isShow:true,searchedId:id,searchedUsername:name});
+        setShowInviteBox({
+          isShow: true,
+          searchedId: id,
+          searchedUsername: name,
+        });
         return;
       }
       if (activeChat?.c_id != id) {
@@ -40,11 +44,17 @@ const OtherChats = ({
             }/1`
           );
           const recievedMessages = messages?.data?.messages;
-          setActiveChat({
+          // setActiveChat({
+          //   c_id: id,
+          //   room: roomResponse?.data?.room,
+          //   messages: recievedMessages,
+          // });
+          setActiveChat((prevState) => ({
+            ...prevState,
             c_id: id,
-            room: roomResponse?.data?.room,
-            messages: recievedMessages,
-          });
+            room: roomResponse?.data?.room || prevState.room,
+            messages: recievedMessages || prevState.messages,
+          }));
         }
       }
     } catch (error) {

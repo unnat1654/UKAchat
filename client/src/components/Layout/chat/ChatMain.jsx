@@ -3,14 +3,21 @@ import { IoAttachOutline, IoSend } from "react-icons/io5";
 import MessageDisplay from "./MessageDisplay";
 import { useActiveChat } from "../../../context/activeChatContext";
 
-const ChatMain = ({addLiveMessage}) => {
+const ChatMain = ({ addLiveMessage }) => {
   const bottomRef = useRef(null);
   const [activeChat, setActiveChat] = useActiveChat();
   const [typedMessage, setTypedMessage] = useState("");
 
   const handleSend = () => {
-    if(typedMessage){
-      addLiveMessage(activeChat.online,activeChat.room,true,typedMessage,"",Date.now());
+    if (typedMessage) {
+      addLiveMessage(
+        activeChat.online,
+        activeChat.room,
+        true,
+        typedMessage,
+        "",
+        Date.now()
+      );
     }
   };
 
@@ -22,8 +29,9 @@ const ChatMain = ({addLiveMessage}) => {
   return (
     <div className="chatmain">
       <div className="chatmain-messages">
-        {activeChat?.messages?.map((m) => (
+        {activeChat?.messages?.map((m, i) => (
           <MessageDisplay
+            key={i}
             message={m.text}
             time={m.timeSent}
             sent={m.sent}
