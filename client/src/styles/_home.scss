@@ -111,7 +111,7 @@
   overflow-y: scroll;
   @media screen and (max-width: $tablet-max) {
     & {
-      min-width: 60%;
+      min-width: 65%;
     }
   }
   @media screen and (max-width: $mobile-max) {
@@ -136,6 +136,29 @@
       background-color: #f795b9;
     }
   }
+  #{&}-allchats {
+    overflow-y: scroll;
+    /* width */
+    &::-webkit-scrollbar {
+      width: 7px;
+      height: 0px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+      background: #f1f1f100;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background: #46464673;
+      border-radius: 10px;
+      transition: all 1s;
+      &:hover {
+        background: #58585873;
+      }
+    }
+  }
   #{&}-search-bar {
     @include flexCenter(row);
     margin: 10px auto;
@@ -145,7 +168,7 @@
     background-color: rgba(249, 249, 249, 0.089);
     min-width: 60%;
     min-height: max-content;
-    max-width: 70%;
+    max-width: max-content;
     backdrop-filter: blur(10px);
     transition: all 0.5s;
     border: solid rgba(155, 155, 155, 0.263);
@@ -674,12 +697,136 @@
     font-weight: bold;
     transition: all 0.2s;
     @include flexCenter(row);
-    &:hover{
+    &:hover {
       background-color: #da5645;
     }
-    &-icon{
-      padding-right:20px;
+    &-icon {
+      padding-right: 20px;
       font-size: calc(50px + 0.5vw);
+    }
+  }
+}
+
+.logoutmenu {
+  position: absolute;
+  bottom: 15px;
+  left: 80px;
+  backdrop-filter: blur(5px);
+  border-radius: 8px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  font-family: "poppins";
+  #{&}-item {
+    border: none;
+    color: #d7d7d7;
+    padding: 20px 25px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    p {
+      cursor: pointer;
+    }
+
+    &:hover {
+      transition: all 0.5s ease-in-out;
+    }
+
+    &:hover p {
+      color: white;
+      transition: all 0.5s ease-in-out;
+    }
+
+    &:hover .logoutmenu-icon {
+      color: white;
+      transition: all 0.5s ease-in-out;
+      cursor: pointer;
+    }
+
+    @media screen and (max-width: $tablet-max) {
+      & {
+        padding: 15px 20px;
+        p {
+          font-size: 16px;
+        }
+      }
+    }
+    @media screen and (max-width: $mobile-max) {
+      & {
+        padding: 10px 15px;
+        p {
+          font-size: 15px;
+        }
+      }
+    }
+  }
+
+  #{&}-icon {
+    font-size: 25px;
+    @media screen and (max-width: $tablet-max) {
+      & {
+        font-size: 22px;
+      }
+    }
+    @media screen and (max-width: $mobile-max) {
+      & {
+        font-size: 20px;
+      }
+    }
+  }
+
+  hr {
+    margin: 0 12px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+  }
+
+  #{&}-button {
+    margin-block: 5px;
+    height: 47px;
+    font-size: 18px;
+    position: relative;
+    left: 130px;
+    border: none;
+    color: rgba(255, 255, 255, 0.705);
+    padding: 10px 15px;
+    cursor: pointer;
+    background: rgba(255, 0, 234, 0.815);
+    // box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.2);
+    border-radius: 25px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+    &:hover {
+      background: rgba(255, 0, 0, 0.7);
+      color: white;
+      transition: all 0.25s ease-in-out;
+    }
+
+    @media screen and (max-width: $tablet-max) {
+      & {
+        height: 40px;
+        font-size: 16px;
+      }
+    }
+    @media screen and (max-width: $mobile-max) {
+      & {
+        height: 35px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  @media screen and (max-width: $tablet-max) {
+    & {
+      left: 60px;
+    }
+  }
+  @media screen and (max-width: $mobile-max) {
+    & {
+      left: 50px;
+      bottom: 8px;
     }
   }
 }
