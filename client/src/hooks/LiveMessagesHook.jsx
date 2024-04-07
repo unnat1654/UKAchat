@@ -5,29 +5,28 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
     const onRecieveMessage = (message) => {
       console.log("Event Recieved: recieve-message");
       const { room, format, text, file, timeSent } = message;
-      liveMessages.get(room);
-      setLiveMessages(
-        liveMessages.set(room, [
-          ...(Array.isArray(liveMessages.get(room))
-            ? liveMessages.get(room)
-            : []),
-          { format, sent: false, text, file, timeSent },
-        ])
-      );
-      console.log(liveMessages);
-      console.log(room);
-      console.log(activeChat);
-      if (room && room == activeChat?.room) {
-        setActiveChat((prev) => ({
-          ...prev,
-          messages: [
-            ...prev.messages,
+      let newLiveMessages = new Map(liveMessages);
+
+      if (newLiveMessages.get(room) && newLiveMessages.get(room).length) {
+        setLiveMessages(
+          newLiveMessages.set(room, [
+            ...newLiveMessages.get(room),
             { format, sent: false, text, file, timeSent },
-          ], //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date,}
-        }));
+          ])
+        );
       } else {
-        console.log(room);
-        console.log(activeChat?.room);
+        setLiveMessages(
+          newLiveMessages.set(room, [
+            { format, sent: false, text, file, timeSent },
+          ])
+        );
+      }
+      if (activeChat && activeChat?.room==room) {
+        setActiveChat((prev)=>({
+          ...prev,
+          messages: [...(prev.messages?prev.messages:[]),{ format, sent: false, text, file, timeSent }],
+          //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date,}
+        }));
       }
     };
     if (socket) {
@@ -35,7 +34,7 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
 
       return () => socket.off("recieve-message");
     }
-  }, [socket]);
+  },[socket,activeChat?.room]);
 
   const addLiveMessage = (online, room, format, text, file, timeSent) => {
     if (online) {
@@ -63,7 +62,6 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
             { format, sent: true, text, file, timeSent },
           ], //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date,}
         }));
-        console.log(activeChat);
       }
     } else {
       //TO DO:send message through http

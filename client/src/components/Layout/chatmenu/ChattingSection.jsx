@@ -5,19 +5,18 @@ import CallMain from "../chat/callMain";
 import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 import { useActiveChat } from "../../../context/activeChatContext";
 import SendInvite from "../invite/sendInvite";
-import { useLiveMessages } from "../../../hooks/LiveMessagesHook";
 import { useAuth } from "../../../context/authContext";
 import axios from "axios";
 import { useSocket } from "../../../context/socketContext";
+import { useLiveMessages } from "../../../hooks/liveMessagesHook";
 
 const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
   const [isCall, setIsCall] = useState(false);
   const [activeChat, setActiveChat] = useActiveChat();
-  const [auth,setAuth]=useAuth();
-  const socket=useSocket();
+  const [auth, setAuth] = useAuth();
+  const socket = useSocket();
   const [contactDetailsArray, setContactDetailsArray] =
-    useContactDetailsArray();  
-  const [liveMessages,addLiveMessage]=useLiveMessages(socket,activeChat,setActiveChat);
+    useContactDetailsArray();
   const [onlineUsers, setOnlineUsers] = useState({
     onlineUserRooms: [],
     onlineContacts: [],
@@ -32,7 +31,9 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
           onlineUserRooms: onlineUsersDetails?.data?.activeUserRooms,
           onlineContacts: onlineUsersDetails?.data?.onlineContacts,
         });
-        socket.emit("join-room",{roomsArray:onlineUsersDetails?.data?.activeUserRooms});
+        socket.emit("join-room", {
+          roomsArray: onlineUsersDetails?.data?.activeUserRooms,
+        });
       } else {
         console.log(onlineUsersDetails?.data?.message);
       }
@@ -40,38 +41,35 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
       console.log(error);
     }
   };
+  const [liveMessages,addLiveMessage]=useLiveMessages(socket,activeChat,setActiveChat);
   useEffect(() => {
-    if(auth?.token){
+    if (auth?.token) {
       getOnlineUsers();
     }
-  }, [auth?.token]);
-  useEffect(()=>{
-    const onPing=(prm)=>{
-      console.log(prm)
-    }
-    if(socket){
-    socket.on("ping",onPing);
-
-    return ()=> socket.off("ping");
-    }
-  },[socket]);
+  }, [auth?.token, socket]);
 
   useEffect(() => {
     const contactObject = contactDetailsArray.detailsArray.find(
       (contactDetailsObject) => contactDetailsObject._id == activeChat?.c_id
     );
-    let online = false; 
-    if (activeChat?.room && onlineUsers.onlineUserRooms.indexOf(activeChat.room) >= 0) {
+    let online = false;
+    if (
+      activeChat?.room &&
+      onlineUsers.onlineUserRooms.indexOf(activeChat.room) >= 0
+    ) {
       online = true;
     }
     if (contactObject) {
-      const roomLiveMessages=liveMessages.get(activeChat.room);
-      setActiveChat((prev)=>({
+      const roomLiveMessages = liveMessages.get(activeChat.room);
+      setActiveChat((prev) => ({
         ...prev,
         username: contactObject.username,
         photo: contactObject?.photo?.secure_url,
         online: online,
-        messages:[...prev.messages,...(roomLiveMessages)?roomLiveMessages:""]
+        messages: [
+          ...prev.messages,
+          ...(roomLiveMessages ? roomLiveMessages : ""),
+        ],
       }));
     }
   }, [activeChat?.room]);
@@ -86,10 +84,14 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
       {!showInviteBox.isShow && (
         <>
           <ChatNavbar isCall={isCall} />
+          {JSON.stringify([...liveMessages.entries()])}
           {isCall ? (
             <CallMain />
           ) : (
-            <ChatMain addLiveMessage={addLiveMessage} onlineContacts={onlineUsers.onlineContacts} />
+            <ChatMain
+              addLiveMessage={addLiveMessage}
+              onlineContacts={onlineUsers.onlineContacts}
+            />
           )}
         </>
       )}

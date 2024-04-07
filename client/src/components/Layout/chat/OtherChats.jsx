@@ -44,17 +44,11 @@ const OtherChats = ({
             }/1`
           );
           const recievedMessages = messages?.data?.messages;
-          // setActiveChat({
-          //   c_id: id,
-          //   room: roomResponse?.data?.room,
-          //   messages: recievedMessages,
-          // });
-          setActiveChat((prevState) => ({
-            ...prevState,
+          setActiveChat({
             c_id: id,
-            room: roomResponse?.data?.room || prevState.room,
-            messages: recievedMessages || prevState.messages,
-          }));
+            room: roomResponse?.data?.room,
+            messages: recievedMessages?recievedMessages:[],
+          });
         }
       }
     } catch (error) {
