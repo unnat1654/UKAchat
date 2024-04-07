@@ -103,28 +103,30 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
               <IoSearchOutline />
             </span>
           </Tilt>
-          {JSON.stringify(activeChat,null,"\t")}
+          {JSON.stringify(activeChat, null, "\t")}
 
-          <React.Fragment>
-            {contactDetailsArray?.detailsArray.map((c) => (
-              <div
-                key={c._id}
-                onClick={() => {
-                  setActiveColor(c._id);
-                }}
-              >
-                <OtherChats
-                  name={c.username}
-                  photo={c?.photo?.secure_url}
-                  notify={c.online}
-                  id={c._id}
-                  active={c._id === activeColor}
-                  searched={contactDetailsArray.searchedNewUser}
-                  setShowInviteBox={setShowInviteBox}
-                />
-              </div>
-            ))}
-          </React.Fragment>
+          <div className="chatmenu-allchats">
+            <React.Fragment>
+              {contactDetailsArray?.detailsArray.map((c) => (
+                <div
+                  key={c._id}
+                  onClick={() => {
+                    setActiveColor(c._id);
+                  }}
+                >
+                  <OtherChats
+                    name={c.username}
+                    photo={c?.photo?.secure_url}
+                    notify={c.online}
+                    id={c._id}
+                    active={c._id === activeColor}
+                    searched={contactDetailsArray.searchedNewUser}
+                    setShowInviteBox={setShowInviteBox}
+                  />
+                </div>
+              ))}
+            </React.Fragment>
+          </div>
         </React.Fragment>
       )}
       {sideBarTab == "invites" && (

@@ -604,7 +604,7 @@
 }
 @media screen and (max-width: 1080px) {
   .chatmenu {
-    min-width: 60%;
+    min-width: 65%;
   }
 }
 @media screen and (max-width: 480px) {
@@ -629,6 +629,28 @@
 .chatmenu .chatmenu-creategroup:hover {
   background-color: #f795b9;
 }
+.chatmenu .chatmenu-allchats {
+  overflow-y: scroll;
+  /* width */
+  /* Track */
+  /* Handle */
+}
+.chatmenu .chatmenu-allchats::-webkit-scrollbar {
+  width: 7px;
+  height: 0px;
+}
+.chatmenu .chatmenu-allchats::-webkit-scrollbar-track {
+  background: rgba(241, 241, 241, 0);
+}
+.chatmenu .chatmenu-allchats::-webkit-scrollbar-thumb {
+  background: rgba(70, 70, 70, 0.4509803922);
+  border-radius: 10px;
+  -webkit-transition: all 1s;
+  transition: all 1s;
+}
+.chatmenu .chatmenu-allchats::-webkit-scrollbar-thumb:hover {
+  background: rgba(88, 88, 88, 0.4509803922);
+}
 .chatmenu .chatmenu-search-bar {
   display: flex;
   justify-content: center;
@@ -642,7 +664,8 @@
   min-width: 60%;
   min-height: -moz-max-content;
   min-height: max-content;
-  max-width: 70%;
+  max-width: -moz-max-content;
+  max-width: max-content;
   -webkit-backdrop-filter: blur(10px);
           backdrop-filter: blur(10px);
   transition: all 0.5s;
@@ -1180,6 +1203,120 @@
 .sendinvitebox .sendinvitebox-button-icon {
   padding-right: 20px;
   font-size: calc(50px + 0.5vw);
+}
+
+.logoutmenu {
+  position: absolute;
+  bottom: 15px;
+  left: 80px;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  border-radius: 8px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  font-family: "poppins";
+}
+.logoutmenu .logoutmenu-item {
+  border: none;
+  color: #d7d7d7;
+  padding: 20px 25px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.logoutmenu .logoutmenu-item p {
+  cursor: pointer;
+}
+.logoutmenu .logoutmenu-item:hover {
+  transition: all 0.5s ease-in-out;
+}
+.logoutmenu .logoutmenu-item:hover p {
+  color: white;
+  transition: all 0.5s ease-in-out;
+}
+.logoutmenu .logoutmenu-item:hover .logoutmenu-icon {
+  color: white;
+  transition: all 0.5s ease-in-out;
+  cursor: pointer;
+}
+@media screen and (max-width: 1080px) {
+  .logoutmenu .logoutmenu-item {
+    padding: 15px 20px;
+  }
+  .logoutmenu .logoutmenu-item p {
+    font-size: 16px;
+  }
+}
+@media screen and (max-width: 480px) {
+  .logoutmenu .logoutmenu-item {
+    padding: 10px 15px;
+  }
+  .logoutmenu .logoutmenu-item p {
+    font-size: 15px;
+  }
+}
+.logoutmenu .logoutmenu-icon {
+  font-size: 25px;
+}
+@media screen and (max-width: 1080px) {
+  .logoutmenu .logoutmenu-icon {
+    font-size: 22px;
+  }
+}
+@media screen and (max-width: 480px) {
+  .logoutmenu .logoutmenu-icon {
+    font-size: 20px;
+  }
+}
+.logoutmenu hr {
+  margin: 0 12px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+}
+.logoutmenu .logoutmenu-button {
+  margin-block: 5px;
+  height: 47px;
+  font-size: 18px;
+  position: relative;
+  left: 130px;
+  border: none;
+  color: rgba(255, 255, 255, 0.705);
+  padding: 10px 15px;
+  cursor: pointer;
+  background: rgba(255, 0, 234, 0.815);
+  border-radius: 25px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+}
+.logoutmenu .logoutmenu-button:hover {
+  background: rgba(255, 0, 0, 0.7);
+  color: white;
+  transition: all 0.25s ease-in-out;
+}
+@media screen and (max-width: 1080px) {
+  .logoutmenu .logoutmenu-button {
+    height: 40px;
+    font-size: 16px;
+  }
+}
+@media screen and (max-width: 480px) {
+  .logoutmenu .logoutmenu-button {
+    height: 35px;
+    font-size: 14px;
+  }
+}
+@media screen and (max-width: 1080px) {
+  .logoutmenu {
+    left: 60px;
+  }
+}
+@media screen and (max-width: 480px) {
+  .logoutmenu {
+    left: 50px;
+    bottom: 8px;
+  }
 }
 
 @keyframes shine {
