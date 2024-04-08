@@ -7,7 +7,6 @@ const ActiveChatProvider = ({ children }) => {
     room: "",
     username: "",
     messages: [], //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date,}
-    // switch:false,
     online: false,
     photo: "", //securl_url
   });

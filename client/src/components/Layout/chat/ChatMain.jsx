@@ -9,6 +9,7 @@ const ChatMain = ({ addLiveMessage }) => {
   const [typedMessage, setTypedMessage] = useState("");
 
   const handleSend = () => {
+    if(!activeChat.room) return;
     if (typedMessage) {
       addLiveMessage(
         activeChat.online,

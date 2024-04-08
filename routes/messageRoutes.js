@@ -4,12 +4,16 @@ import {
   getLastMessageController,
   getMessagesController,
   saveMessagesController,
+  sendMessageController,
 } from "../controllers/messageController.js";
 
 const router = Router();
 
 //save messages in conversations
 router.post("/save-messages", isLoggedIn, saveMessagesController);
+
+//send offline Message
+router.post("/send-message-api",isLoggedIn,sendMessageController);
 
 //get last message from a contact
 router.get("/get-last-message/:cid", isLoggedIn, getLastMessageController);

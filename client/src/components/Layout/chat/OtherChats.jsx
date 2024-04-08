@@ -3,6 +3,7 @@ import UserIcon from "../UserIcon";
 import Tilt from "react-parallax-tilt";
 import axios from "axios";
 import { useActiveChat } from "../../../context/activeChatContext";
+import { convertTimeTo12 } from "../../../functions/timeFunction";
 
 const OtherChats = ({
   name,
@@ -77,7 +78,7 @@ const OtherChats = ({
         </div>
         <div className="otherchats-info">
           <span className="otherchats-info-time">
-            {lastMessageInfo?.timeSent}
+            {lastMessageInfo?.timeSent?convertTimeTo12(lastMessageInfo?.timeSent):""}
           </span>
           <span className="otherchats-info-notification">
             {notify ? <div className="notification"></div> : <div></div>}

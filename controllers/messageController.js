@@ -54,6 +54,38 @@ export const saveMessagesController = async (req, res) => {
   }
 };
 
+//POST /send-message-api
+export const sendMessageController = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { receiver, room, message, doc, timeSent } = req.body;
+    if (doc) {
+      const { secure_url, public_id } = await cloudinary.uploader.upload(doc, {
+        folder: "chatMedia",
+      });
+    }
+    const saveChat = new chatModel({
+      room,
+      sender: userId,
+      receiver,
+      ...(message != "" && { message }),
+      ...(doc && { media: { public_id, secure_url } }),
+      timeSent,
+    });
+    await saveChat.save();
+    res.status(201).send({
+      success: true,
+      message: "Message Sent Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while Sending message",
+      error,
+    });
+  }
+};
 
 //GET  /get-last-message/:cid
 export const getLastMessageController = async (req, res) => {
@@ -101,6 +133,7 @@ export const getLastMessageController = async (req, res) => {
 //get 200 messages in a batch from a contact
 //GET  /get-messages/:room/:page
 export const getMessagesController = async (req, res) => {
+  const userId = req.user._id;
   const { room, page } = req.params;
   try {
     const chatsPerPage = 200;
@@ -111,10 +144,21 @@ export const getMessagesController = async (req, res) => {
       .limit(chatsPerPage)
       .select("-_id -room");
     if (messages) {
+      const formatMessages = [];
+      messages.forEach((message) => {
+        formatMessages.push({
+          ...(message.message
+            ? { format: true, text: message.message, file: "" }
+            : { format: false, file: message.media.secure_url, text: "" }),
+          timeSent: message.timeSent,
+          sent: message.sender == userId,
+        });
+      });
+
       res.status(200).send({
         success: true,
         message: "Messages found successfully",
-        messages,
+        messages: formatMessages,
       });
     } else {
       res.status(404).send({

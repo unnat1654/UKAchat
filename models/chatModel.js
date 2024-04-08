@@ -6,7 +6,7 @@ const chatSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "userRooms",
     required: true,
-    index: -1,
+    index: 1,
   },
   sender: {
     type: mongoose.Schema.Types.ObjectId,
