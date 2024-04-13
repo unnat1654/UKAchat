@@ -17,6 +17,10 @@ const LogoutMenu = ({ show, setShow }) => {
       }
 
       localStorage.removeItem("auth");
+      setAuth({
+        user: null,
+        token: "",
+      });
       toast.success("Logout Successful");
       navigate("/login");
     }

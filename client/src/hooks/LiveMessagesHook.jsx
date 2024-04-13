@@ -41,9 +41,6 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
 
   const addLiveMessage = async (online, room, format, text, file, timeSent) => {
     if (online) {
-      socket.emit("check-contact-online", activeChat.c_id);
-    }
-    if (activeChat.online) {
       socket.emit("send-message", { room, format, text, file, timeSent });
     } else {
       try {

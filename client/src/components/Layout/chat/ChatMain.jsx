@@ -10,7 +10,8 @@ const ChatMain = ({ addLiveMessage }) => {
   const [typedMessage, setTypedMessage] = useState("");
   const [doc, setDoc] = useState("");
   const [fileName, setFileName] = useState("");
-  const [prevMessageDate, setPrevMessageDate] = useState("");
+  // const [prevMessageDate, setPrevMessageDate] = useState("");
+  let prevMessageDate = "";
 
   const handleDoc = (e) => {
     const file = e.target.files[0];
@@ -54,6 +55,7 @@ const ChatMain = ({ addLiveMessage }) => {
     console.log("useEffect to set typed message blank ran");
     setTypedMessage("");
   }, [activeChat.room]);
+
   return (
     <div className="chatmain">
       <div className="chatmain-messages">
@@ -61,10 +63,14 @@ const ChatMain = ({ addLiveMessage }) => {
           activeChat?.messages?.map((m) => {
             let DateSent = new Date(m.timeSent).toLocaleDateString("en-GB");
             let condition = false;
+            console.log(DateSent);
             if (DateSent !== prevMessageDate) {
               condition = true;
-              setPrevMessageDate(DateSent);
+              // setPrevMessageDate(DateSent);
+              prevMessageDate = DateSent;
+              console.log(DateSent);
             }
+
             return (
               <div key={m.timeSent}>
                 {condition && <div className="date-tag">{DateSent}</div>}
