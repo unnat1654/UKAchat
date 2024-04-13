@@ -9,7 +9,7 @@ const ChatMain = ({ addLiveMessage }) => {
   const [typedMessage, setTypedMessage] = useState("");
 
   const handleSend = () => {
-    if(!activeChat.room) return;
+    if (!activeChat.room) return;
     if (typedMessage) {
       addLiveMessage(
         activeChat.online,
@@ -30,14 +30,15 @@ const ChatMain = ({ addLiveMessage }) => {
   return (
     <div className="chatmain">
       <div className="chatmain-messages">
-        {activeChat?.messages?.map((m, i) => (
-          <MessageDisplay
-            key={i}
-            message={m.text}
-            time={m.timeSent}
-            sent={m.sent}
-          />
-        ))}
+        {activeChat?.messages?.length &&
+          activeChat?.messages?.map((m, i) => (
+            <MessageDisplay
+              key={i}
+              message={m.text}
+              time={m.timeSent}
+              sent={m.sent}
+            />
+          ))}
         <div ref={bottomRef} />
       </div>
       <div className="chatmain-sender">

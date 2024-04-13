@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from 'axios';
+import axios from "axios";
 export const useLiveMessages = (socket, activeChat, setActiveChat) => {
   const [liveMessages, setLiveMessages] = useState(new Map());
   useEffect(() => {
@@ -41,6 +41,9 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
 
   const addLiveMessage = async (online, room, format, text, file, timeSent) => {
     if (online) {
+      socket.emit("check-contact-online", activeChat.c_id);
+    }
+    if (activeChat.online) {
       socket.emit("send-message", { room, format, text, file, timeSent });
     } else {
       //TO DO:send message through http

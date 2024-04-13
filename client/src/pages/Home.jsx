@@ -5,14 +5,17 @@ import ChattingSection from "../components/Layout/chatmenu/ChattingSection";
 import ChatMenu from "../components/Layout/chatmenu/ChatMenu";
 import SideBar from "../components/Layout/chatmenu/SideBar";
 import axios from "axios";
-import { ActiveChatProvider } from "../context/activeChatContext";
 import { ContactDetailsProvider } from "../context/ContactDetailsContext";
 import { useAuth } from "../context/authContext";
 const Layout = () => {
-  const [auth,setAuth]=useAuth();
-  const [sideBarTab, setSideBarTab] =useState("chats");
-  const [showInviteBox,setShowInviteBox]=useState({isShow:false,searchedId:"",searchedUsername:""});
-  
+  const [auth, setAuth] = useAuth();
+  const [sideBarTab, setSideBarTab] = useState("chats");
+  const [showInviteBox, setShowInviteBox] = useState({
+    isShow: false,
+    searchedId: "",
+    searchedUsername: "",
+  });
+
   const sendUserLastOnlineTime = async () => {
     try {
       await axios.patch(`${import.meta.env.VITE_SERVER}/contact/stay-online`);
@@ -31,23 +34,30 @@ const Layout = () => {
   // }, []);
   return (
     <ContactDetailsProvider>
-      <ActiveChatProvider>
-        <div className="layout">
-          
-          <Tilt
-            tiltMaxAngleX={2}
-            tiltMaxAngleY={2}
-            transitionSpeed={3000}
-            trackOnWindow={true}
-            className="main"
-          >
-            <SideBar sideBarTab={sideBarTab} setSideBarTab={setSideBarTab} setShowInviteBox={setShowInviteBox}/>
-            <ChatMenu sideBarTab={sideBarTab} setShowInviteBox={setShowInviteBox}/>
-            <ChattingSection showInviteBox={showInviteBox} setShowInviteBox={setShowInviteBox}/>
-          </Tilt>
-          <img src={background} alt="background" className="background" />
-        </div>
-      </ActiveChatProvider>
+      <div className="layout">
+        <Tilt
+          tiltMaxAngleX={2}
+          tiltMaxAngleY={2}
+          transitionSpeed={3000}
+          trackOnWindow={true}
+          className="main"
+        >
+          <SideBar
+            sideBarTab={sideBarTab}
+            setSideBarTab={setSideBarTab}
+            setShowInviteBox={setShowInviteBox}
+          />
+          <ChatMenu
+            sideBarTab={sideBarTab}
+            setShowInviteBox={setShowInviteBox}
+          />
+          <ChattingSection
+            showInviteBox={showInviteBox}
+            setShowInviteBox={setShowInviteBox}
+          />
+        </Tilt>
+        <img src={background} alt="background" className="background" />
+      </div>
     </ContactDetailsProvider>
   );
 };

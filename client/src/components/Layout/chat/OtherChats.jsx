@@ -48,7 +48,7 @@ const OtherChats = ({
           setActiveChat({
             c_id: id,
             room: roomResponse?.data?.room,
-            messages: recievedMessages?recievedMessages:[],
+            messages: recievedMessages ? recievedMessages : [],
           });
         }
       }
@@ -78,7 +78,9 @@ const OtherChats = ({
         </div>
         <div className="otherchats-info">
           <span className="otherchats-info-time">
-            {lastMessageInfo?.timeSent?convertTimeTo12(lastMessageInfo?.timeSent):""}
+            {lastMessageInfo?.timeSent
+              ? convertTimeTo12(lastMessageInfo?.timeSent)
+              : ""}
           </span>
           <span className="otherchats-info-notification">
             {notify ? <div className="notification"></div> : <div></div>}

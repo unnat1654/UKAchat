@@ -17,6 +17,11 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
   const socket = useSocket();
   const [contactDetailsArray, setContactDetailsArray] =
     useContactDetailsArray();
+  const [liveMessages, addLiveMessage] = useLiveMessages(
+    socket,
+    activeChat,
+    setActiveChat
+  );
   const [onlineUsers, setOnlineUsers] = useState({
     onlineUserRooms: [],
     onlineContacts: [],
@@ -41,12 +46,21 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
       console.log(error);
     }
   };
-  const [liveMessages,addLiveMessage]=useLiveMessages(socket,activeChat,setActiveChat);
   useEffect(() => {
     if (auth?.token) {
       getOnlineUsers();
     }
   }, [auth?.token, socket]);
+  useEffect(() => {
+    const onPing = (prm) => {
+      console.log(prm);
+    };
+    if (socket) {
+      socket.on("ping", onPing);
+
+      return () => socket.off("ping");
+    }
+  }, [socket]);
 
   useEffect(() => {
     const contactObject = contactDetailsArray.detailsArray.find(
