@@ -15,7 +15,6 @@ export const isLoggedIn = (req, res, next) => {
           message: "Token expired. Please login again",
         });
       } else {
-        console.log("Token is still valid");
         const decode = JWT.verify(
           req.headers.authorization,
           process.env.JWT_SECRET

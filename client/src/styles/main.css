@@ -972,7 +972,7 @@
   background-color: rgba(126, 126, 126, 0.068);
   -webkit-backdrop-filter: blur(10px);
           backdrop-filter: blur(10px);
-  font-size: calc(30px + 0.5vw);
+  font-size: calc(20px + 0.5vw);
   padding: 10px;
   display: flex;
   align-items: center;
@@ -983,51 +983,69 @@
   }
 }
 .chatmain .chatmain-sender > *:nth-child(1) {
-  margin-left: 2px;
-  color: white;
-  transition: all 0.5s 0.1s;
+  margin-left: 20px;
+  color: rgb(215, 215, 215);
+  transition: all 0.5s 0.5s;
+  display: flex;
+  align-items: center;
 }
 .chatmain .chatmain-sender > *:nth-child(1):hover {
   scale: 1.01;
-  color: rgba(252, 226, 108, 0.534);
+  color: rgb(163, 163, 163);
+}
+.chatmain .chatmain-sender > *:nth-child(1) span {
+  -webkit-backdrop-filter: blur(40px);
+          backdrop-filter: blur(40px);
+  background-color: rgba(215, 215, 215, 0.4431372549);
+  padding: 0px 5px;
+  border-radius: 10px;
+  font-size: calc(10px + 0.5vw);
+  color: rgb(215, 215, 215);
+  white-space: nowrap;
+}
+.chatmain .chatmain-sender > *:nth-child(1) span:hover {
+  scale: 1.01;
+  color: rgb(215, 215, 215);
+}
+.chatmain .chatmain-sender > *:nth-child(1) .close-file {
+  color: rgba(236, 56, 56, 0.733);
+  margin-right: 0.1vw;
+}
+.chatmain .chatmain-sender > *:nth-child(1) .close-file:hover {
+  color: rgba(197, 48, 48, 0.562);
 }
 .chatmain .chatmain-sender input {
   background-color: transparent;
   border-width: 0px;
   padding-left: 10px;
-  padding-block: 10px;
+  padding-block: 5px;
   margin: 0px 10px 0px 20px;
   color: rgb(234, 234, 234);
   font-family: "poppins";
-  font-size: 20px;
-  width: 80%;
+  font-size: calc(10px + 0.4vw);
+  flex-grow: 1;
   border-bottom: 1px solid rgba(161, 161, 161, 0.237);
-}
-@media screen and (max-width: 480px) {
-  .chatmain .chatmain-sender input {
-    font-size: 15px;
-  }
 }
 .chatmain .chatmain-sender input:focus {
   outline: none;
 }
 .chatmain .chatmain-sender input::-moz-placeholder {
   color: rgb(207, 207, 207);
-  font-size: 16px;
+  font-size: calc(10px + 0.4vw);
 }
 .chatmain .chatmain-sender input::placeholder {
   color: rgb(207, 207, 207);
-  font-size: 16px;
+  font-size: calc(10px + 0.4vw);
 }
-.chatmain .chatmain-sender > *:nth-child(3) {
+.chatmain .chatmain-sender > *:nth-child(4) {
   color: white;
-  margin-left: auto;
+  margin-left: 20px;
   margin-right: 20px;
   transition: all 0.5s 0.1s;
 }
-.chatmain .chatmain-sender > *:nth-child(3):hover {
+.chatmain .chatmain-sender > *:nth-child(4):hover {
   transform: translate(5px, 0px);
-  color: rgba(112, 248, 255, 0.4);
+  color: rgba(60, 251, 60, 0.4);
 }
 .chatmain .chatmain-call {
   background-color: #39916a;
@@ -1120,11 +1138,11 @@
   background-color: rgba(98, 126, 220, 0.299);
   min-height: 10%;
   min-width: 22%;
-  max-width: 65%;
   width: -moz-fit-content;
   width: fit-content;
   height: -moz-fit-content;
   height: fit-content;
+  max-width: 65%;
   border-radius: 25px;
   -webkit-backdrop-filter: blur(10px);
           backdrop-filter: blur(10px);
@@ -1151,6 +1169,12 @@
     margin: 10px 15px 30px 10px;
   }
 }
+.message-box .message-box-image, .message-box .message-box-video {
+  max-width: 80%;
+  display: inline-block;
+  border-radius: 20px;
+  margin: 1vw 0px 2vw 1vw;
+}
 .message-box .message-box-time {
   position: absolute;
   bottom: 5px;
@@ -1159,6 +1183,20 @@
 .message-box.sent {
   margin-left: auto;
   background-color: rgba(61, 153, 179, 0.299);
+}
+
+.date-tag {
+  margin: 0px auto;
+  font-size: calc(9px + 0.5vw);
+  font-family: poppins;
+  letter-spacing: 1px;
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  background-color: rgba(100, 100, 100, 0.322);
+  color: rgba(215, 215, 215, 0.694);
+  padding: 0.5vw 10px;
+  flex-shrink: 0;
+  border-radius: 10px;
 }
 
 .sendinvitebox {

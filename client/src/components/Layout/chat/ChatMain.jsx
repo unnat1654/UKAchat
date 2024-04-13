@@ -1,56 +1,122 @@
 import React, { useState, useRef, useEffect } from "react";
-import { IoAttachOutline, IoSend } from "react-icons/io5";
+import { PiUploadSimple, PiX } from "react-icons/pi";
 import MessageDisplay from "./MessageDisplay";
 import { useActiveChat } from "../../../context/activeChatContext";
+import { TbArrowBigRightLinesFilled } from "react-icons/tb";
 
 const ChatMain = ({ addLiveMessage }) => {
   const bottomRef = useRef(null);
   const [activeChat, setActiveChat] = useActiveChat();
   const [typedMessage, setTypedMessage] = useState("");
+  const [doc, setDoc] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [prevMessageDate, setPrevMessageDate] = useState("");
+
+  const handleDoc = (e) => {
+    const file = e.target.files[0];
+    setFileName(file.name);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    console.log(file);
+    reader.onloadend = () => {
+      setDoc(reader.result);
+    };
+    setTypedMessage("");
+  };
+
+  const removeFile = (e) => {
+    e.preventDefault();
+    setDoc("");
+    setFileName("");
+  };
 
   const handleSend = () => {
-    if(!activeChat.room) return;
-    if (typedMessage) {
-      addLiveMessage(
-        activeChat.online,
-        activeChat.room,
-        true,
-        typedMessage,
-        "",
-        Date.now()
-      );
-    }
+    if (!activeChat.room && !doc && !typedMessage) return;
+    addLiveMessage(
+      activeChat.online,
+      activeChat.room,
+      typedMessage != "", //false->file true->text
+      typedMessage, //text
+      doc, //file
+      Date.now()
+    );
+    setDoc("");
+    setFileName("");
+    setTypedMessage("");
   };
 
   useEffect(() => {
     //scroll to bottom every time messages change
+    console.log("useEffect to bring message to bottom ran");
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeChat.messages]);
-
+  useEffect(() => {
+    console.log("useEffect to set typed message blank ran");
+    setTypedMessage("");
+  }, [activeChat.room]);
   return (
     <div className="chatmain">
       <div className="chatmain-messages">
-        {activeChat?.messages?.map((m, i) => (
-          <MessageDisplay
-            key={i}
-            message={m.text}
-            time={m.timeSent}
-            sent={m.sent}
-          />
-        ))}
+        {activeChat?.messages?.map((m) => {
+          let DateSent = new Date(m.timeSent).toLocaleDateString("en-GB");
+          let condition = false;
+          if (DateSent !== prevMessageDate) {
+            condition = true;
+            setPrevMessageDate(DateSent);
+          }
+          return (
+            <div key={m.timeSent}>
+              {condition && (
+                <div className="date-tag">
+                  {DateSent}
+                </div>
+              )}
+
+              <MessageDisplay
+                format={m.format}
+                text={m.text}
+                file={m.file}
+                timeSent={m.timeSent}
+                sent={m.sent}
+
+              />
+            </div>
+          );
+        })}
         <div ref={bottomRef} />
       </div>
       <div className="chatmain-sender">
-        <IoAttachOutline />
+        <label htmlFor="upload-file">
+          {doc ? (
+            <>
+              <PiX className="close-file" onClick={removeFile} />
+              <span className="upload-file-name">
+                {fileName.length > 12
+                  ? `${fileName.slice(0, 8)}...${fileName.split(".").pop()}`
+                  : fileName}
+              </span>
+            </>
+          ) : (
+            <PiUploadSimple />
+          )}
+        </label>
+        <input
+          type="file"
+          id="upload-file"
+          onChange={handleDoc}
+          accept="*"
+          hidden
+        />
         <input
           type="text"
           value={typedMessage}
           onChange={(e) => {
+            if (doc) return;
             setTypedMessage(e.target.value);
           }}
-          placeholder="type a message..."
+          placeholder="type your message..."
         />
-        <IoSend onClick={handleSend} />
+        <TbArrowBigRightLinesFilled onClick={handleSend} />
       </div>
     </div>
   );

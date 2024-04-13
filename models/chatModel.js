@@ -37,6 +37,6 @@ const chatSchema = new mongoose.Schema({
 });
 
 chatSchema.index({
-  timeSent: -1,
+  timeSent: 1,
 });
 export default mongoose.model("userChats", chatSchema, "userChats");

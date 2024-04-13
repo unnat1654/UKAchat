@@ -466,7 +466,7 @@
     height: 12%;
     background-color: rgba(126, 126, 126, 0.068);
     backdrop-filter: blur(10px);
-    font-size: calc(30px + 0.5vw);
+    font-size: calc(20px + 0.5vw);
     padding: 10px;
     display: flex;
     align-items: center;
@@ -476,46 +476,63 @@
       }
     }
     & > *:nth-child(1) {
-      margin-left: 2px;
-      color: white;
-      transition: all 0.5s 0.1s;
+      margin-left: 20px;
+      color: rgb(215, 215, 215);
+      transition: all 0.5s 0.5s;
+      display: flex;
+      align-items: center;
       &:hover {
         scale: 1.01;
-        color: rgba(252, 226, 108, 0.534);
+        color: rgb(163, 163, 163);
+      }
+      & span{
+        backdrop-filter: blur(40px);
+        background-color: #d7d7d771;
+        padding: 0px 5px;
+        border-radius: 10px;
+        font-size: calc(10px + 0.5vw);
+        color: rgb(215, 215, 215);
+        white-space: nowrap;
+        &:hover {
+          scale: 1.01;
+          color: rgb(215, 215, 215);
+        }
+      }
+      .close-file{
+        color:rgba(236, 56, 56, 0.733);
+        margin-right: 0.1vw;
+        &:hover{
+          color: rgba(197, 48, 48, 0.562)
+        }
       }
     }
     input {
       background-color: transparent;
       border-width: 0px;
       padding-left: 10px;
-      padding-block: 10px;
+      padding-block: 5px;
       margin: 0px 10px 0px 20px;
       color: rgb(234, 234, 234);
       font-family: "poppins";
-      font-size: 20px;
-      width: 80%;
+      font-size: calc(10px + 0.4vw);
+      flex-grow:1;
       border-bottom: 1px solid rgba(161, 161, 161, 0.237);
-      @media screen and (max-width: $mobile-max) {
-        & {
-          font-size: 15px;
-        }
-      }
     }
     input:focus {
       outline: none;
     }
     input::placeholder {
       color: rgb(207, 207, 207);
-      font-size: 16px;
+      font-size: calc(10px + 0.4vw);
     }
-    & > *:nth-child(3) {
+    & > *:nth-child(4) {
       color: white;
-      margin-left: auto;
+      margin-left: 20px;
       margin-right: 20px;
       transition: all 0.5s 0.1s;
       &:hover {
         transform: translate(5px, 0px);
-        color: rgba(112, 248, 255, 0.4);
+        color: rgba(60, 251, 60, 0.4);
       }
     }
   }
@@ -632,9 +649,9 @@
   background-color: rgba(98, 126, 220, 0.299);
   min-height: 10%;
   min-width: 22%;
+  width:fit-content;
+  height:fit-content;
   max-width: 65%;
-  width: fit-content;
-  height: fit-content;
   border-radius: 25px;
   backdrop-filter: blur(10px);
   font-family: poppins;
@@ -659,6 +676,12 @@
       }
     }
   }
+  #{&}-image,#{&}-video{
+    max-width: 80%;
+    display: inline-block;
+    border-radius:20px;
+    margin:1vw 0px 2vw 1vw;
+  }
   #{&}-time {
     position: absolute;
     bottom: 5px;
@@ -668,6 +691,18 @@
     margin-left: auto;
     background-color: rgba(61, 153, 179, 0.299);
   }
+}
+.date-tag{
+  margin:0px auto;
+  font-size: calc(9px + 0.5vw);
+  font-family: poppins;
+  letter-spacing: 1px;
+  backdrop-filter: blur(10px);
+  background-color: rgba(100, 100, 100, 0.322);
+  color:rgba(215, 215, 215, 0.694);
+  padding:0.5vw 10px;
+  flex-shrink: 0;
+  border-radius: 10px;
 }
 
 .sendinvitebox {
