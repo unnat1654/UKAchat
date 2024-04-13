@@ -35,13 +35,7 @@ const Layout = () => {
   return (
     <ContactDetailsProvider>
       <div className="layout">
-        <Tilt
-          tiltMaxAngleX={2}
-          tiltMaxAngleY={2}
-          transitionSpeed={3000}
-          trackOnWindow={true}
-          className="main"
-        >
+        <div className="main">
           <SideBar
             sideBarTab={sideBarTab}
             setSideBarTab={setSideBarTab}
@@ -55,7 +49,8 @@ const Layout = () => {
             showInviteBox={showInviteBox}
             setShowInviteBox={setShowInviteBox}
           />
-        </Tilt>
+        </div>
+
         <img src={background} alt="background" className="background" />
       </div>
     </ContactDetailsProvider>
