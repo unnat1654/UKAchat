@@ -7,18 +7,18 @@
 .layout .main {
   display: flex;
   align-items: center;
-  border-radius: 20px;
-  height: 90vh;
-  margin: 5vh 5vw 5vh 5vw;
-  width: 90vw;
-  border-top: rgba(86, 86, 86, 0.253) 2px solid;
-  border-right: rgba(185, 185, 185, 0.253) 5px solid;
-  border-bottom: rgba(185, 185, 185, 0.253) 5px solid;
-  border-left: rgba(86, 86, 86, 0.253) 2px solid;
+  // border-radius: 20px;
+  height: 100vh;
+  // margin: 5vh 5vw 5vh 5vw;
+  width: 100vw;
+  // border-top: rgba(86, 86, 86, 0.253) 2px solid;
+  // border-right: rgba(185, 185, 185, 0.253) 5px solid;
+  // border-bottom: rgba(185, 185, 185, 0.253) 5px solid;
+  // border-left: rgba(86, 86, 86, 0.253) 2px solid;
 
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  // box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+  //   rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+  //   rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
   transition: all 1s;
   @media screen and (max-width: $tablet-max) {
     overflow-x: scroll;
@@ -485,7 +485,7 @@
         scale: 1.01;
         color: rgb(163, 163, 163);
       }
-      & span{
+      & span {
         backdrop-filter: blur(40px);
         background-color: #d7d7d771;
         padding: 0px 5px;
@@ -498,11 +498,11 @@
           color: rgb(215, 215, 215);
         }
       }
-      .close-file{
-        color:rgba(236, 56, 56, 0.733);
+      .close-file {
+        color: rgba(236, 56, 56, 0.733);
         margin-right: 0.1vw;
-        &:hover{
-          color: rgba(197, 48, 48, 0.562)
+        &:hover {
+          color: rgba(197, 48, 48, 0.562);
         }
       }
     }
@@ -515,7 +515,7 @@
       color: rgb(234, 234, 234);
       font-family: "poppins";
       font-size: calc(10px + 0.4vw);
-      flex-grow:1;
+      flex-grow: 1;
       border-bottom: 1px solid rgba(161, 161, 161, 0.237);
     }
     input:focus {
@@ -649,8 +649,8 @@
   background-color: rgba(98, 126, 220, 0.299);
   min-height: 10%;
   min-width: 22%;
-  width:fit-content;
-  height:fit-content;
+  width: fit-content;
+  height: fit-content;
   max-width: 65%;
   border-radius: 25px;
   backdrop-filter: blur(10px);
@@ -676,11 +676,12 @@
       }
     }
   }
-  #{&}-image,#{&}-video{
+  #{&}-image,
+  #{&}-video {
     max-width: 80%;
     display: inline-block;
-    border-radius:20px;
-    margin:1vw 0px 2vw 1vw;
+    border-radius: 20px;
+    margin: 1vw 0px 2vw 1vw;
   }
   #{&}-time {
     position: absolute;
@@ -692,15 +693,15 @@
     background-color: rgba(61, 153, 179, 0.299);
   }
 }
-.date-tag{
-  margin:0px auto;
+.date-tag {
+  margin: 0px auto;
   font-size: calc(9px + 0.5vw);
   font-family: poppins;
   letter-spacing: 1px;
   backdrop-filter: blur(10px);
   background-color: rgba(100, 100, 100, 0.322);
-  color:rgba(215, 215, 215, 0.694);
-  padding:0.5vw 10px;
+  color: rgba(215, 215, 215, 0.694);
+  padding: 0.5vw 10px;
   flex-shrink: 0;
   border-radius: 10px;
 }

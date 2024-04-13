@@ -494,15 +494,8 @@
 .layout .main {
   display: flex;
   align-items: center;
-  border-radius: 20px;
-  height: 90vh;
-  margin: 5vh 5vw 5vh 5vw;
-  width: 90vw;
-  border-top: rgba(86, 86, 86, 0.253) 2px solid;
-  border-right: rgba(185, 185, 185, 0.253) 5px solid;
-  border-bottom: rgba(185, 185, 185, 0.253) 5px solid;
-  border-left: rgba(86, 86, 86, 0.253) 2px solid;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  height: 100vh;
+  width: 100vw;
   transition: all 1s;
 }
 @media screen and (max-width: 1080px) {
@@ -1169,7 +1162,8 @@
     margin: 10px 15px 30px 10px;
   }
 }
-.message-box .message-box-image, .message-box .message-box-video {
+.message-box .message-box-image,
+.message-box .message-box-video {
   max-width: 80%;
   display: inline-block;
   border-radius: 20px;
