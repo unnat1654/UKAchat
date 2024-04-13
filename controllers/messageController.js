@@ -59,17 +59,20 @@ export const sendMessageController = async (req, res) => {
   try {
     const userId = req.user._id;
     const { receiver, room, message, doc, timeSent } = req.body;
+    let secureUrl,publicId;
     if (doc) {
       const { secure_url, public_id } = await cloudinary.uploader.upload(doc, {
         folder: "chatMedia",
       });
+      secureUrl=secure_url;
+      publicId=public_id;
     }
     const saveChat = new chatModel({
       room,
       sender: userId,
       receiver,
       ...(message != "" && { message }),
-      ...(doc && { media: { public_id, secure_url } }),
+      ...(doc && { media: { public_id:publicId, secure_url:secureUrl} }),
       timeSent,
     });
     await saveChat.save();

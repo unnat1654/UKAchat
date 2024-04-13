@@ -652,6 +652,7 @@
   width:fit-content;
   height:fit-content;
   max-width: 65%;
+  max-height: 90%;
   border-radius: 25px;
   backdrop-filter: blur(10px);
   font-family: poppins;
@@ -678,6 +679,7 @@
   }
   #{&}-image,#{&}-video{
     max-width: 80%;
+    max-height:99%;
     display: inline-block;
     border-radius:20px;
     margin:1vw 0px 2vw 1vw;
@@ -696,6 +698,7 @@
   margin:0px auto;
   font-size: calc(9px + 0.5vw);
   font-family: poppins;
+  width:fit-content;
   letter-spacing: 1px;
   backdrop-filter: blur(10px);
   background-color: rgba(100, 100, 100, 0.322);

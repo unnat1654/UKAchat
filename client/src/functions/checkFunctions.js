@@ -11,7 +11,7 @@ export const hasNumber = (str) => {
 };
 
 export const getFileType = (str)=>{
-  const typeMatch = base64String.match(/^data:(.*?);base64,/);
+  const typeMatch = str.match(/^data:(.*?);base64,/);
 
     if (typeMatch && typeMatch.length > 1) {
         const fileTypeParts = typeMatch[1].split('/'); 

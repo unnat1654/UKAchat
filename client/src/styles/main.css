@@ -1143,6 +1143,7 @@
   height: -moz-fit-content;
   height: fit-content;
   max-width: 65%;
+  max-height: 90%;
   border-radius: 25px;
   -webkit-backdrop-filter: blur(10px);
           backdrop-filter: blur(10px);
@@ -1171,6 +1172,7 @@
 }
 .message-box .message-box-image, .message-box .message-box-video {
   max-width: 80%;
+  max-height: 99%;
   display: inline-block;
   border-radius: 20px;
   margin: 1vw 0px 2vw 1vw;
@@ -1189,6 +1191,8 @@
   margin: 0px auto;
   font-size: calc(9px + 0.5vw);
   font-family: poppins;
+  width: -moz-fit-content;
+  width: fit-content;
   letter-spacing: 1px;
   -webkit-backdrop-filter: blur(10px);
           backdrop-filter: blur(10px);

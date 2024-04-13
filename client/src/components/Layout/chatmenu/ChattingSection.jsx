@@ -98,7 +98,6 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
       {!showInviteBox.isShow && (
         <>
           <ChatNavbar isCall={isCall} />
-          {JSON.stringify([...liveMessages.entries()])}
           {isCall ? (
             <CallMain />
           ) : (

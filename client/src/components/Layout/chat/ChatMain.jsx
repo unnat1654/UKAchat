@@ -11,6 +11,7 @@ const ChatMain = ({ addLiveMessage }) => {
   const [doc, setDoc] = useState("");
   const [fileName, setFileName] = useState("");
   // const [prevMessageDate, setPrevMessageDate] = useState("");
+  let todayData=Date.now().toLocaleString();
   let prevMessageDate = "";
 
   const handleDoc = (e) => {
@@ -72,7 +73,7 @@ const ChatMain = ({ addLiveMessage }) => {
             }
 
             return (
-              <div key={m.timeSent}>
+              <React.Fragment key={m.timeSent}>
                 {condition && <div className="date-tag">{DateSent}</div>}
 
                 <MessageDisplay
@@ -82,7 +83,7 @@ const ChatMain = ({ addLiveMessage }) => {
                   timeSent={m.timeSent}
                   sent={m.sent}
                 />
-              </div>
+              </React.Fragment>
             );
           })}
         <div ref={bottomRef} />

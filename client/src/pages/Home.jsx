@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import background from "../assets/bogdan-mb0sco-coffee-shop-animationfullhd.gif";
+import background from "../assets/aesthetic.gif";
 import Tilt from "react-parallax-tilt";
 import ChattingSection from "../components/Layout/chatmenu/ChattingSection";
 import ChatMenu from "../components/Layout/chatmenu/ChatMenu";

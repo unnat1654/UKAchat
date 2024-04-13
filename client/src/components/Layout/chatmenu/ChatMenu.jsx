@@ -103,7 +103,7 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
               <IoSearchOutline />
             </span>
           </Tilt>
-          {JSON.stringify(activeChat, null, "\t")}
+          {/* {JSON.stringify(activeChat, null, "\t")} */}
 
           <div className="chatmenu-allchats">
             <React.Fragment>
