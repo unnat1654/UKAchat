@@ -46,7 +46,6 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
     if (activeChat.online) {
       socket.emit("send-message", { room, format, text, file, timeSent });
     } else {
-      //TO DO:send message through http
       try {
         const { data } = await axios.post(
           `${import.meta.env.VITE_SERVER}/message/send-message-api`,

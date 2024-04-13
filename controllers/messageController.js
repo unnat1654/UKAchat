@@ -92,12 +92,12 @@ export const getLastMessageController = async (req, res) => {
   const { cid } = req.params;
   const userId = req.user._id;
   try {
-    const lastMessage = await chatModel.findOne({
+    const [lastMessage] = await chatModel.find({
       $or: [
         { sender: cid, receiver: userId },
         { sender: userId, receiver: cid },
       ],
-    });
+    }).sort("-timeSent").limit(1);
     if (lastMessage?.message) {
       res.status(200).send({
         success: true,
@@ -139,7 +139,7 @@ export const getMessagesController = async (req, res) => {
     const chatsPerPage = 200;
     const messages = await chatModel
       .find({ room: room })
-      .sort({ timeSent: -1 })
+      .sort({ timeSent: 1 })
       .skip((page - 1) * chatsPerPage)
       .limit(chatsPerPage)
       .select("-_id -room");
