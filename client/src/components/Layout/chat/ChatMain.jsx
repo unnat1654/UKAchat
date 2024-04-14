@@ -57,7 +57,8 @@ const ChatMain = ({ addLiveMessage }) => {
         alert(
           "Error: Only images, videos, audios, PDFs, Word, Excel, and PowerPoint files are allowed."
         );
-        event.target.value = ""; // Clear the file input
+        setDoc("");
+        setFileName("");
         return;
       }
 
@@ -94,7 +95,8 @@ const ChatMain = ({ addLiveMessage }) => {
   };
 
   const handleKeyDown = (event) => {
-    if (event.keyCode === 13 && event.target.name === "chatInput") {
+    console.log(event);
+    if (event.keyCode === 13 &&( event.target.name === "chatInput" || event.target.name==="fileInput")) {
       if (typedMessage != "" || doc) handleSend();
     }
   };
@@ -156,6 +158,8 @@ const ChatMain = ({ addLiveMessage }) => {
           type="file"
           id="upload-file"
           onChange={handleDoc}
+          onKeyDown={handleKeyDown}
+          name="fileInput"
           // accept="*"
           accept="image/*, video/*, audio/*, application/pdf, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint"
           hidden

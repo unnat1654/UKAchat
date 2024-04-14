@@ -746,7 +746,7 @@
   }
 }
 
-.logoutmenu {
+.logout-menu {
   position: absolute;
   bottom: 15px;
   left: 80px;
@@ -830,16 +830,16 @@
     position: relative;
     left: 130px;
     border: none;
-    color: rgba(255, 255, 255, 0.705);
+    color: rgba(69, 69, 69, 0.705);
     padding: 10px 15px;
     cursor: pointer;
-    background: rgba(255, 0, 234, 0.815);
+    background: #e2e0438c;
     // box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.2);
     border-radius: 25px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
     &:hover {
-      background: rgba(255, 0, 0, 0.7);
-      color: white;
+      background: rgb(165 163 21 / 60%);
+      color: rgb(199, 199, 199);
       transition: all 0.25s ease-in-out;
     }
 

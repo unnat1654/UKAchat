@@ -42,8 +42,16 @@ const MessageDisplay = ({ format, timeSent, file, text, sent }) => {
             </span>
           </>
           )}
+          {fileType=="audio" && (<>
+          <audio className="message-box-image" controls={true} autoBuffer={true}>
+            <source src={file} />
+          </audio>
+          <span className="message-box-time">
+              {convertTimeTo12(timeSent)}
+            </span>
+          </>)}
           {
-            fileType!="video" && fileType!="image" && (<></>)
+            fileType!="video" && fileType!="image" && fileType!="audio" (<></>)
 
           }
         </div>

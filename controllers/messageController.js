@@ -62,6 +62,7 @@ export const sendMessageController = async (req, res) => {
     let secureUrl,publicId;
     if (doc) {
       const { secure_url, public_id } = await cloudinary.uploader.upload(doc, {
+        resource_type:"auto",
         folder: "chatMedia",
       });
       secureUrl=secure_url;

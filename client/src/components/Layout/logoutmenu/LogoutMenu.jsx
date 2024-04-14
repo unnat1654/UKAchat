@@ -29,24 +29,24 @@ const LogoutMenu = ({ show, setShow }) => {
   if (auth?.token) {
     return (
       <div
-        className="logoutmenu"
+        className="logout-menu"
         style={{ visibility: show ? "visible" : "hidden" }}
         onMouseLeave={() => {
           setShow(false);
         }}
       >
-        <div className="logoutmenu-item">
-          <PiUserSwitch className="logoutmenu-icon" />
+        <div className="logout-menu-item">
+          <PiUserSwitch className="logout-menu-icon" />
           <p>Change Profile Picture</p>
         </div>
         <hr />
-        <div className="logoutmenu-item">
-          <LuQrCode className="logoutmenu-icon" />
+        <div className="logout-menu-item">
+          <LuQrCode className="logout-menu-icon" />
           <p>QR Code</p>
         </div>
         <hr />
-        <div className="logoutmenu-item">
-          <button className="logoutmenu-button" onClick={handleClick}>
+        <div className="logout-menu-item">
+          <button className="logout-menu-button" onClick={handleClick}>
             Logout
           </button>
         </div>
@@ -55,4 +55,4 @@ const LogoutMenu = ({ show, setShow }) => {
   }
 };
 
-export default LogoutMenu;
+export default logout-menu;
