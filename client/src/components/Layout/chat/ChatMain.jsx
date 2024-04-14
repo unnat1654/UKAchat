@@ -10,20 +10,66 @@ const ChatMain = ({ addLiveMessage }) => {
   const [typedMessage, setTypedMessage] = useState("");
   const [doc, setDoc] = useState("");
   const [fileName, setFileName] = useState("");
-  // const [prevMessageDate, setPrevMessageDate] = useState("");
-  let todayData=Date.now().toLocaleString();
+  let todayData = Date.now().toLocaleString();
   let prevMessageDate = "";
 
   const handleDoc = (e) => {
     const file = e.target.files[0];
-    setFileName(file.name);
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    console.log(file);
-    reader.onloadend = () => {
-      setDoc(reader.result);
-    };
-    setTypedMessage("");
+    if (file) {
+      const allowedExtensions = [
+        "jpg",
+        "jpeg",
+        "png",
+        "gif",
+        "bmp",
+        "mp4",
+        "avi",
+        "mov",
+        "mp3",
+        "pdf",
+        "doc",
+        "docx",
+        "xls",
+        "xlsx",
+        "ppt",
+        "pptx",
+      ];
+      const allowedMimeTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/bmp",
+        "video/mp4",
+        "video/avi",
+        "video/quicktime",
+        "audio/mpeg",
+        "application/pdf",
+        "application/msword",
+        "application/vnd.ms-excel",
+        "application/vnd.ms-powerpoint",
+      ];
+
+      const fileExtension = file.name.split(".").pop().toLowerCase();
+      if (
+        !allowedExtensions.includes(fileExtension) ||
+        !allowedMimeTypes.includes(file.type)
+      ) {
+        alert(
+          "Error: Only images, videos, audios, PDFs, Word, Excel, and PowerPoint files are allowed."
+        );
+        event.target.value = ""; // Clear the file input
+        return;
+      }
+
+      setFileName(file.name);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      console.log(file);
+      reader.onloadend = () => {
+        setDoc(reader.result);
+      };
+      setTypedMessage("");
+    }
   };
 
   const removeFile = (e) => {
@@ -47,6 +93,12 @@ const ChatMain = ({ addLiveMessage }) => {
     setTypedMessage("");
   };
 
+  const handleKeyDown = (event) => {
+    if (event.keyCode === 13 && event.target.name === "chatInput") {
+      if (typedMessage != "" || doc) handleSend();
+    }
+  };
+
   useEffect(() => {
     //scroll to bottom every time messages change
     console.log("useEffect to bring message to bottom ran");
@@ -64,12 +116,9 @@ const ChatMain = ({ addLiveMessage }) => {
           activeChat?.messages?.map((m) => {
             let DateSent = new Date(m.timeSent).toLocaleDateString("en-GB");
             let condition = false;
-            console.log(DateSent);
             if (DateSent !== prevMessageDate) {
               condition = true;
-              // setPrevMessageDate(DateSent);
               prevMessageDate = DateSent;
-              console.log(DateSent);
             }
 
             return (
@@ -107,10 +156,12 @@ const ChatMain = ({ addLiveMessage }) => {
           type="file"
           id="upload-file"
           onChange={handleDoc}
-          accept="*"
+          // accept="*"
+          accept="image/*, video/*, audio/*, application/pdf, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint"
           hidden
         />
         <input
+          name="chatInput"
           type="text"
           value={typedMessage}
           onChange={(e) => {
@@ -118,8 +169,13 @@ const ChatMain = ({ addLiveMessage }) => {
             setTypedMessage(e.target.value);
           }}
           placeholder="type your message..."
+          onKeyDown={handleKeyDown}
         />
-        <TbArrowBigRightLinesFilled onClick={handleSend} />
+        <TbArrowBigRightLinesFilled
+          onClick={() => {
+            if (typedMessage || doc) handleSend();
+          }}
+        />
       </div>
     </div>
   );

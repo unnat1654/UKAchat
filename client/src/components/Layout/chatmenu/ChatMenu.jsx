@@ -88,16 +88,25 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
       console.log(error);
     }
   };
+
+  const handleKeyDown = (event) => {
+    if (event.keyCode === 13 && event.target.name === "searchInput") {
+      handleSearch();
+    }
+  };
+
   return (
     <div className="chatmenu">
       {sideBarTab == "chats" && (
         <React.Fragment>
           <Tilt className="chatmenu-search-bar">
             <input
+              name="searchInput"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               type="text"
               placeholder="search for chat..."
+              onKeyDown={handleKeyDown}
             />
             <span onClick={handleSearch}>
               <IoSearchOutline />
