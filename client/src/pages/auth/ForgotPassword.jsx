@@ -9,7 +9,7 @@ import {
   IoIosCheckmarkCircleOutline,
   IoIosCloseCircleOutline,
 } from "react-icons/io";
-import { hasNumber, hasLowerStr, hasUpperStr } from "../../functions/checkFunctions";
+import { hasNumber, hasLowerStr, hasUpperStr } from "../../functions/regexFunctions";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 

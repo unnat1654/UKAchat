@@ -1,26 +1,22 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { chunkString } from "../functions/regexFunctions";
+import { v4 as uuidv4 } from "uuid";
 export const useLiveMessages = (socket, activeChat, setActiveChat) => {
   const [liveMessages, setLiveMessages] = useState(new Map());
+  let receivingFiles = new Map();
+  let chunkSize = 500000;
   useEffect(() => {
-    const onRecieveMessage = (message) => {
+    const onReceiveMessage = (message) => {
       const { room, format, text, file, timeSent } = message;
       let newLiveMessages = new Map(liveMessages);
 
-      if (newLiveMessages.get(room) && newLiveMessages.get(room).length) {
-        setLiveMessages(
-          newLiveMessages.set(room, [
-            ...newLiveMessages.get(room),
-            { format, sent: false, text, file, timeSent },
-          ])
-        );
-      } else {
-        setLiveMessages(
-          newLiveMessages.set(room, [
-            { format, sent: false, text, file, timeSent },
-          ])
-        );
-      }
+      setLiveMessages(
+        newLiveMessages.set(room, [
+          ...(newLiveMessages.has(room) ? newLiveMessages.get(room) : []),
+          { format, sent: false, text, file, timeSent },
+        ])
+      );
       if (activeChat && activeChat?.room == room) {
         setActiveChat((prev) => ({
           ...prev,
@@ -32,16 +28,47 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
         }));
       }
     };
-    if (socket) {
-      socket.on("recieve-message", onRecieveMessage);
+    const onReceiveBuffer = ({ room, timeSent, numberOfChunks, chunk }) => {
+      console.log("recieved Event: receive buffer");
+      const key = room + timeSent;
+      const value = receivingFiles.has(key)
+        ? receivingFiles.get(key) + chunk
+        : chunk;
+      receivingFiles.set(key, value);
 
-      return () => socket.off("recieve-message");
+      //full file is received
+      if (value.length > (numberOfChunks - 1) * chunkSize) {
+        onReceiveMessage({
+          room,
+          format: false,
+          text: "",
+          file: value,
+          timeSent,
+        });
+      }
+    };
+    if (socket) {
+      socket.on("receive-message", onReceiveMessage);
+      socket.on("receive-buffer", onReceiveBuffer);
+      return () => {
+        socket.off("receive-message");
+        socket.off("receive-buffer");
+      };
     }
   }, [socket, activeChat?.room]);
 
   const addLiveMessage = async (online, room, format, text, file, timeSent) => {
     if (online) {
-      socket.emit("send-message", { room, format, text, file, timeSent });
+      if (format) {
+        //true->text
+        socket.emit("send-message", { room, format, text, file, timeSent });
+      } else {
+        let chunks = chunkString(file, chunkSize);
+        let numberOfChunks = chunks.length;
+        chunks.forEach((chunk) => {
+          socket.emit("send-buffer", { room, timeSent, numberOfChunks, chunk });
+        });
+      }
     } else {
       try {
         const { data } = await axios.post(

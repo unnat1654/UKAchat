@@ -1,7 +1,7 @@
 import React from "react";
 import { convertTimeTo12 } from "../../../functions/timeFunction";
 import image from "../../../assets/62111-urban-minimalist-wallpaper-top-free-urban-minimalist.jpg";
-import { getFileType } from "../../../functions/checkFunctions";
+import { getFileType } from "../../../functions/regexFunctions";
 
 const MessageDisplay = ({ format, timeSent, file, text, sent }) => {
   let fileType="";
@@ -35,7 +35,7 @@ const MessageDisplay = ({ format, timeSent, file, text, sent }) => {
               className="message-box-video"
               src={file}
               alt="image not found"
-              controls="true"
+              controls={true}
             />
             <span className="message-box-time">
               {convertTimeTo12(timeSent)}

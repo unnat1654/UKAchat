@@ -4,7 +4,7 @@ import chatModel from "../models/chatModel.js";
 //POST  /save-messages
 export const saveMessagesController = async (req, res) => {
   try {
-    const { room, messages } = req.body;
+    const messages = req.body;
     if (!room || !messages) {
       return res.status(404).send({
         success: false,

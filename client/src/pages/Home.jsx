@@ -16,13 +16,13 @@ const Layout = () => {
     searchedUsername: "",
   });
 
-  const sendUserLastOnlineTime = async () => {
-    try {
-      await axios.patch(`${import.meta.env.VITE_SERVER}/contact/stay-online`);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const sendUserLastOnlineTime = async () => {
+  //   try {
+  //     await axios.patch(`${import.meta.env.VITE_SERVER}/contact/stay-online`);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   //Every five seconds we check if the user had the home page opened
   //we send a simple request and in the backend a field containing the last online time is updated
   //to check if a user is online check if that last online is close in time to the current time

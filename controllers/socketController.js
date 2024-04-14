@@ -21,12 +21,14 @@ const socketEvents = () => {
     });
 
     socket.on("send-message", (message) => {
-      console.log("Event Fired: send-message", JSON.stringify(message));
-      socket.to(message.room).emit("recieve-message", message);
-      console.log("Event Recieved: recieve-message");
+      console.log("send-message event occured", JSON.stringify(message));
+      socket.to(message.room).emit("receive-message", message);
       //message->{room:"",format:T(text)/F(file),text:"",file:"",timeSent:Date}
     });
-
+    socket.on("send-buffer",({room,timeSent,numberOfChunks,chunk})=>{
+      console.log("send-buffer event occured");
+      socket.to(room).emit("receive-buffer",{room,timeSent,numberOfChunks,chunk});
+    })
     socket.on("disconnect", async (userId) => {
       await onlineUsers.setOffline(userId);
     });

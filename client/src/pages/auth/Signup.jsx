@@ -9,7 +9,7 @@ import {
   IoIosCheckmarkCircleOutline,
   IoIosCloseCircleOutline,
 } from "react-icons/io";
-import { hasNumber, hasLowerStr, hasUpperStr } from "../../functions/checkFunctions";
+import { hasNumber, hasLowerStr, hasUpperStr } from "../../functions/regexFunctions";
 import background from "../../assets/tumblr_piwmfy6Auo1rnbw6mo1_1280.gif.c7ace76f60e21632bee08b08c82391be.gif";
 
 const Signup = () => {
