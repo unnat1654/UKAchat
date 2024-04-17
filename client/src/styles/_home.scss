@@ -651,7 +651,7 @@
   min-width: 22%;
   width: fit-content;
   height: fit-content;
-  max-width: 65%;
+  max-width: 50%;
   max-height: 90%;
   border-radius: 25px;
   backdrop-filter: blur(10px);
@@ -661,6 +661,9 @@
   flex-shrink: 0;
   font-size: calc(7px + 0.5vw);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
   @media screen and (max-width: $mobile-max) {
     & {
       margin: 5px;
@@ -677,14 +680,47 @@
       }
     }
   }
+
   #{&}-image,
-  #{&}-video {
-    max-width: 80%;
-    max-height:99%;
+  #{&}-video,
+  #{&}-audio,
+  #{&}-document {
+    max-width: 100%;
+    max-height: 92%;
     display: inline-block;
     border-radius: 20px;
-    margin: 1vw 0px 2vw 1vw;
+    margin: 1vw 1vw 2vw 1vw;
+    @media screen and (max-width: $mobile-max) {
+      & {
+        margin-bottom: 7vw;
+      }
+    }
+    @media screen and (max-width: $tablet-max) {
+      & {
+        margin-bottom: 3vw;
+      }
+    }
   }
+
+  audio::-webkit-media-controls-play-button,
+  audio::-webkit-media-controls-panel {
+    background-color: #ffdc14;
+  }
+
+  @media screen and (max-width: $mobile-max) {
+    // audio {
+    //   // width: 100px;
+    //   height: 25px;
+    // }
+  }
+
+  #{&}-document {
+    a {
+      text-decoration: none;
+      color: black;
+    }
+  }
+
   #{&}-time {
     position: absolute;
     bottom: 5px;
@@ -692,6 +728,8 @@
   }
   &.sent {
     margin-left: auto;
+    justify-content: flex-end;
+    align-items: center;
     background-color: rgba(61, 153, 179, 0.299);
   }
 }
@@ -699,7 +737,7 @@
   margin: 0px auto;
   font-size: calc(9px + 0.5vw);
   font-family: poppins;
-  width:fit-content;
+  width: fit-content;
   letter-spacing: 1px;
   backdrop-filter: blur(10px);
   background-color: rgba(100, 100, 100, 0.322);
@@ -778,7 +816,7 @@
       transition: all 0.5s ease-in-out;
     }
 
-    &:hover .logoutmenu-icon {
+    &:hover .logout-menu-icon {
       color: white;
       transition: all 0.5s ease-in-out;
       cursor: pointer;

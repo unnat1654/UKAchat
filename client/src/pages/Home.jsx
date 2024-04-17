@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import background from "../assets/aesthetic.gif";
+import background from "../assets/Chill-Lofi-Background-Wallpaper-Full-HD-Free-Download-for-PC-Laptop-Macbook-231121-Wallpaperxyz.com-1.gif";
 import Tilt from "react-parallax-tilt";
 import ChattingSection from "../components/Layout/chatmenu/ChattingSection";
 import ChatMenu from "../components/Layout/chatmenu/ChatMenu";

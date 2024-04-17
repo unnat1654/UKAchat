@@ -10,6 +10,7 @@ const ChatMain = ({ addLiveMessage }) => {
   const [typedMessage, setTypedMessage] = useState("");
   const [doc, setDoc] = useState("");
   const [fileName, setFileName] = useState("");
+  const [extension, setExtension] = useState("");
   let todayData = Date.now().toLocaleString();
   let prevMessageDate = "";
 
@@ -50,17 +51,18 @@ const ChatMain = ({ addLiveMessage }) => {
       ];
 
       const fileExtension = file.name.split(".").pop().toLowerCase();
-      if (
-        !allowedExtensions.includes(fileExtension) ||
-        !allowedMimeTypes.includes(file.type)
-      ) {
-        alert(
-          "Error: Only images, videos, audios, PDFs, Word, Excel, and PowerPoint files are allowed."
-        );
-        setDoc("");
-        setFileName("");
-        return;
-      }
+      setExtension(fileExtension);
+      // if (
+      //   !allowedExtensions.includes(fileExtension) ||
+      //   !allowedMimeTypes.includes(file.type)
+      // ) {
+      //   alert(
+      //     "Error: Only images, videos, audios, PDFs, Word, Excel, and PowerPoint files are allowed."
+      //   );
+      //   setDoc("");
+      //   setFileName("");
+      //   return;
+      // }
 
       setFileName(file.name);
       const reader = new FileReader();
@@ -87,16 +89,21 @@ const ChatMain = ({ addLiveMessage }) => {
       typedMessage != "", //false->file true->text
       typedMessage, //text
       doc, //file
+      extension,
       Date.now()
     );
     setDoc("");
     setFileName("");
     setTypedMessage("");
+    setExtension("");
   };
 
   const handleKeyDown = (event) => {
     console.log(event);
-    if (event.keyCode === 13 &&( event.target.name === "chatInput" || event.target.name==="fileInput")) {
+    if (
+      event.keyCode === 13 &&
+      (event.target.name === "chatInput" || event.target.name === "fileInput")
+    ) {
       if (typedMessage != "" || doc) handleSend();
     }
   };
@@ -133,6 +140,7 @@ const ChatMain = ({ addLiveMessage }) => {
                   file={m.file}
                   timeSent={m.timeSent}
                   sent={m.sent}
+                  extension={m.extension}
                 />
               </React.Fragment>
             );
@@ -160,8 +168,8 @@ const ChatMain = ({ addLiveMessage }) => {
           onChange={handleDoc}
           onKeyDown={handleKeyDown}
           name="fileInput"
-          // accept="*"
-          accept="image/*, video/*, audio/*, application/pdf, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint"
+          accept="*"
+          // accept="image/*, video/*, audio/*, application/pdf, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint"
           hidden
         />
         <input

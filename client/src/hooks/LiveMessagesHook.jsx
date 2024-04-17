@@ -8,13 +8,13 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
   let chunkSize = 500000;
   useEffect(() => {
     const onReceiveMessage = (message) => {
-      const { room, format, text, file, timeSent } = message;
+      const { room, format, text, file, timeSent, extension } = message;
       let newLiveMessages = new Map(liveMessages);
 
       setLiveMessages(
         newLiveMessages.set(room, [
           ...(newLiveMessages.has(room) ? newLiveMessages.get(room) : []),
-          { format, sent: false, text, file, timeSent },
+          { format, sent: false, text, file, timeSent, extension },
         ])
       );
       if (activeChat && activeChat?.room == room) {
@@ -22,9 +22,9 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
           ...prev,
           messages: [
             ...(prev.messages ? prev.messages : []),
-            { format, sent: false, text, file, timeSent },
+            { format, sent: false, text, file, timeSent, extension },
           ],
-          //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date,}
+          //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date, extension}
         }));
       }
     };
@@ -44,6 +44,7 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
           text: "",
           file: value,
           timeSent,
+          extension,
         });
       }
     };
@@ -57,15 +58,31 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
     }
   }, [socket, activeChat?.room]);
 
-  const addLiveMessage = async (online, room, format, text, file, timeSent) => {
+  const addLiveMessage = async (
+    online,
+    room,
+    format,
+    text,
+    file,
+    extension,
+    timeSent
+  ) => {
     if (online) {
       if (format) {
         //true->text
-        socket.emit("send-message", { room, format, text, file, timeSent });
+        socket.emit("send-message", {
+          room,
+          format,
+          text,
+          file,
+          timeSent,
+          extension,
+        });
       } else {
         let chunks = chunkString(file, chunkSize);
         let numberOfChunks = chunks.length;
         chunks.forEach((chunk) => {
+          console.log(chunk);
           socket.emit("send-buffer", { room, timeSent, numberOfChunks, chunk });
         });
       }
@@ -76,8 +93,9 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
           {
             room,
             receiver: activeChat?.c_id,
-            message: text || "",
+            text: text || "",
             doc: file || "",
+            extension,
             timeSent,
           }
         );
@@ -93,12 +111,14 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
       setLiveMessages(
         liveMessages.set(room, [
           ...oldMessages,
-          { format, sent: true, text, file, timeSent },
+          { format, sent: true, text, file, timeSent, extension },
         ])
       );
     } else {
       setLiveMessages(
-        liveMessages.set(room, [{ format, sent: true, text, file, timeSent }])
+        liveMessages.set(room, [
+          { format, sent: true, text, file, timeSent, extension },
+        ])
       );
     }
     if (room == activeChat.room) {
@@ -106,8 +126,8 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
         ...prev,
         messages: [
           ...prev.messages,
-          { format, sent: true, text, file, timeSent },
-        ], //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date,}
+          { format, sent: true, text, file, timeSent, extension },
+        ], //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date, extension}
       }));
     }
   };

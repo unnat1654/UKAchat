@@ -1135,7 +1135,7 @@
   width: fit-content;
   height: -moz-fit-content;
   height: fit-content;
-  max-width: 65%;
+  max-width: 50%;
   max-height: 90%;
   border-radius: 25px;
   -webkit-backdrop-filter: blur(10px);
@@ -1146,6 +1146,9 @@
   flex-shrink: 0;
   font-size: calc(7px + 0.5vw);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
 }
 @media screen and (max-width: 480px) {
   .message-box {
@@ -1164,12 +1167,38 @@
   }
 }
 .message-box .message-box-image,
-.message-box .message-box-video {
-  max-width: 80%;
-  max-height: 99%;
+.message-box .message-box-video,
+.message-box .message-box-audio,
+.message-box .message-box-document {
+  max-width: 100%;
+  max-height: 92%;
   display: inline-block;
   border-radius: 20px;
-  margin: 1vw 0px 2vw 1vw;
+  margin: 1vw 1vw 2vw 1vw;
+}
+@media screen and (max-width: 480px) {
+  .message-box .message-box-image,
+  .message-box .message-box-video,
+  .message-box .message-box-audio,
+  .message-box .message-box-document {
+    margin-bottom: 7vw;
+  }
+}
+@media screen and (max-width: 1080px) {
+  .message-box .message-box-image,
+  .message-box .message-box-video,
+  .message-box .message-box-audio,
+  .message-box .message-box-document {
+    margin-bottom: 3vw;
+  }
+}
+.message-box audio::-webkit-media-controls-play-button,
+.message-box audio::-webkit-media-controls-panel {
+  background-color: #ffdc14;
+}
+.message-box .message-box-document a {
+  text-decoration: none;
+  color: black;
 }
 .message-box .message-box-time {
   position: absolute;
@@ -1178,6 +1207,8 @@
 }
 .message-box.sent {
   margin-left: auto;
+  justify-content: flex-end;
+  align-items: center;
   background-color: rgba(61, 153, 179, 0.299);
 }
 
@@ -1241,7 +1272,7 @@
   font-size: calc(50px + 0.5vw);
 }
 
-.logoutmenu {
+.logout-menu {
   position: absolute;
   bottom: 15px;
   left: 80px;
@@ -1254,7 +1285,7 @@
   z-index: 1;
   font-family: "poppins";
 }
-.logoutmenu .logoutmenu-item {
+.logout-menu .logout-menu-item {
   border: none;
   color: #d7d7d7;
   padding: 20px 25px;
@@ -1262,94 +1293,94 @@
   gap: 10px;
   align-items: center;
 }
-.logoutmenu .logoutmenu-item p {
+.logout-menu .logout-menu-item p {
   cursor: pointer;
 }
-.logoutmenu .logoutmenu-item:hover {
+.logout-menu .logout-menu-item:hover {
   transition: all 0.5s ease-in-out;
 }
-.logoutmenu .logoutmenu-item:hover p {
+.logout-menu .logout-menu-item:hover p {
   color: white;
   transition: all 0.5s ease-in-out;
 }
-.logoutmenu .logoutmenu-item:hover .logoutmenu-icon {
+.logout-menu .logout-menu-item:hover .logout-menu-icon {
   color: white;
   transition: all 0.5s ease-in-out;
   cursor: pointer;
 }
 @media screen and (max-width: 1080px) {
-  .logoutmenu .logoutmenu-item {
+  .logout-menu .logout-menu-item {
     padding: 15px 20px;
   }
-  .logoutmenu .logoutmenu-item p {
+  .logout-menu .logout-menu-item p {
     font-size: 16px;
   }
 }
 @media screen and (max-width: 480px) {
-  .logoutmenu .logoutmenu-item {
+  .logout-menu .logout-menu-item {
     padding: 10px 15px;
   }
-  .logoutmenu .logoutmenu-item p {
+  .logout-menu .logout-menu-item p {
     font-size: 15px;
   }
 }
-.logoutmenu .logoutmenu-icon {
+.logout-menu .logout-menu-icon {
   font-size: 25px;
 }
 @media screen and (max-width: 1080px) {
-  .logoutmenu .logoutmenu-icon {
+  .logout-menu .logout-menu-icon {
     font-size: 22px;
   }
 }
 @media screen and (max-width: 480px) {
-  .logoutmenu .logoutmenu-icon {
+  .logout-menu .logout-menu-icon {
     font-size: 20px;
   }
 }
-.logoutmenu hr {
+.logout-menu hr {
   margin: 0 12px;
   height: 1px;
   background: rgba(255, 255, 255, 0.5);
   border: none;
 }
-.logoutmenu .logoutmenu-button {
+.logout-menu .logout-menu-button {
   margin-block: 5px;
   height: 47px;
   font-size: 18px;
   position: relative;
   left: 130px;
   border: none;
-  color: rgba(255, 255, 255, 0.705);
+  color: rgba(69, 69, 69, 0.705);
   padding: 10px 15px;
   cursor: pointer;
-  background: rgba(255, 0, 234, 0.815);
+  background: rgba(226, 224, 67, 0.5490196078);
   border-radius: 25px;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
 }
-.logoutmenu .logoutmenu-button:hover {
-  background: rgba(255, 0, 0, 0.7);
-  color: white;
+.logout-menu .logout-menu-button:hover {
+  background: rgba(165, 163, 21, 0.6);
+  color: rgb(199, 199, 199);
   transition: all 0.25s ease-in-out;
 }
 @media screen and (max-width: 1080px) {
-  .logoutmenu .logoutmenu-button {
+  .logout-menu .logout-menu-button {
     height: 40px;
     font-size: 16px;
   }
 }
 @media screen and (max-width: 480px) {
-  .logoutmenu .logoutmenu-button {
+  .logout-menu .logout-menu-button {
     height: 35px;
     font-size: 14px;
   }
 }
 @media screen and (max-width: 1080px) {
-  .logoutmenu {
+  .logout-menu {
     left: 60px;
   }
 }
 @media screen and (max-width: 480px) {
-  .logoutmenu {
+  .logout-menu {
     left: 50px;
     bottom: 8px;
   }
