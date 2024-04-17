@@ -1,10 +1,8 @@
-import { contactIdFinder } from "../helpers/contactHelpers.js";
+import { contactDetailsFinder } from "../helpers/contactHelpers.js";
 import chatRoomModel from "../models/chatRoomModel.js";
 import userModel from "../models/userModel.js";
-import chatModel from "../models/chatModel.js";
 import mongoose from "mongoose";
 import onlineUsers from "../helpers/onlineUsers.js";
-import {socketModule} from "../config/socket_config.js";
 
 //POST /create-room
 export const getRoomController = async (req, res) => {
@@ -116,35 +114,8 @@ export const searchContactContoller = async (req, res) => {
 export const getContactsController = async (req, res) => {
   const user = req.user._id;
   const limit = 20;
-  const userId = new mongoose.Types.ObjectId(user);
   try {
-    const rooms = await chatModel.aggregate([
-      {
-        $match: {
-          $or: [{ sender: userId }, { receiver: userId }],
-        },
-      },
-      { $sort: { timeSent: -1 } },
-      {
-        $group: {
-          _id: "$room",
-          sender: { $first: "$sender" },
-          receiver: { $first: "$receiver" },
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          sender: 1, // Include sender field
-          receiver: 1, // Include receiver field
-        },
-      },
-      { $limit: limit },
-    ]);
-
-    const contactDetailsArray = await contactIdFinder(rooms, userId, limit);
-    // returing: {_id,username,photo:{securl_url,public_id}}
-
+    const contactDetailsArray = await contactDetailsFinder(user, limit);
     res.status(200).send({
       success: true,
       message: "First 20 Contacts Found Successfully",
@@ -165,17 +136,7 @@ export const getAllContactsController = async (req, res) => {
   const user = req.user._id;
   const limit = null;
   try {
-    const rooms = await chatModel.aggregate([
-      {
-        $match: {
-          $or: [{ sender: user }, { receiver: user }],
-        },
-      },
-      { $sort: { timeSent: -1 } },
-      { $group: { _id: "$room" } },
-      { $skip: 20 },
-    ]);
-    const contactDetailsArray = await contactIdFinder(rooms, user, limit);
+    const contactDetailsArray = await contactDetailsFinder(user, limit);
     // returing: {_id,username,photo:{securl_url,public_id}}
     res.status(200).send({
       success: true,
