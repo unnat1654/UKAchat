@@ -55,4 +55,4 @@ const LogoutMenu = ({ show, setShow }) => {
   }
 };
 
-export default logout-menu;
+export default LogoutMenu;

@@ -1,11 +1,12 @@
 import { cloudinary } from "../config/cloudinary.js";
-import chatModel from "../models/chatModel.js";
+import chatRoomModel from "../models/chatRoomModel.js";
 
-//POST  /save-messages
-export const saveMessagesController = async (req, res) => {
+//POST  /save-backup-messages
+export const saveBulkMessagesController = async (req, res) => {
   try {
     const messages = req.body;
-    if (!room || !messages) {
+    const user=req.user._id;
+    if (!messages) {
       return res.status(404).send({
         success: false,
         message: "room or messages not found",
@@ -58,25 +59,30 @@ export const saveMessagesController = async (req, res) => {
 export const sendMessageController = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { receiver, room, message, doc, timeSent } = req.body;
-    let secureUrl,publicId;
+    const { room, receiver, text, doc,extension, timeSent } = req.body;
+    let secureUrl, publicId;
     if (doc) {
       const { secure_url, public_id } = await cloudinary.uploader.upload(doc, {
-        resource_type:"auto",
+        resource_type: "auto",
         folder: "chatMedia",
+        format:extension,
       });
-      secureUrl=secure_url;
-      publicId=public_id;
+      secureUrl = secure_url;
+      publicId = public_id;
     }
-    const saveChat = new chatModel({
-      room,
-      sender: userId,
-      receiver,
-      ...(message != "" && { message }),
-      ...(doc && { media: { public_id:publicId, secure_url:secureUrl} }),
-      timeSent,
+    const update = {
+      $push: {
+        chats: {
+          sender: userId,
+          ...(text && { text }),
+          ...(doc && { media: { secure_url: secureUrl, public_id: publicId,extension } }),
+          timeSent,
+        },
+      },
+    };
+    await chatRoomModel.findByIdAndUpdate(room, update, {
+      runValidators: true,
     });
-    await saveChat.save();
     res.status(201).send({
       success: true,
       message: "Message Sent Successfully",
@@ -96,25 +102,21 @@ export const getLastMessageController = async (req, res) => {
   const { cid } = req.params;
   const userId = req.user._id;
   try {
-    const [lastMessage] = await chatModel.find({
+    const query = {
       $or: [
-        { sender: cid, receiver: userId },
-        { sender: userId, receiver: cid },
+        { user1: userId, user2: cid },
+        { user2: userId, user1: cid },
       ],
-    }).sort("-timeSent").limit(1);
-    if (lastMessage?.message) {
+    };
+    const { chats } = await chatRoomModel
+      .findOne(query,{ 'chats': { $slice: -1 } });
+    let lastMessage = chats[0];
+    if (lastMessage) {
       res.status(200).send({
         success: true,
         lastMessageInfo: {
-          lastMessage: lastMessage.message,
-          timeSent: lastMessage.timeSent,
-        },
-      });
-    } else if (lastMessage?.media) {
-      res.status(200).send({
-        success: true,
-        lastMessageInfo: {
-          lastMessage: "File Shared",
+          ...(lastMessage?.text && {lastMessage: lastMessage.text}),
+          ...(lastMessage?.media && {lastMessage: "File Shared",}),
           timeSent: lastMessage.timeSent,
         },
       });
@@ -141,21 +143,17 @@ export const getMessagesController = async (req, res) => {
   const { room, page } = req.params;
   try {
     const chatsPerPage = 200;
-    const messages = await chatModel
-      .find({ room: room })
-      .sort({ timeSent: 1 })
-      .skip((page - 1) * chatsPerPage)
-      .limit(chatsPerPage)
-      .select("-_id -room");
-    if (messages) {
+    const fromEndIndex=-(chatsPerPage*page);
+    const {chats}= await chatRoomModel.find({_id:room},{chats:{$slice: [fromEndIndex, chatsPerPage] }});
+    if (chats) {
       const formatMessages = [];
-      messages.forEach((message) => {
+      chats.forEach((chat) => {
         formatMessages.push({
-          ...(message.message
-            ? { format: true, text: message.message, file: "" }
-            : { format: false, file: message.media.secure_url, text: "" }),
-          timeSent: message.timeSent,
-          sent: message.sender == userId,
+          ...(chat.text
+            ? { format: true, text: chat.text, file: "",extension:"" }
+            : { format: false, file: chat.media.secure_url, text: "",extension:chat.media.extension }),
+          timeSent: chat.timeSent,
+          sent: chat.sender == userId,
         });
       });
 
@@ -165,9 +163,10 @@ export const getMessagesController = async (req, res) => {
         messages: formatMessages,
       });
     } else {
-      res.status(404).send({
-        success: false,
+      res.status(200).send({
+        success: true,
         message: "No messages found",
+        messages:[]
       });
     }
   } catch (error) {
