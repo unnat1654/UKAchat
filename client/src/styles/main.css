@@ -1129,8 +1129,6 @@
 
 .message-box {
   background-color: rgba(98, 126, 220, 0.299);
-  min-height: 10%;
-  min-width: 22%;
   width: -moz-fit-content;
   width: fit-content;
   height: -moz-fit-content;
@@ -1153,13 +1151,11 @@
 @media screen and (max-width: 480px) {
   .message-box {
     margin: 5px;
-    min-height: 8%;
-    min-width: 5%;
   }
 }
 .message-box .message-box-message {
   margin: 15px 20px 40px 20px;
-  min-width: 100px;
+  min-width: 60px;
 }
 @media screen and (max-width: 480px) {
   .message-box .message-box-message {
@@ -1168,8 +1164,7 @@
 }
 .message-box .message-box-image,
 .message-box .message-box-video,
-.message-box .message-box-audio,
-.message-box .message-box-document {
+.message-box .message-box-audio {
   max-width: 100%;
   max-height: 92%;
   display: inline-block;
@@ -1179,26 +1174,57 @@
 @media screen and (max-width: 480px) {
   .message-box .message-box-image,
   .message-box .message-box-video,
-  .message-box .message-box-audio,
-  .message-box .message-box-document {
-    margin-bottom: 7vw;
+  .message-box .message-box-audio {
+    padding-bottom: 3vw;
   }
 }
 @media screen and (max-width: 1080px) {
   .message-box .message-box-image,
   .message-box .message-box-video,
-  .message-box .message-box-audio,
-  .message-box .message-box-document {
+  .message-box .message-box-audio {
     margin-bottom: 3vw;
   }
+}
+.message-box .message-box-audio {
+  min-width: 20vw;
 }
 .message-box audio::-webkit-media-controls-play-button,
 .message-box audio::-webkit-media-controls-panel {
   background-color: #ffdc14;
 }
-.message-box .message-box-document a {
+.message-box .message-box-download {
+  margin: 15px 20px 40px 20px;
+  min-width: 60px;
+}
+@media screen and (max-width: 480px) {
+  .message-box .message-box-download {
+    margin: 10px 15px 30px 10px;
+  }
+}
+.message-box .message-box-download a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1vh;
+  font-weight: 600;
   text-decoration: none;
-  color: black;
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.25s;
+}
+.message-box .message-box-download a:hover > * {
+  color: rgba(255, 255, 255, 0.824);
+  scale: 1.1;
+}
+.message-box .message-box-download a > * {
+  font-size: calc(20px + 1vw);
+  margin: 7px 5px;
+  transition: all 0.25s;
+  display: inline-block;
+}
+.message-box .message-box-download a:hover {
+  color: rgba(255, 255, 255, 0.824);
+  scale: 1.01;
 }
 .message-box .message-box-time {
   position: absolute;

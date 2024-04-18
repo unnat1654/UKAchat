@@ -5,7 +5,7 @@ import chatRoomModel from "../models/chatRoomModel.js";
 export const saveBulkMessagesController = async (req, res) => {
   try {
     const messages = req.body;
-    const user=req.user._id;
+    const user = req.user._id;
     if (!messages) {
       return res.status(404).send({
         success: false,
@@ -59,13 +59,13 @@ export const saveBulkMessagesController = async (req, res) => {
 export const sendMessageController = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { room, receiver, text, doc,extension, timeSent } = req.body;
+    const { room, receiver, text, doc, extension, timeSent } = req.body;
     let secureUrl, publicId;
     if (doc) {
       const { secure_url, public_id } = await cloudinary.uploader.upload(doc, {
         resource_type: "auto",
         folder: "chatMedia",
-        format:extension,
+        format: extension,
       });
       secureUrl = secure_url;
       publicId = public_id;
@@ -75,7 +75,9 @@ export const sendMessageController = async (req, res) => {
         chats: {
           sender: userId,
           ...(text && { text }),
-          ...(doc && { media: { secure_url: secureUrl, public_id: publicId,extension } }),
+          ...(doc && {
+            media: { secure_url: secureUrl, public_id: publicId, extension },
+          }),
           timeSent,
         },
       },
@@ -108,15 +110,16 @@ export const getLastMessageController = async (req, res) => {
         { user2: userId, user1: cid },
       ],
     };
-    const { chats } = await chatRoomModel
-      .findOne(query,{ 'chats': { $slice: -1 } });
+    const { chats } = await chatRoomModel.findOne(query, {
+      chats: { $slice: -1 },
+    });
     let lastMessage = chats[0];
     if (lastMessage) {
       res.status(200).send({
         success: true,
         lastMessageInfo: {
-          ...(lastMessage?.text && {lastMessage: lastMessage.text}),
-          ...(lastMessage?.media && {lastMessage: "File Shared",}),
+          ...(lastMessage?.text && { lastMessage: lastMessage.text }),
+          ...(lastMessage?.media && { lastMessage: "File Shared" }),
           timeSent: lastMessage.timeSent,
         },
       });
@@ -143,15 +146,25 @@ export const getMessagesController = async (req, res) => {
   const { room, page } = req.params;
   try {
     const chatsPerPage = 200;
-    const fromEndIndex=-(chatsPerPage*page);
-    const {chats}= await chatRoomModel.find({_id:room},{chats:{$slice: [fromEndIndex, chatsPerPage] }});
+    const fromEndIndex = -(chatsPerPage * page);
+    const { chats } = await chatRoomModel
+      .findOne(
+        { _id: room },
+        { chats: { $slice: [fromEndIndex, chatsPerPage] } }
+      )
+      .select("chats");
     if (chats) {
       const formatMessages = [];
       chats.forEach((chat) => {
         formatMessages.push({
           ...(chat.text
-            ? { format: true, text: chat.text, file: "",extension:"" }
-            : { format: false, file: chat.media.secure_url, text: "",extension:chat.media.extension }),
+            ? { format: true, text: chat.text, file: "", extension: "" }
+            : {
+                format: false,
+                file: chat.media.secure_url,
+                text: "",
+                extension: chat.media.extension,
+              }),
           timeSent: chat.timeSent,
           sent: chat.sender == userId,
         });
@@ -166,7 +179,7 @@ export const getMessagesController = async (req, res) => {
       res.status(200).send({
         success: true,
         message: "No messages found",
-        messages:[]
+        messages: [],
       });
     }
   } catch (error) {

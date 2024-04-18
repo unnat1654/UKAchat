@@ -647,8 +647,8 @@
 }
 .message-box {
   background-color: rgba(98, 126, 220, 0.299);
-  min-height: 10%;
-  min-width: 22%;
+  // min-height: 10%;
+  // min-width: 22%;
   width: fit-content;
   height: fit-content;
   max-width: 50%;
@@ -667,13 +667,13 @@
   @media screen and (max-width: $mobile-max) {
     & {
       margin: 5px;
-      min-height: 8%;
-      min-width: 5%;
+      // min-height: 8%;
+      // min-width: 5%;
     }
   }
   #{&}-message {
     margin: 15px 20px 40px 20px;
-    min-width: 100px;
+    min-width: 60px;
     @media screen and (max-width: $mobile-max) {
       & {
         margin: 10px 15px 30px 10px;
@@ -683,8 +683,7 @@
 
   #{&}-image,
   #{&}-video,
-  #{&}-audio,
-  #{&}-document {
+  #{&}-audio {
     max-width: 100%;
     max-height: 92%;
     display: inline-block;
@@ -692,7 +691,8 @@
     margin: 1vw 1vw 2vw 1vw;
     @media screen and (max-width: $mobile-max) {
       & {
-        margin-bottom: 7vw;
+        // margin-top: 3vw;
+        padding-bottom: 3vw;
       }
     }
     @media screen and (max-width: $tablet-max) {
@@ -702,22 +702,49 @@
     }
   }
 
+  #{&}-audio {
+    min-width: 20vw;
+  }
+
   audio::-webkit-media-controls-play-button,
   audio::-webkit-media-controls-panel {
     background-color: #ffdc14;
   }
 
-  @media screen and (max-width: $mobile-max) {
-    // audio {
-    //   // width: 100px;
-    //   height: 25px;
-    // }
-  }
-
-  #{&}-document {
+  #{&}-download {
+    margin: 15px 20px 40px 20px;
+    min-width: 60px;
+    @media screen and (max-width: $mobile-max) {
+      & {
+        margin: 10px 15px 30px 10px;
+      }
+    }
     a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1vh;
+      font-weight: 600;
       text-decoration: none;
-      color: black;
+      color: rgba(255, 255, 255, 0.5);
+      transition: all 0.25s;
+
+      &:hover > * {
+        color: rgba(255, 255, 255, 0.824);
+        scale: 1.1;
+      }
+
+      & > * {
+        font-size: calc(20px + 1vw);
+        margin: 7px 5px;
+        transition: all 0.25s;
+        display: inline-block;
+      }
+      &:hover {
+        color: rgba(255, 255, 255, 0.824);
+        scale: 1.01;
+      }
     }
   }
 

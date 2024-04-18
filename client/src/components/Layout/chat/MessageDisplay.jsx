@@ -1,31 +1,13 @@
 import React from "react";
 import { convertTimeTo12 } from "../../../functions/timeFunction";
-import image from "../../../assets/62111-urban-minimalist-wallpaper-top-free-urban-minimalist.jpg";
 import { getFileType } from "../../../functions/regexFunctions";
+import { IoCloudDownloadOutline } from "react-icons/io5";
 
 const MessageDisplay = ({ format, timeSent, file, text, sent, extension }) => {
   let fileType = "";
-  console.log(extension);
 
-  const audioExtensions = [
-    "mp3",
-    "wav",
-    "ogg",
-    "aac",
-    "flac",
-    "aiff",
-    "aif",
-    "wma",
-    "m4a",
-  ];
-
-  if (
-    !format &&
-    audioExtensions.some((ext) => ext.toLowerCase() === extension)
-  ) {
-    fileType = "audio";
-  } else if (!format) {
-    fileType = getFileType(file);
+  if (!format) {
+    fileType = getFileType(extension);
   }
   return (
     <>
@@ -79,8 +61,12 @@ const MessageDisplay = ({ format, timeSent, file, text, sent, extension }) => {
             fileType != "image" &&
             fileType != "audio" && (
               <>
-                <p className="message-box-document">
-                  <a href={file}>Click here to download the file. </a>
+                <p className="message-box-download">
+                  <a href={file} target="_blank">
+                    <IoCloudDownloadOutline />
+                    Click here to download <br />
+                    the file.{" "}
+                  </a>
                 </p>
                 <span className="message-box-time">
                   {convertTimeTo12(timeSent)}
