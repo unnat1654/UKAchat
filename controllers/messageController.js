@@ -6,6 +6,7 @@ export const saveBulkMessagesController = async (req, res) => {
   try {
     const messages = req.body; // {room:String,chats:[{format:bool,sent:bool,text:"",file:"",extension:"",timeSent:DateTime}...]}
     const userId = req.user._id;
+
     if (!messages) {
       return res.status(404).send({
         success: false,
@@ -181,7 +182,7 @@ export const getMessagesController = async (req, res) => {
   const timeInNum= time.getTime();
   try {
     const chatsPerPage = 200;
-    let fromEndIndex = -chatsPerPage * page;
+    const fromEndIndex = -(chatsPerPage * page);
     const { chats } = await chatRoomModel
       .findOne(
         { _id: room },
