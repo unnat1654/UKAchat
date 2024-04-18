@@ -19,6 +19,6 @@ router.post("/send-message-api",isLoggedIn,sendMessageController);
 router.get("/get-last-message/:cid", isLoggedIn, getLastMessageController);
 
 //get 200 messages in a batch from a contact
-router.get("/get-messages/:room/:page", isLoggedIn, getMessagesController);
+router.get("/get-messages", isLoggedIn, getMessagesController);
 
 export default router;

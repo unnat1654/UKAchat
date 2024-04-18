@@ -40,9 +40,9 @@ const OtherChats = ({
         );
         if (roomResponse?.data?.success) {
           const messages = await axios.get(
-            `${import.meta.env.VITE_SERVER}/message/get-messages/${
+            `${import.meta.env.VITE_SERVER}/message/get-messages?room=${
               roomResponse?.data?.room
-            }/1`
+            }&page=1`
           );
           const recievedMessages = messages?.data?.messages;
           setActiveChat({

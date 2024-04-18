@@ -4,47 +4,79 @@ import chatRoomModel from "../models/chatRoomModel.js";
 //POST  /save-backup-messages
 export const saveBulkMessagesController = async (req, res) => {
   try {
-    const messages = req.body;
-    const user=req.user._id;
+    const messages = req.body; // {room:String,chats:[{format:bool,sent:bool,text:"",file:"",extension:"",timeSent:DateTime}...]}
+    const userId = req.user._id;
     if (!messages) {
       return res.status(404).send({
         success: false,
         message: "room or messages not found",
       });
     }
-    let itemToBeInserted = [];
-
-    for (i = 0; i < messages.length; i++) {
-      let element = messages[i];
-      if (element.message) {
-        let messageObject = {
-          room: room,
-          message: element.message,
-          sender: element.sender,
-          receiver: element.receiver,
-          timeSent: element.timeSent,
-        };
-        itemToBeInserted.append(messageObject);
-      } else if (element.data) {
-        const { secure_url, public_id } = await cloudinary.uploader.upload(
-          photo,
-          {
-            folder: "chatMedia",
-          }
-        );
-        let messageObject = {
-          room: room,
-          media: { public_id, secure_url },
-          sender: element.sender,
-          receiver: element.receiver,
-          timeSent: element.timeSent,
-        };
-
-        itemToBeInserted.append(messageObject);
-      }
-    }
-    await chatModel.insertMany(itemToBeInserted);
     res.status(201).send({ success: true });
+
+    for (const [room, messages] of Object.entries(messages)) {
+      const lastMessageTime = new Date(messages[-1].timeSent);
+      const firstMessageTime = new Date(messages[0].timeSent);
+      const { user1, user2, chats } = await chatRoomModel.findOne(
+        { _id: room },
+        { chats: { $slice: -1 } }
+      );
+      if (user1 != userId && user2 != userId) {
+        res.status(403).send({
+          success: false,
+          message: "Access Forbidden",
+        });
+      }
+      const contactId = user1 == userId ? user2 : user1;
+      const lastSavedMessageTime = chats[0].timeSent;
+      if (lastMessageTime <= lastSavedMessageTime) {//case 1: all messages are already saved
+        continue;
+      }
+      else if (firstMessageTime <= lastSavedMessageTime) {//case 2: some messages are saved while some are not
+        let lastSavedMessageIndex=-1;
+        for(let i=0;i<messages.length;i++){
+          if(lastSavedMessageTime===new Date(messages[i].timeSent)){
+            lastSavedMessageIndex=i;
+            break;
+          }
+        }
+        if(lastSavedMessageIndex<0){
+          throw new Error("Something unexpected occured while saving messages");
+        }
+        messages.splice(0,lastSavedMessageIndex+1);
+      }
+      const formattedMessages = [];
+        await Promise.all(
+          messages.map(async (message) => {
+            let secureUrl="";
+            let publicId="";
+            if(message.file!==""){
+              const { secure_url, public_id } = await cloudinary.uploader.upload(doc, {
+                resource_type: "auto",
+                folder: "chatMedia",
+                format: extension,
+              });
+              secureUrl=secure_url;
+              publicId=public_id;
+            }
+            if(!secureUrl && !message.text){
+              throw new Error("Error while saving message backup");
+            }
+            formattedMessages.push({
+              sender: message.sent ? userId : contactId,
+              ...(message.text && { text: message.text }),
+              ...(secureUrl && {media:{secure_url:secureUrl,public_id:publicId,extension:message.extension}}),
+              timeSent:new Date(message.timeSent)
+            });
+          })
+        );
+        await chatRoomModel.findByIdAndUpdate(room, {$push:{chats:{$each:formattedMessages}}},{runValidators:true});
+
+    }
+    res.status(201).send({
+      success:true,
+      message:"All messages saved sucessfully"
+    })
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -59,13 +91,13 @@ export const saveBulkMessagesController = async (req, res) => {
 export const sendMessageController = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { room, receiver, text, doc,extension, timeSent } = req.body;
+    const { room, receiver, text, doc, extension, timeSent } = req.body;
     let secureUrl, publicId;
     if (doc) {
       const { secure_url, public_id } = await cloudinary.uploader.upload(doc, {
         resource_type: "auto",
         folder: "chatMedia",
-        format:extension,
+        format: extension,
       });
       secureUrl = secure_url;
       publicId = public_id;
@@ -75,7 +107,9 @@ export const sendMessageController = async (req, res) => {
         chats: {
           sender: userId,
           ...(text && { text }),
-          ...(doc && { media: { secure_url: secureUrl, public_id: publicId,extension } }),
+          ...(doc && {
+            media: { secure_url: secureUrl, public_id: publicId, extension },
+          }),
           timeSent,
         },
       },
@@ -108,15 +142,16 @@ export const getLastMessageController = async (req, res) => {
         { user2: userId, user1: cid },
       ],
     };
-    const { chats } = await chatRoomModel
-      .findOne(query,{ 'chats': { $slice: -1 } });
+    const { chats } = await chatRoomModel.findOne(query, {
+      chats: { $slice: -1 },
+    });
     let lastMessage = chats[0];
     if (lastMessage) {
       res.status(200).send({
         success: true,
         lastMessageInfo: {
-          ...(lastMessage?.text && {lastMessage: lastMessage.text}),
-          ...(lastMessage?.media && {lastMessage: "File Shared",}),
+          ...(lastMessage?.text && { lastMessage: lastMessage.text }),
+          ...(lastMessage?.media && { lastMessage: "File Shared" }),
           timeSent: lastMessage.timeSent,
         },
       });
@@ -137,25 +172,42 @@ export const getLastMessageController = async (req, res) => {
 };
 
 //get 200 messages in a batch from a contact
-//GET  /get-messages/:room/:page
+//GET  /get-messages?room=""&page=""&time=""
 export const getMessagesController = async (req, res) => {
   const userId = req.user._id;
-  const { room, page } = req.params;
+  const room=req.query.room;
+  const page=parseInt(req.query.page);
+  const time=new Date(req.query.time);//oldest local message time
+  const timeInNum= time.getTime();
   try {
     const chatsPerPage = 200;
-    const fromEndIndex=-(chatsPerPage*page);
-    const {chats}= await chatRoomModel.find({_id:room},{chats:{$slice: [fromEndIndex, chatsPerPage] }});
+    let fromEndIndex = -chatsPerPage * page;
+    const { chats } = await chatRoomModel
+      .findOne(
+        { _id: room },
+        { chats: { $slice: [fromEndIndex, chatsPerPage] } }
+      )
+      .select("chats");
     if (chats) {
       const formatMessages = [];
-      chats.forEach((chat) => {
+      for(let chat of chats){
+        let timeSent= new Date(chat.timeSent);
+        if(timeSent.getTime()>=timeInNum){
+          continue;
+        }
         formatMessages.push({
           ...(chat.text
-            ? { format: true, text: chat.text, file: "",extension:"" }
-            : { format: false, file: chat.media.secure_url, text: "",extension:chat.media.extension }),
+            ? { format: true, text: chat.text, file: "", extension: "" }
+            : {
+                format: false,
+                file: chat.media.secure_url,
+                text: "",
+                extension: chat.media.extension,
+              }),
           timeSent: chat.timeSent,
           sent: chat.sender == userId,
         });
-      });
+      }
 
       res.status(200).send({
         success: true,
@@ -166,7 +218,7 @@ export const getMessagesController = async (req, res) => {
       res.status(200).send({
         success: true,
         message: "No messages found",
-        messages:[]
+        messages: [],
       });
     }
   } catch (error) {

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { chunkString } from "../functions/regexFunctions";
-import { v4 as uuidv4 } from "uuid";
 export const useLiveMessages = (socket, activeChat, setActiveChat) => {
   const [liveMessages, setLiveMessages] = useState(new Map());
   let receivingFiles = new Map();
@@ -28,7 +27,7 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
         }));
       }
     };
-    const onReceiveBuffer = ({ room, timeSent, numberOfChunks, chunk }) => {
+    const onReceiveBuffer = ({ room, timeSent, numberOfChunks, chunk}) => {
       console.log("recieved Event: receive buffer");
       const key = room + timeSent;
       const value = receivingFiles.has(key)
@@ -44,7 +43,6 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
           text: "",
           file: value,
           timeSent,
-          extension,
         });
       }
     };
