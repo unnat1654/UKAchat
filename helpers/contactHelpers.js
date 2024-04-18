@@ -9,8 +9,12 @@ export const contactDetailsFinder = async (user, limit) => {
       return [];
     }
     roomsData.sort((a, b) => {
-      const timeA = a.chats.length ? a.chats[0].timeSent : new Date(0);
-      const timeB = b.chats.length ? b.chats[0].timeSent : new Date(0);
+      const timeA = a.chats.length
+        ? a.chats[a.chats.length - 1]?.timeSent
+        : new Date(0);
+      const timeB = b.chats.length
+        ? b.chats[b.chats.length - 1]?.timeSent
+        : new Date(0);
       return timeB - timeA;
     });
     let numberOfContacts = roomsData.length;
@@ -25,16 +29,34 @@ export const contactDetailsFinder = async (user, limit) => {
       }
       contacts.push(roomsData[i].user1);
     }
-    const contactDetailsArray = await userModel.find(
-      { _id: { $in: contacts } },
-      { username: 1, _id: 1, photo: 1 }
-    );
+    // const contactDetailsArray = await userModel.find(
+    //   { _id: { $in: contacts } },
+    //   { username: 1, _id: 1, photo: 1 }
+    // );
+
+    const contactDetailsArray = await userModel.aggregate([
+      { $match: { _id: { $in: contacts } } }, // Filter by IDs in the contacts array
+      {
+        $addFields: {
+          __order: { $indexOfArray: [contacts, "$_id"] },
+        },
+      },
+      { $sort: { __order: 1 } }, // Sort based on the order in the contacts array
+      {
+        $project: {
+          _id: 1,
+          username: 1,
+          photo: 1,
+        },
+      },
+    ]);
     //sort the contactDetailsArray according to the sorted contacts array
-    contactDetailsArray.sort((a, b) => {
-      const indexA = contacts.indexOf(a._id);
-      const indexB = contacts.indexOf(b._id);
-      return indexA - indexB;
-    });
+    // contactDetailsArray.sort((a, b) => {
+    //   const indexA = contacts.indexOf(a._id);
+    //   const indexB = contacts.indexOf(b._id);
+    //   return indexA - indexB;
+    // });
+    console.log(contactDetailsArray);
     return contactDetailsArray;
   } catch (error) {
     console.log(error);
