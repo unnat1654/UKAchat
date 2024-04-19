@@ -56,7 +56,6 @@ export const contactDetailsFinder = async (user, limit) => {
     //   const indexB = contacts.indexOf(b._id);
     //   return indexA - indexB;
     // });
-    console.log(contactDetailsArray);
     return contactDetailsArray;
   } catch (error) {
     console.log(error);

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import UserIcon from "../UserIcon";
 import Tilt from "react-parallax-tilt";
 import axios from "axios";
-import { useActiveChat } from "../../../context/activeChatContext";
-import { convertTimeTo12 } from "../../../functions/timeFunction";
+import { useActiveChat } from "../../context/activeChatContext";
+import { convertTimeTo12 } from "../../functions/timeFunction";
 
 const OtherChats = ({
   name,

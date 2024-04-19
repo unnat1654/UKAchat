@@ -1,6 +1,6 @@
 import React from "react";
-import { convertTimeTo12 } from "../../../functions/timeFunction";
-import { getFileType } from "../../../functions/regexFunctions";
+import { convertTimeTo12 } from "../../functions/timeFunction";
+import { getFileType } from "../../functions/regexFunctions";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 
 const MessageDisplay = ({ format, timeSent, file, text, sent, extension }) => {

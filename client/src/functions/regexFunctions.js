@@ -11,7 +11,6 @@ export const hasNumber = (str) => {
 };
 
 export const getFileType = (extension) => {
-  console.log(extension);
   const imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "svg", "webp"];
   const audioExtensions = [
     "mp3",

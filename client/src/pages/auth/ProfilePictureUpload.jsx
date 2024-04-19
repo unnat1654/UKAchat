@@ -5,7 +5,7 @@ import { FiUpload } from "react-icons/fi";
 import { RiEditLine } from "react-icons/ri";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
-import UserIcon from "../../components/Layout/UserIcon";
+import UserIcon from "../../components/UserIcon";
 import Tilt from "react-parallax-tilt";
 
 const ProfilePictureUpload = () => {

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import OtherChats from "../chat/OtherChats";
+import OtherChats from "../../chat/OtherChats";
 import { IoSearchOutline } from "react-icons/io5";
 import Tilt from "react-parallax-tilt";
 import axios from "axios";
 import { useAuth } from "../../../context/authContext";
 import { useActiveChat } from "../../../context/activeChatContext";
 import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
-import Invites from "../invite/Invites";
+import Invites from "../../invite/Invites";
 
 const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
   const [searchInput, setSearchInput] = useState("");

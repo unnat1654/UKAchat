@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { PiUserSwitch } from "react-icons/pi";
 import { LuQrCode } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
-import { useAuth } from "../../../context/authContext";
-import { useSocket } from "../../../context/socketContext";
+import toast from "react-hot-toast";
+import { useAuth } from "../../context/authContext";
+import { useSocket } from "../../context/socketContext";
 
 const LogoutMenu = ({ show, setShow }) => {
   const socket = useSocket();

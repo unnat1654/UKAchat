@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import ChatNavbar from "../chat/ChatNavbar";
-import ChatMain from "../chat/ChatMain";
-import CallMain from "../chat/callMain";
+import ChatNavbar from "../../chat/ChatNavbar";
+import ChatMain from "../../chat/ChatMain";
+import CallMain from "../../chat/callMain";
 import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 import { useActiveChat } from "../../../context/activeChatContext";
-import SendInvite from "../invite/sendInvite";
+import SendInvite from "../../invite/sendInvite";
 import { useAuth } from "../../../context/authContext";
 import axios from "axios";
 import { useSocket } from "../../../context/socketContext";

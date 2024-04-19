@@ -5,13 +5,16 @@ import { PiEye, PiEyeClosed } from "react-icons/pi";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import background from "../../assets/5927911.gif";
 import {
-  IoIosCheckmarkCircle,
   IoIosCheckmarkCircleOutline,
   IoIosCloseCircleOutline,
 } from "react-icons/io";
-import { hasNumber, hasLowerStr, hasUpperStr } from "../../functions/regexFunctions";
+import {
+  hasNumber,
+  hasLowerStr,
+  hasUpperStr,
+} from "../../functions/regexFunctions";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const ForgotPassword = () => {
   const [details, setDetails] = useSearchParams({ email: "" });

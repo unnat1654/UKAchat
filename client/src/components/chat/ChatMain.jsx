@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { PiUploadSimple, PiX } from "react-icons/pi";
 import MessageDisplay from "./MessageDisplay";
-import { useActiveChat } from "../../../context/activeChatContext";
+import { useActiveChat } from "../../context/activeChatContext";
 import { TbArrowBigRightLinesFilled } from "react-icons/tb";
 
 const ChatMain = ({ addLiveMessage }) => {
@@ -67,7 +67,6 @@ const ChatMain = ({ addLiveMessage }) => {
       setFileName(file.name);
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      console.log(file);
       reader.onloadend = () => {
         setDoc(reader.result);
       };
@@ -99,7 +98,6 @@ const ChatMain = ({ addLiveMessage }) => {
   };
 
   const handleKeyDown = (event) => {
-    console.log(event);
     if (
       event.keyCode === 13 &&
       (event.target.name === "chatInput" || event.target.name === "fileInput")

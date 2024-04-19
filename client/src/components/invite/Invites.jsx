@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import UserIcon from "../UserIcon";
 import Tilt from "react-parallax-tilt";
 import RejectIcon from "./RejectIcon";
 import AcceptIcon from "./AcceptIcon";
 import axios from "axios";
 
-const Invites = ({ sender, photo, id, active,setInvitesArray}) => {
+const Invites = ({ sender, photo, id, active, setInvitesArray }) => {
   const handleClick = () => {
     console.log("clicked");
   };
@@ -19,8 +19,10 @@ const Invites = ({ sender, photo, id, active,setInvitesArray}) => {
       if (data?.success) {
         console.log(data?.message);
       }
-      if(data){
-        setInvitesArray((prev)=>(prev.filter(item=>item.senderUserId!==id)));
+      if (data) {
+        setInvitesArray((prev) =>
+          prev.filter((item) => item.senderUserId !== id)
+        );
       }
     } catch (error) {
       console.log(error);

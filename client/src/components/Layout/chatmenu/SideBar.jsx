@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import { PiChatCircleDotsFill } from "react-icons/pi";
-import { HiMiniUserGroup } from "react-icons/hi2";
-import { AiFillSetting } from "react-icons/ai";
-import UserIcon from "../UserIcon";
-import { MdGroupAdd } from "react-icons/md";
+import UserIcon from "../../UserIcon";
 import { Tooltip } from "antd";
 import { PiUsersThreeBold } from "react-icons/pi";
 import { MdOutlineGroupAdd } from "react-icons/md";
@@ -11,7 +7,7 @@ import { IoChatbubbleOutline } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
 import { BsEnvelopePlus } from "react-icons/bs";
 import { useAuth } from "../../../context/authContext";
-import LogoutMenu from "../logoutmenu/LogoutMenu";
+import LogoutMenu from "../../logoutmenu/LogoutMenu";
 
 const SideBar = ({ sideBarTab, setSideBarTab, setShowInviteBox }) => {
   const [auth, setAuth] = useAuth();

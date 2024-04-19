@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import background from "../assets/Chill-Lofi-Background-Wallpaper-Full-HD-Free-Download-for-PC-Laptop-Macbook-231121-Wallpaperxyz.com-1.gif";
-import Tilt from "react-parallax-tilt";
 import ChattingSection from "../components/Layout/chatmenu/ChattingSection";
 import ChatMenu from "../components/Layout/chatmenu/ChatMenu";
 import SideBar from "../components/Layout/chatmenu/SideBar";
-import axios from "axios";
 import { ContactDetailsProvider } from "../context/ContactDetailsContext";
 import { useAuth } from "../context/authContext";
 const Layout = () => {
