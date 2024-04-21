@@ -5,6 +5,7 @@ import ChatMenu from "../components/Layout/chatmenu/ChatMenu";
 import SideBar from "../components/Layout/chatmenu/SideBar";
 import { ContactDetailsProvider } from "../context/ContactDetailsContext";
 import { useAuth } from "../context/authContext";
+import { saveAllOldMessages } from "../functions/localStorageFunction";
 const Layout = () => {
   const [auth, setAuth] = useAuth();
   const [sideBarTab, setSideBarTab] = useState("chats");
@@ -13,6 +14,19 @@ const Layout = () => {
     searchedId: "",
     searchedUsername: "",
   });
+  let count = 0;
+
+  useEffect(() => {
+    const backUpMessages = () => {
+      if (count > 10) {
+        saveAllOldMessages();
+        count=0;
+      }
+    };
+
+    window.addEventListener("storage", backUpMessages);
+    return () => window.removeEventListener("storage", backUpMessages);
+  }, []);
 
   // const sendUserLastOnlineTime = async () => {
   //   try {

@@ -1,34 +1,34 @@
 import mongoose from "mongoose";
 
-const chatSchema = new mongoose.Schema({
-  sender: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "users",
-    required: true,
-  },
-  text: {
-    type: String,
-    maxLength: 30000,
-  },
-  media: {
-    public_id: {
-      type: String,
-    },
-    secure_url: {
-      type: String,
-    },
-    extension: {
-      type: String,
-    },
-  },
-  timeSent: {
-    type: Date,
-    required: true,
-  },
-});
-chatSchema.path("message")?.validate((value) => {
-  return value || (this.media && this.media.secure_url && this.media.public_id);
-}, "Either message or media with secure_url and public_id should be provided");
+// const chatSchema = new mongoose.Schema({
+//   sender: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: "users",
+//     required: true,
+//   },
+//   text: {
+//     type: String,
+//     maxLength: 30000,
+//   },
+//   media: {
+//     public_id: {
+//       type: String,
+//     },
+//     secure_url: {
+//       type: String,
+//     },
+//     extension: {
+//       type: String,
+//     },
+//   },
+//   timeSent: {
+//     type: Date,
+//     required: true,
+//   },
+// });
+// chatSchema.path("message")?.validate((value) => {
+//   return value || (this.media && this.media.secure_url && this.media.public_id);
+// }, "Either message or media with secure_url and public_id should be provided");
 
 const userRoomSchema = new mongoose.Schema({
   user1: {
@@ -43,7 +43,37 @@ const userRoomSchema = new mongoose.Schema({
     required: true,
     index: true,
   },
-  chats: [chatSchema],
+  chats: {
+    type: [
+      {
+        sender: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "users",
+          required: true,
+        },
+        text: {
+          type: String,
+          maxLength: 30000,
+        },
+        media: {
+          public_id: {
+            type: String,
+          },
+          secure_url: {
+            type: String,
+          },
+          extension: {
+            type: String,
+          },
+        },
+        timeSent: {
+          type: Date,
+          required: true,
+        },
+      },
+    ],
+    default: [],
+  },
 });
 
 export default mongoose.model("userRooms", userRoomSchema, "userRooms");

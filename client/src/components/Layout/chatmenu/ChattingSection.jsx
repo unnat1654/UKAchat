@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import ChatNavbar from "../../chat/ChatNavbar";
 import ChatMain from "../../chat/ChatMain";
 import CallMain from "../../chat/callMain";
@@ -6,9 +7,8 @@ import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 import { useActiveChat } from "../../../context/activeChatContext";
 import SendInvite from "../../invite/sendInvite";
 import { useAuth } from "../../../context/authContext";
-import axios from "axios";
 import { useSocket } from "../../../context/socketContext";
-import { useLiveMessages } from "../../../hooks/liveMessagesHook";
+import { useLiveMessages } from "../../../hooks/LiveMessagesHook";
 
 const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
   const [isCall, setIsCall] = useState(false);

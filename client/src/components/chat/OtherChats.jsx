@@ -2,8 +2,13 @@ import React, { useEffect, useState } from "react";
 import UserIcon from "../UserIcon";
 import Tilt from "react-parallax-tilt";
 import axios from "axios";
+
 import { useActiveChat } from "../../context/activeChatContext";
 import { convertTimeTo12 } from "../../functions/timeFunction";
+import {
+  getLSMsgTimeRange,
+  getRoomLSMessages,
+} from "../../functions/localStorageFunction";
 
 const OtherChats = ({
   name,
@@ -39,17 +44,31 @@ const OtherChats = ({
           { contactId: id }
         );
         if (roomResponse?.data?.success) {
-          const messages = await axios.get(
-            `${import.meta.env.VITE_SERVER}/message/get-messages?room=${
-              roomResponse?.data?.room
-            }&page=1`
+          const room = roomResponse?.data?.room;
+          const [firstTime, lastTime] = getLSMsgTimeRange(room);
+          const messagesResponse = await axios.get(
+            `${
+              import.meta.env.VITE_SERVER
+            }/message/get-messages?room=${room}&page=1${
+              firstTime ? `&firstTime=${firstTime}` : ""
+            }${lastTime ? `&lastTime=${lastTime}` : ""}`
           );
-          const recievedMessages = messages?.data?.messages;
-          setActiveChat({
-            c_id: id,
-            room: roomResponse?.data?.room,
-            messages: recievedMessages ? recievedMessages : [],
-          });
+          const recievedMessages = messagesResponse?.data?.messages;
+          const roomId = roomResponse?.data?.room;
+          if (messagesResponse?.data?.success) {
+            const msgInLS = getRoomLSMessages(
+              roomId,
+              0 == messagesResponse.data.newMessagesCount
+            ); // if new messages are found then getRoomLSMessages are not required
+            setActiveChat({
+              c_id: id,
+              room: roomId,
+              messages: [
+                ...(recievedMessages ? recievedMessages : []),
+                ...msgInLS,
+              ],
+            });
+          }
         }
       }
     } catch (error) {

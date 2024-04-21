@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { chunkString } from "../functions/regexFunctions";
+import { addMessageToLocalStorage, roomSaveOldMessages } from "../functions/localStorageFunction";
 
 export const useLiveMessages = (socket, activeChat, setActiveChat) => {
   const [liveMessages, setLiveMessages] = useState(new Map());
@@ -27,6 +28,7 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
           //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date, extension}
         }));
       }
+      addMessageToLocalStorage(room,{format,sent:false,text,file,extension,timeSent});
     };
     const onReceiveBuffer = ({ room, timeSent, numberOfChunks, chunk }) => {
       console.log("recieved Event: receive buffer");
@@ -45,6 +47,7 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
           file: value,
           timeSent,
         });
+        receivingFiles.delete(key);
       }
     };
     if (socket) {
@@ -85,8 +88,13 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
           socket.emit("send-buffer", { room, timeSent, numberOfChunks, chunk });
         });
       }
+      addMessageToLocalStorage(room,{format,sent:true,text:(text?text:""),file:(file?file:""),extension:(extension?extension:""),timeSent});
     } else {
       try {
+        const response = await roomSaveOldMessages(room);
+        if(!response.success){
+          throw new Error("Error while saving old messages");
+        }
         const { data } = await axios.post(
           `${import.meta.env.VITE_SERVER}/message/send-message-api`,
           {

@@ -647,8 +647,7 @@
 }
 .message-box {
   background-color: rgba(98, 126, 220, 0.299);
-  // min-height: 10%;
-  // min-width: 22%;
+  min-width: 10%;
   width: fit-content;
   height: fit-content;
   max-width: 50%;
@@ -755,8 +754,8 @@
   }
   &.sent {
     margin-left: auto;
-    justify-content: flex-end;
-    align-items: center;
+    justify-content: flex-start;
+    align-items:center;
     background-color: rgba(61, 153, 179, 0.299);
   }
 }

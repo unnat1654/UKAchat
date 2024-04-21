@@ -3,17 +3,59 @@ import { PiUploadSimple, PiX } from "react-icons/pi";
 import MessageDisplay from "./MessageDisplay";
 import { useActiveChat } from "../../context/activeChatContext";
 import { TbArrowBigRightLinesFilled } from "react-icons/tb";
+import axios from "axios";
+import {
+  getLSMsgTimeRange,
+  getRoomLSMessages,
+} from "../../../functions/localStorageFunction";
 
 const ChatMain = ({ addLiveMessage }) => {
   const bottomRef = useRef(null);
+  const scrollRef = useRef(null);
   const [activeChat, setActiveChat] = useActiveChat();
   const [typedMessage, setTypedMessage] = useState("");
   const [doc, setDoc] = useState("");
   const [fileName, setFileName] = useState("");
   const [extension, setExtension] = useState("");
-  let todayData = Date.now().toLocaleString();
+  let todayDate = Date.now().toLocaleString();
+  const [page, setPage] = useState({ prevPage: 0, currPage: 1 });
+  const [pageChanging, setPageChanging] = useState(false);
   let prevMessageDate = "";
 
+  const fetchPageMessages = async () => {
+    try {
+      const [firstTime, lastTime] = getLSMsgTimeRange(activeChat.room);
+      console.log("fetchPageMessages ran");
+      if (page.currPage == 1 && page && page.prevPage == 1) return;
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_SERVER}/message/get-messages?room=${
+          activeChat?.room
+        }&page=${page.currPage}${
+          page.currPage == 1
+            ? `&firstTime=${firstTime}&lastTime=${lastTime}`
+            : ""
+        }`
+      );
+      if (data?.success) {
+        let displayMessages = [];
+        if (page.currPage > page.prevPage) {
+          displayMessages = [
+            ...data?.messages,
+            ...activeChat?.messages.slice(0, 100),
+          ];
+        } else if (page.currPage < page.prevPage) {
+          displayMessages = [
+            ...activeChat?.messages.slice(-101, -1),
+            ...data?.messages,
+            ...getRoomLSMessages(activeChat?.room, page.currPage == 1),
+          ];
+        }
+        setActiveChat((prev) => ({ ...prev, messages: displayMessages }));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleDoc = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -78,6 +120,7 @@ const ChatMain = ({ addLiveMessage }) => {
     e.preventDefault();
     setDoc("");
     setFileName("");
+    setExtension("");
   };
 
   const handleSend = () => {
@@ -97,28 +140,76 @@ const ChatMain = ({ addLiveMessage }) => {
     setExtension("");
   };
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (e) => {
     if (
-      event.keyCode === 13 &&
-      (event.target.name === "chatInput" || event.target.name === "fileInput")
+      e.keyCode === 13 &&
+      (e.target.name === "chatInput" || e.target.name === "fileInput")
     ) {
       if (typedMessage != "" || doc) handleSend();
     }
   };
 
   useEffect(() => {
-    //scroll to bottom every time messages change
-    console.log("useEffect to bring message to bottom ran");
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const handleScroll = async () => {
+      console.log(
+        "ScrollTop:" +
+          scrollRef.current.scrollTop +
+          "\nScrollHeight:" +
+          scrollRef.current.scrollHeight +
+          "\nclientHeight:" +
+          scrollRef.current.clientHeight
+      );
+
+      if (scrollRef.current.scrollTop == 0) {
+        if (
+          (1 == page.currPage && activeChat?.messages?.length >= 100) ||
+          (1 < page.currPage && activeChat.messages.length == 200)
+        ) {
+          setPage((prev) => ({
+            prevPage: prev.currPage,
+            currPage: prev.currPage + 1,
+          }));
+          setPageChanging(true);
+        }
+      } else if (
+        scrollRef.current.scrollTop + scrollRef.current.clientHeight >
+        scrollRef.current.scrollHeight * 0.93
+      ) {
+        if (page.prevPage > 1) {
+          setPage((prev) => ({
+            prevPage: prev.currPage,
+            currPage: prev.prevPage - 1,
+          }));
+          setPageChanging(true);
+        }
+      } else {
+        setPageChanging(false);
+      }
+    };
+    scrollRef.current.addEventListener("scroll", handleScroll);
+
+    return () => scrollRef.current.removeEventListener("scroll", handleScroll);
+  }, [scrollRef.current && scrollRef.current.scrollTop]);
+
+  useEffect(() => {
+    if (pageChanging) {
+      fetchPageMessages();
+    }
+  }, [pageChanging]);
+  useEffect(() => {
+    //scroll to bottom every time messages change except when old messages are loaded
+    if (!pageChanging) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [activeChat.messages]);
   useEffect(() => {
-    console.log("useEffect to set typed message blank ran");
     setTypedMessage("");
+    setPage({ prevPage: 0, currPage: 1 });
   }, [activeChat.room]);
 
   return (
     <div className="chatmain">
-      <div className="chatmain-messages">
+      <div ref={scrollRef} className="chatmain-messages">
         {activeChat?.messages?.length &&
           activeChat?.messages?.map((m) => {
             let DateSent = new Date(m.timeSent).toLocaleDateString("en-GB");
@@ -146,6 +237,7 @@ const ChatMain = ({ addLiveMessage }) => {
         <div ref={bottomRef} />
       </div>
       <div className="chatmain-sender">
+        {JSON.stringify(page)}
         <label htmlFor="upload-file">
           {doc ? (
             <>

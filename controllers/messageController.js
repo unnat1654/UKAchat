@@ -1,22 +1,25 @@
+import mongoose from "mongoose";
 import { cloudinary } from "../config/cloudinary.js";
 import chatRoomModel from "../models/chatRoomModel.js";
 
 //POST  /save-backup-messages
 export const saveBulkMessagesController = async (req, res) => {
   try {
-    const messages = req.body; // {room:String,chats:[{format:bool,sent:bool,text:"",file:"",extension:"",timeSent:DateTime}...]}
+    const chats = req.body; // chats:[{room:String,messages:[{format:bool,sent:bool,text:"",file:"",extension:"",timeSent:DateTime}...]}]
     const userId = req.user._id;
 
-    if (!messages) {
+    if (!chats) {
       return res.status(404).send({
         success: false,
         message: "room or messages not found",
       });
     }
-    res.status(201).send({ success: true });
 
-    for (const [room, messages] of Object.entries(messages)) {
-      const lastMessageTime = new Date(messages[-1].timeSent);
+    for (const {room, messages} of chats) {
+      console.log(room);
+      console.log(JSON.stringify(messages));
+      if(messages.length==0) continue;
+      const lastMessageTime = new Date(messages[messages.length-1].timeSent);
       const firstMessageTime = new Date(messages[0].timeSent);
       const { user1, user2, chats } = await chatRoomModel.findOne(
         { _id: room },
@@ -30,54 +33,67 @@ export const saveBulkMessagesController = async (req, res) => {
       }
       const contactId = user1 == userId ? user2 : user1;
       const lastSavedMessageTime = chats[0].timeSent;
-      if (lastMessageTime <= lastSavedMessageTime) {//case 1: all messages are already saved
+      if (lastMessageTime <= lastSavedMessageTime) {
+        //case 1: all messages are already saved
         continue;
-      }
-      else if (firstMessageTime <= lastSavedMessageTime) {//case 2: some messages are saved while some are not
-        let lastSavedMessageIndex=-1;
-        for(let i=0;i<messages.length;i++){
-          if(lastSavedMessageTime===new Date(messages[i].timeSent)){
-            lastSavedMessageIndex=i;
+      } else if (firstMessageTime <= lastSavedMessageTime) {
+        //case 2: some messages are saved while some are not
+        let lastSavedMessageIndex = -1;
+        for (let i = 0; i < messages.length; i++) {
+          if (lastSavedMessageTime === new Date(messages[i].timeSent)) {
+            lastSavedMessageIndex = i;
             break;
           }
         }
-        if(lastSavedMessageIndex<0){
+        if (lastSavedMessageIndex < 0) {
           throw new Error("Something unexpected occured while saving messages");
         }
-        messages.splice(0,lastSavedMessageIndex+1);
+        messages.splice(0, lastSavedMessageIndex + 1);
       }
       const formattedMessages = [];
-        await Promise.all(
-          messages.map(async (message) => {
-            let secureUrl="";
-            let publicId="";
-            if(message.file!==""){
-              const { secure_url, public_id } = await cloudinary.uploader.upload(doc, {
+      await Promise.all(
+        messages.map(async (message) => {
+          let secureUrl = "";
+          let publicId = "";
+          if ("" !== message.file) {
+            const { secure_url, public_id } = await cloudinary.uploader.upload(
+              doc,
+              {
                 resource_type: "auto",
                 folder: "chatMedia",
                 format: extension,
-              });
-              secureUrl=secure_url;
-              publicId=public_id;
-            }
-            if(!secureUrl && !message.text){
-              throw new Error("Error while saving message backup");
-            }
-            formattedMessages.push({
-              sender: message.sent ? userId : contactId,
-              ...(message.text && { text: message.text }),
-              ...(secureUrl && {media:{secure_url:secureUrl,public_id:publicId,extension:message.extension}}),
-              timeSent:new Date(message.timeSent)
-            });
-          })
-        );
-        await chatRoomModel.findByIdAndUpdate(room, {$push:{chats:{$each:formattedMessages}}},{runValidators:true});
-
+              }
+            );
+            secureUrl = secure_url;
+            publicId = public_id;
+          }
+          if (!secureUrl && "" == message.text) {
+            throw new Error("Error while saving message backup");
+          }
+          formattedMessages.push({
+            sender: message.sent ? userId : contactId,
+            ...(message.text && { text: message.text }),
+            ...(secureUrl && {
+              media: {
+                secure_url: secureUrl,
+                public_id: publicId,
+                extension: message.extension,
+              },
+            }),
+            timeSent: new Date(message.timeSent),
+          });
+        })
+      );
+      await chatRoomModel.findByIdAndUpdate(
+        room,
+        { $push: { chats: { $each: formattedMessages } } },
+        { runValidators: true }
+      );
     }
     res.status(201).send({
-      success:true,
-      message:"All messages saved sucessfully"
-    })
+      success: true,
+      message: "All messages saved sucessfully",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -173,29 +189,59 @@ export const getLastMessageController = async (req, res) => {
 };
 
 //get 200 messages in a batch from a contact
-//GET  /get-messages?room=""&page=""&time=""
+//GET  /get-messages?room=""&page=""&firstTime=""&lastTime=""
 export const getMessagesController = async (req, res) => {
-  const userId = req.user._id;
-  const room=req.query.room;
-  const page=parseInt(req.query.page);
-  const time=new Date(req.query.time);//oldest local message time
-  const timeInNum= time.getTime();
+  const {_id}= req.user;
+  const room = req.query.room;
+  const page = parseInt(req.query.page);
+  const firstTimeInNum = parseInt(req.query.firstTime); //oldest local message time
+  const lastTimeInNum = parseInt(req.query.lastTime); //last local stored message time
+  let newMessagesCount = 0;
+
   try {
-    const chatsPerPage = 200;
-    const fromEndIndex = -(chatsPerPage * page);
+    const chatsPerPage = 100;
+    const fromEndIndex = -(chatsPerPage * parseInt(page));
+    const totalSavedMessages=await chatRoomModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(room) } }, // Match the document by its ID
+      { $unwind: "$chats" }, // Unwind the array
+      {
+        $group: {
+          _id: null,
+          arraySize: { $sum: 1 } // Count the number of documents
+        }
+      }
+    ])
+    if(totalSavedMessages<-(fromEndIndex+1)){
+      res.status(200).send({
+        success:true,
+        message:"No more Messages found",
+        newMessagesCount,
+        messages: [],
+      })
+    };
     const { chats } = await chatRoomModel
       .findOne(
         { _id: room },
         { chats: { $slice: [fromEndIndex, chatsPerPage] } }
       )
-      .select("chats");
     if (chats) {
       const formatMessages = [];
-      for(let chat of chats){
-        let timeSent= new Date(chat.timeSent);
-        if(timeSent.getTime()>=timeInNum){
-          continue;
+      if (1 == parseInt(page)) {
+        for (let chat of chats) {
+          let timeSent = new Date(chat.timeSent);
+          if (timeSent.getTime() > lastTimeInNum) {
+            newMessagesCount++;
+          }
         }
+      }
+      for (let chat of chats) {
+        if (0 == newMessagesCount && 1 == page) {
+          let timeSent = new Date(chat.timeSent);
+          if (timeSent.getTime() >= firstTimeInNum) {
+            continue;
+          }
+        }
+
         formatMessages.push({
           ...(chat.text
             ? { format: true, text: chat.text, file: "", extension: "" }
@@ -206,19 +252,21 @@ export const getMessagesController = async (req, res) => {
                 extension: chat.media.extension,
               }),
           timeSent: chat.timeSent,
-          sent: chat.sender == userId,
+          sent: chat.sender == _id,
         });
       }
 
       res.status(200).send({
         success: true,
         message: "Messages found successfully",
+        newMessagesCount,
         messages: formatMessages,
       });
     } else {
       res.status(200).send({
         success: true,
         message: "No messages found",
+        newMessagesCount,
         messages: [],
       });
     }

@@ -1129,6 +1129,7 @@
 
 .message-box {
   background-color: rgba(98, 126, 220, 0.299);
+  min-width: 10%;
   width: -moz-fit-content;
   width: fit-content;
   height: -moz-fit-content;
@@ -1233,7 +1234,7 @@
 }
 .message-box.sent {
   margin-left: auto;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   background-color: rgba(61, 153, 179, 0.299);
 }
