@@ -7,7 +7,7 @@ import axios from "axios";
 import {
   getLSMsgTimeRange,
   getRoomLSMessages,
-} from "../../../functions/localStorageFunction";
+} from "../../functions/localStorageFunction";
 
 const ChatMain = ({ addLiveMessage }) => {
   const bottomRef = useRef(null);
@@ -21,6 +21,7 @@ const ChatMain = ({ addLiveMessage }) => {
   const [page, setPage] = useState({ prevPage: 0, currPage: 1 });
   const [pageChanging, setPageChanging] = useState(false);
   let prevMessageDate = "";
+  let counter = 0;
 
   const fetchPageMessages = async () => {
     try {
@@ -50,6 +51,8 @@ const ChatMain = ({ addLiveMessage }) => {
             ...getRoomLSMessages(activeChat?.room, page.currPage == 1),
           ];
         }
+        console.log("ac ", activeChat);
+        console.log("dm ", displayMessages);
         setActiveChat((prev) => ({ ...prev, messages: displayMessages }));
       }
     } catch (error) {
@@ -161,10 +164,18 @@ const ChatMain = ({ addLiveMessage }) => {
       );
 
       if (scrollRef.current.scrollTop == 0) {
-        if (
-          (1 == page.currPage && activeChat?.messages?.length >= 100) ||
-          (1 < page.currPage && activeChat.messages.length == 200)
-        ) {
+        console.log("length", activeChat.messages.length);
+        console.log(activeChat);
+        const condition1 =
+          page.currPage === 1 && activeChat?.messages?.length >= 100;
+        const condition2 =
+          page.currPage > 1 && activeChat?.messages?.length === 200;
+        const condition = condition1 || condition2;
+        console.log("c1", condition1);
+        console.log("c2", condition2);
+        console.log(condition);
+        if (condition) {
+          console.log("if");
           setPage((prev) => ({
             prevPage: prev.currPage,
             currPage: prev.currPage + 1,
@@ -196,6 +207,7 @@ const ChatMain = ({ addLiveMessage }) => {
       fetchPageMessages();
     }
   }, [pageChanging]);
+
   useEffect(() => {
     //scroll to bottom every time messages change except when old messages are loaded
     if (!pageChanging) {
@@ -220,7 +232,8 @@ const ChatMain = ({ addLiveMessage }) => {
             }
 
             return (
-              <React.Fragment key={m.timeSent}>
+              // <React.Fragment key={m.timeSent}>
+              <React.Fragment key={counter++}>
                 {condition && <div className="date-tag">{DateSent}</div>}
 
                 <MessageDisplay

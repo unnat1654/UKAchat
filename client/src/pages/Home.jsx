@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import background from "../assets/Chill-Lofi-Background-Wallpaper-Full-HD-Free-Download-for-PC-Laptop-Macbook-231121-Wallpaperxyz.com-1.gif";
 import ChattingSection from "../components/Layout/chatmenu/ChattingSection";
 import ChatMenu from "../components/Layout/chatmenu/ChatMenu";
@@ -20,7 +20,7 @@ const Layout = () => {
     const backUpMessages = () => {
       if (count > 10) {
         saveAllOldMessages();
-        count=0;
+        count = 0;
       }
     };
 

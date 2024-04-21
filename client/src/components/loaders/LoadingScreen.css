@@ -1,0 +1,16 @@
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+
+  .loading-screen-heading {
+    color: #000000b2;
+  }
+
+  .loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

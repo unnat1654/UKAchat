@@ -7,6 +7,7 @@ import { useAuth } from "../../../context/authContext";
 import { useActiveChat } from "../../../context/activeChatContext";
 import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 import Invites from "../../invite/Invites";
+import LoadingScreen from "../../loaders/LoadingScreen";
 
 const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
   const [searchInput, setSearchInput] = useState("");
@@ -136,6 +137,7 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
               ))}
             </React.Fragment>
           </div>
+          {/* {JSON.stringify(activeChat, null, "\t")} */}
         </React.Fragment>
       )}
       {sideBarTab == "invites" && (
@@ -149,6 +151,12 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox }) => {
               setInvitesArray={setInvitesArray}
             ></Invites>
           ))}
+        </React.Fragment>
+      )}
+
+      {sideBarTab == "groups" && (
+        <React.Fragment>
+          <LoadingScreen></LoadingScreen>
         </React.Fragment>
       )}
     </div>

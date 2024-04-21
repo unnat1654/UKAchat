@@ -15,11 +15,11 @@ export const saveBulkMessagesController = async (req, res) => {
       });
     }
 
-    for (const {room, messages} of chats) {
+    for (const { room, messages } of chats) {
       console.log(room);
       console.log(JSON.stringify(messages));
-      if(messages.length==0) continue;
-      const lastMessageTime = new Date(messages[messages.length-1].timeSent);
+      if (messages.length == 0) continue;
+      const lastMessageTime = new Date(messages[messages.length - 1].timeSent);
       const firstMessageTime = new Date(messages[0].timeSent);
       const { user1, user2, chats } = await chatRoomModel.findOne(
         { _id: room },
@@ -86,7 +86,11 @@ export const saveBulkMessagesController = async (req, res) => {
       );
       await chatRoomModel.findByIdAndUpdate(
         room,
-        { $push: { chats: { $each: formattedMessages } } },
+        {
+          $push: { chats: { $each: formattedMessages } },
+          $inc: { totalMessages: formattedMessages.length },
+        },
+
         { runValidators: true }
       );
     }
@@ -130,6 +134,7 @@ export const sendMessageController = async (req, res) => {
           timeSent,
         },
       },
+      $inc: { totalMessages: 1 },
     };
     await chatRoomModel.findByIdAndUpdate(room, update, {
       runValidators: true,
@@ -191,7 +196,7 @@ export const getLastMessageController = async (req, res) => {
 //get 200 messages in a batch from a contact
 //GET  /get-messages?room=""&page=""&firstTime=""&lastTime=""
 export const getMessagesController = async (req, res) => {
-  const {_id}= req.user;
+  const { _id } = req.user;
   const room = req.query.room;
   const page = parseInt(req.query.page);
   const firstTimeInNum = parseInt(req.query.firstTime); //oldest local message time
@@ -201,29 +206,24 @@ export const getMessagesController = async (req, res) => {
   try {
     const chatsPerPage = 100;
     const fromEndIndex = -(chatsPerPage * parseInt(page));
-    const totalSavedMessages=await chatRoomModel.aggregate([
-      { $match: { _id: new mongoose.Types.ObjectId(room) } }, // Match the document by its ID
-      { $unwind: "$chats" }, // Unwind the array
-      {
-        $group: {
-          _id: null,
-          arraySize: { $sum: 1 } // Count the number of documents
-        }
-      }
-    ])
-    if(totalSavedMessages<-(fromEndIndex+1)){
-      res.status(200).send({
-        success:true,
-        message:"No more Messages found",
-        newMessagesCount,
-        messages: [],
-      })
-    };
-    const { chats } = await chatRoomModel
-      .findOne(
-        { _id: room },
-        { chats: { $slice: [fromEndIndex, chatsPerPage] } }
-      )
+    let fetchfrom = fromEndIndex;
+    let fetchTill = chatsPerPage;
+    const { totalMessages } = await chatRoomModel
+      .findById(room)
+      .select("totalMessages");
+    console.log("fei ", -(fromEndIndex + 1));
+    console.log("tm ", totalMessages);
+    if (totalMessages < -(fromEndIndex + 1)) {
+      fetchfrom = -totalMessages;
+      fetchTill = totalMessages - (page - 1) * chatsPerPage;
+    }
+    const { chats } = await chatRoomModel.findOne(
+      { _id: room },
+      { chats: { $slice: [fetchfrom, fetchTill] } }
+    );
+
+    console.log(chats);
+
     if (chats) {
       const formatMessages = [];
       if (1 == parseInt(page)) {

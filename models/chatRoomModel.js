@@ -74,6 +74,10 @@ const userRoomSchema = new mongoose.Schema({
     ],
     default: [],
   },
+  totalMessages: {
+    type: Number,
+    default: 0,
+  },
 });
 
 export default mongoose.model("userRooms", userRoomSchema, "userRooms");
