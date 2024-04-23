@@ -9,6 +9,7 @@ const ActiveChatProvider = ({ children }) => {
     messages: [], //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date, extension}
     online: false,
     photo: "", //securl_url
+    totalPages: 0,
   });
 
   return (

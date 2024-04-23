@@ -21,7 +21,6 @@ const ChatMain = ({ addLiveMessage }) => {
   const [page, setPage] = useState({ prevPage: 0, currPage: 1 });
   const [pageChanging, setPageChanging] = useState(false);
   let prevMessageDate = "";
-  let counter = 0;
 
   const fetchPageMessages = async () => {
     try {
@@ -53,7 +52,22 @@ const ChatMain = ({ addLiveMessage }) => {
         }
         console.log("ac ", activeChat);
         console.log("dm ", displayMessages);
-        setActiveChat((prev) => ({ ...prev, messages: displayMessages }));
+        setActiveChat((prev) => ({
+          ...prev,
+          messages: displayMessages.slice(0, 100),
+          totalPages: data?.totalPages,
+        }));
+        if (
+          scrollRef.current.scrollTop + scrollRef.current.clientHeight !=
+          scrollRef.current.scrollHeight
+        ) {
+          scrollRef.current.scrollTop =
+            scrollRef.current.scrollHeight -
+            scrollRef.current.clientHeight -
+            100;
+        } else {
+          scrollRef.current.scrollTop = scrollRef.current.clientHeight - 100;
+        }
       }
     } catch (error) {
       console.log(error);
@@ -169,7 +183,9 @@ const ChatMain = ({ addLiveMessage }) => {
         const condition1 =
           page.currPage === 1 && activeChat?.messages?.length >= 100;
         const condition2 =
-          page.currPage > 1 && activeChat?.messages?.length === 200;
+          page.currPage > 1 &&
+          activeChat?.messages?.length === 100 &&
+          page.currPage != activeChat?.totalPages;
         const condition = condition1 || condition2;
         console.log("c1", condition1);
         console.log("c2", condition2);
@@ -183,16 +199,28 @@ const ChatMain = ({ addLiveMessage }) => {
           setPageChanging(true);
         }
       } else if (
-        scrollRef.current.scrollTop + scrollRef.current.clientHeight >
-        scrollRef.current.scrollHeight * 0.93
+        scrollRef.current.scrollTop + scrollRef.current.clientHeight ==
+        scrollRef.current.scrollHeight
       ) {
-        if (page.prevPage > 1) {
+        if (page.prevPage >= 1) {
+          console.log("1234");
           setPage((prev) => ({
-            prevPage: prev.currPage,
-            currPage: prev.prevPage - 1,
+            currPage: prev.prevPage,
+            prevPage: prev.prevPage - 1,
           }));
           setPageChanging(true);
         }
+        // } else if (
+        //   scrollRef.current.scrollTop + scrollRef.current.clientHeight >
+        //   scrollRef.current.scrollHeight * 0.93
+        // ) {
+        //   if (page.prevPage > 1) {
+        //     setPage((prev) => ({
+        //       prevPage: prev.currPage,
+        //       currPage: prev.prevPage - 1,
+        //     }));
+        //     setPageChanging(true);
+        //   }
       } else {
         setPageChanging(false);
       }
@@ -232,8 +260,7 @@ const ChatMain = ({ addLiveMessage }) => {
             }
 
             return (
-              // <React.Fragment key={m.timeSent}>
-              <React.Fragment key={counter++}>
+              <React.Fragment key={m.timeSent}>
                 {condition && <div className="date-tag">{DateSent}</div>}
 
                 <MessageDisplay

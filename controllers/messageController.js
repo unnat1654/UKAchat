@@ -211,8 +211,6 @@ export const getMessagesController = async (req, res) => {
     const { totalMessages } = await chatRoomModel
       .findById(room)
       .select("totalMessages");
-    console.log("fei ", -(fromEndIndex + 1));
-    console.log("tm ", totalMessages);
     if (totalMessages < -(fromEndIndex + 1)) {
       fetchfrom = -totalMessages;
       fetchTill = totalMessages - (page - 1) * chatsPerPage;
@@ -221,8 +219,6 @@ export const getMessagesController = async (req, res) => {
       { _id: room },
       { chats: { $slice: [fetchfrom, fetchTill] } }
     );
-
-    console.log(chats);
 
     if (chats) {
       const formatMessages = [];
@@ -261,6 +257,7 @@ export const getMessagesController = async (req, res) => {
         message: "Messages found successfully",
         newMessagesCount,
         messages: formatMessages,
+        totalPages: Math.ceil(totalMessages / chatsPerPage),
       });
     } else {
       res.status(200).send({
