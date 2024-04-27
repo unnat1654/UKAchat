@@ -13,7 +13,7 @@ const router = Router();
 router.post("/save-backup-messages", isLoggedIn, saveBulkMessagesController);
 
 //send offline Message
-router.post("/send-message-api",isLoggedIn,sendMessageController);
+router.post("/send-message-api", isLoggedIn, sendMessageController);
 
 //get last message from a contact
 router.get("/get-last-message/:cid", isLoggedIn, getLastMessageController);

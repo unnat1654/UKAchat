@@ -199,6 +199,14 @@ export const getMessagesController = async (req, res) => {
   const { _id } = req.user;
   const room = req.query.room;
   const page = parseInt(req.query.page);
+  if (page == 0) {
+    res.status(200).send({
+      success: true,
+      message: "No messages found",
+      messages: [],
+    });
+    return;
+  }
   const firstTimeInNum = parseInt(req.query.firstTime); //oldest local message time
   const lastTimeInNum = parseInt(req.query.lastTime); //last local stored message time
   let newMessagesCount = 0;
@@ -237,7 +245,6 @@ export const getMessagesController = async (req, res) => {
             continue;
           }
         }
-
         formatMessages.push({
           ...(chat.text
             ? { format: true, text: chat.text, file: "", extension: "" }
