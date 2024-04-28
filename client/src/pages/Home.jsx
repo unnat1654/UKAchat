@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState,useEffect, useCallback} from "react";
 import background from "../assets/Chill-Lofi-Background-Wallpaper-Full-HD-Free-Download-for-PC-Laptop-Macbook-231121-Wallpaperxyz.com-1.gif";
 import ChattingSection from "../components/Layout/chatmenu/ChattingSection";
 import ChatMenu from "../components/Layout/chatmenu/ChatMenu";
@@ -9,13 +9,13 @@ import { saveAllOldMessages } from "../functions/localStorageFunction";
 const Layout = () => {
   const [auth, setAuth] = useAuth();
   const [sideBarTab, setSideBarTab] = useState("chats");
+  const [myStream,setMyStream] =useState();
   const [showInviteBox, setShowInviteBox] = useState({
     isShow: false,
     searchedId: "",
     searchedUsername: "",
   });
   let count = 0;
-
   useEffect(() => {
     const backUpMessages = () => {
       if (count > 10) {
@@ -56,10 +56,12 @@ const Layout = () => {
           <ChatMenu
             sideBarTab={sideBarTab}
             setShowInviteBox={setShowInviteBox}
+            useMyStream={[myStream,setMyStream]}
           />
           <ChattingSection
             showInviteBox={showInviteBox}
             setShowInviteBox={setShowInviteBox}
+            useMyStream={[myStream,setMyStream]}
           />
         </div>
 

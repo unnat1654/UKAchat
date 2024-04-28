@@ -1013,6 +1013,61 @@
   scale: 1.05;
 }
 
+.incoming-call {
+  margin: 10px auto;
+  width: 90%;
+  height: -moz-max-content;
+  height: max-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  background-color: rgba(215, 215, 215, 0.1137254902);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+.incoming-call .incoming-call-photo {
+  width: 30%;
+  height: -moz-max-content;
+  height: max-content;
+}
+.incoming-call .incoming-call-username {
+  font-size: calc(10px + 1vw);
+  color: rgb(190, 190, 190);
+  font-family: "Nunito Sans";
+}
+.incoming-call .incoming-call-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+  gap: 25%;
+}
+.incoming-call .incoming-call-buttons * {
+  font-size: calc(40px + 1vw);
+  border-width: 0;
+  border-radius: 100%;
+  padding: 10px;
+  flex-shrink: 0;
+  transition: opacity 1s;
+}
+.incoming-call .incoming-call-buttons *:hover {
+  opacity: 70%;
+}
+.incoming-call .incoming-call-buttons-accept {
+  background-color: rgba(44, 198, 126, 0.9411764706);
+  color: #323232;
+}
+.incoming-call .incoming-call-buttons-decline {
+  background-color: rgba(198, 54, 54, 0.8901960784);
+  color: #c8c8c8;
+}
+
 @keyframes shine {
   0% {
     background-position: 0;

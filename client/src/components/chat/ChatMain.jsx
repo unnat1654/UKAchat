@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useRef, useEffect } from "react";
 import { PiUploadSimple, PiX } from "react-icons/pi";
 import MessageDisplay from "./MessageDisplay";
@@ -17,7 +18,6 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
   const [doc, setDoc] = useState("");
   const [fileName, setFileName] = useState("");
   const [extension, setExtension] = useState("");
-  let todayDate = Date.now().toLocaleString();
   const [pageChanging, setPageChanging] = useState(false);
   const [newScrollHeight, setNewScrollHeight] = useState(0);
   const [toDel, setToDel] = useState(0);

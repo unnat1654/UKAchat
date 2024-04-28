@@ -54,15 +54,14 @@ const OtherChats = ({
             }${lastTime ? `&lastTime=${lastTime}` : ""}`
           );
           const recievedMessages = messagesResponse?.data?.messages;
-          const roomId = roomResponse?.data?.room;
           if (messagesResponse?.data?.success) {
             const msgInLS = getRoomLSMessages(
-              roomId,
+              room,
               0 == messagesResponse.data.newMessagesCount
             ); // if new messages are found then getRoomLSMessages are not required
             setActiveChat({
               c_id: id,
-              room: roomId,
+              room,
               messages: [
                 ...(recievedMessages ? recievedMessages : []),
                 ...msgInLS,

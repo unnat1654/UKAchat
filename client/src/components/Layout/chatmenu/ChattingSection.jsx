@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import ChatNavbar from "../../chat/ChatNavbar";
 import ChatMain from "../../chat/ChatMain";
-import CallMain from "../../chat/callMain";
+import CallMain from "../../call/CallMain";
 import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 import { useActiveChat } from "../../../context/activeChatContext";
 import SendInvite from "../../invite/sendInvite";
 import { useAuth } from "../../../context/authContext";
 import { useSocket } from "../../../context/socketContext";
 import { useLiveMessages } from "../../../hooks/LiveMessagesHook";
+import peer from "../../../services/peer";
 
-const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
-  const [isCall, setIsCall] = useState(false);
+const ChattingSection = ({ showInviteBox, setShowInviteBox,useMyStream }) => {
+  const [callRoom, setCallRoom] = useState("");
   const [activeChat, setActiveChat] = useActiveChat();
   const [auth, setAuth] = useAuth();
   const socket = useSocket();
+  const [myStream,setMyStream]=useMyStream;
   const [contactDetailsArray, setContactDetailsArray] =
     useContactDetailsArray();
   const [page, setPage] = useState({ prevPage: 0, currPage: 1 });
@@ -48,21 +50,41 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
       console.log(error);
     }
   };
+  const sendStreams= useCallback(() => {
+    for (const track of myStream.getTracks()) {
+      peer.peer.addTrack(track, myStream);
+    }
+  }, [myStream]);
+  const handleVoiceCall=useCallback(async ()=>{
+   
+    const username=auth?.user?.username;
+    const photo=auth?.user?.photo;
+    const room=activeChat?.room;
+    if(!username || !room){
+      return;
+    }
+    const stream=await navigator.mediaDevices.getUserMedia({
+      audio:true
+    });
+    setMyStream(stream);
+    sendStreams();
+    console.log(myStream);
+    const offer = await peer.getOffer();
+    socket.emit("handle-voice-call",{room,offer,username,photo});
+    setCallRoom(room);
+    
+  },[socket]);
+
+  const handleVideoCall=useCallback(()=>{
+
+  },[]);
+
   useEffect(() => {
     if (auth?.token) {
       getOnlineUsers();
     }
   }, [auth?.token, socket]);
-  useEffect(() => {
-    const onPing = (prm) => {
-      console.log(prm);
-    };
-    if (socket) {
-      socket.on("ping", onPing);
 
-      return () => socket.off("ping");
-    }
-  }, [socket]);
 
   useEffect(() => {
     const contactObject = contactDetailsArray.detailsArray.find(
@@ -76,16 +98,11 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
       online = true;
     }
     if (contactObject) {
-      const roomLiveMessages = liveMessages.get(activeChat.room);
       setActiveChat((prev) => ({
         ...prev,
         username: contactObject.username,
         photo: contactObject?.photo?.secure_url,
-        online: online,
-        messages: [
-          ...prev.messages,
-          ...(roomLiveMessages ? roomLiveMessages : ""),
-        ],
+        online,
       }));
     }
   }, [activeChat?.room]);
@@ -99,8 +116,8 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
       )}
       {!showInviteBox.isShow && (
         <>
-          <ChatNavbar isCall={isCall} />
-          {isCall ? (
+          <ChatNavbar callRoom={callRoom} handleVoiceCall={handleVoiceCall} handleVideoCall={handleVideoCall} useMyStream={useMyStream} />
+          {callRoom===activeChat?.room ? (
             <CallMain />
           ) : (
             <ChatMain
