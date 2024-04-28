@@ -9,7 +9,7 @@ import {
   getRoomLSMessages,
 } from "../../functions/localStorageFunction";
 
-const ChatMain = ({ addLiveMessage }) => {
+const ChatMain = ({ addLiveMessage, page, setPage }) => {
   const bottomRef = useRef(null);
   const scrollRef = useRef(null);
   const [activeChat, setActiveChat] = useActiveChat();
@@ -18,7 +18,6 @@ const ChatMain = ({ addLiveMessage }) => {
   const [fileName, setFileName] = useState("");
   const [extension, setExtension] = useState("");
   let todayDate = Date.now().toLocaleString();
-  const [page, setPage] = useState({ prevPage: 0, currPage: 1 });
   const [pageChanging, setPageChanging] = useState(false);
   const [newScrollHeight, setNewScrollHeight] = useState(0);
   const [toDel, setToDel] = useState(0);
@@ -63,8 +62,8 @@ const ChatMain = ({ addLiveMessage }) => {
           }
           setToDel(data?.messages?.length);
         }
-        console.log("ac ", activeChat);
-        console.log("dm ", displayMessages);
+        // console.log("ac ", activeChat);
+        // console.log("dm ", displayMessages);
         setActiveChat((prev) => ({
           ...prev,
           messages: displayMessages,
@@ -170,14 +169,14 @@ const ChatMain = ({ addLiveMessage }) => {
 
   useEffect(() => {
     const handleScroll = async () => {
-      console.log(
-        "ScrollTop:" +
-          scrollRef.current.scrollTop +
-          "\nScrollHeight:" +
-          scrollRef.current.scrollHeight +
-          "\nclientHeight:" +
-          scrollRef.current.clientHeight
-      );
+      // console.log(
+      //   "ScrollTop:" +
+      //     scrollRef.current.scrollTop +
+      //     "\nScrollHeight:" +
+      //     scrollRef.current.scrollHeight +
+      //     "\nclientHeight:" +
+      //     scrollRef.current.clientHeight
+      // );
 
       if (scrollRef.current.scrollTop == 0) {
         setFetchPrev(true);
@@ -190,9 +189,9 @@ const ChatMain = ({ addLiveMessage }) => {
           activeChat?.messages?.length >= 100 &&
           page.currPage != activeChat?.totalPages;
         const condition = condition1 || condition2;
-        console.log("c1", condition1);
-        console.log("c2", condition2);
-        console.log(condition);
+        // console.log("c1", condition1);
+        // console.log("c2", condition2);
+        // console.log(condition);
         if (condition) {
           console.log("if");
           setNewScrollHeight(scrollRef.current.scrollHeight);

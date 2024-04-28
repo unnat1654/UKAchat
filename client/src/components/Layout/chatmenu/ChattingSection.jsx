@@ -17,10 +17,12 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
   const socket = useSocket();
   const [contactDetailsArray, setContactDetailsArray] =
     useContactDetailsArray();
+  const [page, setPage] = useState({ prevPage: 0, currPage: 1 });
   const [liveMessages, addLiveMessage] = useLiveMessages(
     socket,
     activeChat,
-    setActiveChat
+    setActiveChat,
+    page.currPage
   );
   const [onlineUsers, setOnlineUsers] = useState({
     onlineUserRooms: [],
@@ -104,6 +106,8 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox }) => {
             <ChatMain
               addLiveMessage={addLiveMessage}
               onlineContacts={onlineUsers.onlineContacts}
+              page={page}
+              setPage={setPage}
             />
           )}
         </>

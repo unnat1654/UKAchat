@@ -1,0 +1,247 @@
+@import "./functions";
+
+.chatmenu {
+  height: 100%;
+  background-color: rgb(84, 84, 84, 0.07);
+  border: rgb(225, 225, 225, 0.1) 1px solid;
+  border-block-width: 0px;
+  flex-grow: 5;
+  flex-basis: auto;
+  flex-wrap: nowrap;
+  max-width: 400px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex-direction: column;
+  padding-block: 10px;
+  overflow-y: scroll;
+  @media screen and (max-width: $tablet-max) {
+    & {
+      min-width: 65%;
+    }
+  }
+  @media screen and (max-width: $mobile-max) {
+    & {
+      min-width: 90%;
+    }
+  }
+  #{&}-creategroup {
+    position: fixed;
+    bottom: 11%;
+    left: 27.5%;
+    font-size: 30px;
+    z-index: 1;
+    color: rgb(46, 46, 46);
+    background-color: #dc5385;
+    padding: 9px;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    transition: all 0.5s 0.1s;
+    &:hover {
+      background-color: #f795b9;
+    }
+  }
+  #{&}-allchats {
+    overflow-y: scroll;
+    /* width */
+    &::-webkit-scrollbar {
+      width: 7px;
+      height: 0px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+      background: #f1f1f100;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background: #46464673;
+      border-radius: 10px;
+      transition: all 1s;
+      &:hover {
+        background: #58585873;
+      }
+    }
+  }
+  #{&}-search-bar {
+    @include flexCenter(row);
+    margin: 10px auto;
+    padding: 0px 10px 0px 5px;
+    border-radius: 20px;
+    color: rgb(234, 234, 234);
+    background-color: rgba(249, 249, 249, 0.089);
+    min-width: 60%;
+    min-height: max-content;
+    max-width: max-content;
+    backdrop-filter: blur(10px);
+    transition: all 0.5s;
+    border: solid rgba(155, 155, 155, 0.263);
+    border-width: 0px 1px 1px 0px;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.377);
+    // box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+    //   rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    flex-shrink: 0;
+    * {
+      flex-shrink: 0;
+    }
+    input {
+      background-color: transparent;
+      border-width: 0px;
+      padding-left: 10px;
+      padding-block: 15px;
+      color: rgb(234, 234, 234);
+      font-family: "poppins";
+    }
+    input:focus {
+      outline: none;
+    }
+    input::placeholder {
+      color: rgb(207, 207, 207);
+    }
+    &:hover {
+      background-color: rgba(171, 171, 171, 0.331);
+    }
+    &:focus-within {
+      background-color: rgba(32, 32, 32, 0.014);
+    }
+  }
+  /* width */
+  &::-webkit-scrollbar {
+    width: 7px;
+    height: 0px;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    background: #f1f1f100;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: #888888c7;
+    border-radius: 10px;
+    transition: all 1s;
+    &:hover {
+      background: #c1c1c1af;
+    }
+  }
+}
+
+.otherchats {
+  @include flexCenter(row);
+  margin: 10px 15px;
+  border-radius: 5px;
+  background-color: rgba(112, 108, 218, 0.043);
+  backdrop-filter: blur(10px);
+  color: rgb(215, 215, 215);
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  padding: 1% 5%;
+  flex-shrink: 0;
+  transition: all 1s;
+  min-width: fit-content;
+  &:hover {
+    color: white;
+  }
+  * {
+    @include flexCenter(column);
+    flex-shrink: 0;
+  }
+  #{&}-dp {
+    height: 45px;
+    width: 45px;
+    border-radius: 100%;
+  }
+  #{&}-chat {
+    margin-left: 3%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    &-name {
+      font-family: "Nunito Sans";
+      font-size: calc(12px + 0.4vw);
+    }
+    &-message {
+      text-indent: 5px;
+      font-family: "Poppins";
+      font-size: calc(10px + 0.2vw);
+    }
+  }
+  #{&}-info {
+    margin-left: auto;
+    margin-right: 5%;
+    display: flex;
+
+    &-time {
+      margin-bottom: 5px;
+      font-family: "Poppins";
+    }
+    &-notification {
+      margin-bottom: 5px;
+      font-family: "Poppins";
+      .notification {
+        width: 20px;
+        height: 20px;
+        border-radius: 100%;
+        background: radial-gradient(
+          circle,
+          rgb(98, 251, 63) 30%,
+          rgba(86, 251, 71, 0.377) 40%,
+          rgb(126 255 134 / 19%) 70%
+        );
+      }
+    }
+  }
+  &-active {
+    background-color: rgba(34, 19, 32, 0.142);
+  }
+}
+
+.invites {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  margin: 10px 15px;
+  border-radius: 5px;
+  background-color: rgba(112, 108, 218, 0.043);
+  backdrop-filter: blur(10px);
+  color: rgb(215, 215, 215);
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  padding: 1% 5%;
+  flex-shrink: 0;
+  transition: all 1s;
+  min-width: fit-content;
+  &:hover {
+    color: white;
+  }
+  * {
+    @include flexCenter(column);
+    flex-shrink: 0;
+  }
+  #{&}-dp {
+    height: calc(35px + 0.4vw);
+    width: calc(35px + 0.4vw);
+    border-radius: 100%;
+  }
+  #{&}-chat {
+    margin-left: 3%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    &-name {
+      font-family: "Nunito Sans";
+      font-size: calc(12px + 0.4vw);
+    }
+  }
+  #{&}-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+  &-active {
+    background-color: rgba(34, 19, 32, 0.142);
+  }
+}

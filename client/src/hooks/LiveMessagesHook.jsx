@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { chunkString } from "../functions/regexFunctions";
-import { addMessageToLocalStorage, roomSaveOldMessages } from "../functions/localStorageFunction";
+import {
+  addMessageToLocalStorage,
+  roomSaveOldMessages,
+} from "../functions/localStorageFunction";
 
-export const useLiveMessages = (socket, activeChat, setActiveChat) => {
+export const useLiveMessages = (socket, activeChat, setActiveChat, page) => {
   const [liveMessages, setLiveMessages] = useState(new Map());
   let receivingFiles = new Map();
   let chunkSize = 500000;
@@ -18,7 +21,16 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
           { format, sent: false, text, file, timeSent, extension },
         ])
       );
-      if (activeChat && activeChat?.room == room) {
+      addMessageToLocalStorage(room, {
+        format,
+        sent: false,
+        text,
+        file,
+        extension,
+        timeSent,
+      });
+      if (activeChat && activeChat?.room == room && page <= 2) {
+        console.log(page);
         setActiveChat((prev) => ({
           ...prev,
           messages: [
@@ -28,7 +40,6 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
           //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date, extension}
         }));
       }
-      addMessageToLocalStorage(room,{format,sent:false,text,file,extension,timeSent});
     };
     const onReceiveBuffer = ({ room, timeSent, numberOfChunks, chunk }) => {
       console.log("recieved Event: receive buffer");
@@ -88,11 +99,18 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
           socket.emit("send-buffer", { room, timeSent, numberOfChunks, chunk });
         });
       }
-      addMessageToLocalStorage(room,{format,sent:true,text:(text?text:""),file:(file?file:""),extension:(extension?extension:""),timeSent});
+      addMessageToLocalStorage(room, {
+        format,
+        sent: true,
+        text: text ? text : "",
+        file: file ? file : "",
+        extension: extension ? extension : "",
+        timeSent,
+      });
     } else {
       try {
         const response = await roomSaveOldMessages(room);
-        if(!response.success){
+        if (response?.success != true) {
           throw new Error("Error while saving old messages");
         }
         const { data } = await axios.post(
@@ -128,7 +146,7 @@ export const useLiveMessages = (socket, activeChat, setActiveChat) => {
         ])
       );
     }
-    if (room == activeChat.room) {
+    if (room == activeChat.room && page <= 2) {
       setActiveChat((prev) => ({
         ...prev,
         messages: [

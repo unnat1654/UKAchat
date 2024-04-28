@@ -1,0 +1,117 @@
+@import "./functions";
+
+.chatmain {
+  width: 100%;
+  height: 100%;
+  #{&}-messages {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 88%;
+    overflow-y: scroll;
+    @media screen and (max-width: $mobile-max) {
+      & {
+        height: 90%;
+      }
+    }
+    /* width */
+    &::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+      background: #f1f1f100;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background: #888888c7;
+      border-radius: 10px;
+      transition: all 1s;
+      &:hover {
+        background: #c1c1c1af;
+      }
+    }
+  }
+  #{&}-sender {
+    width: 100%;
+    height: 12%;
+    background-color: rgba(126, 126, 126, 0.068);
+    backdrop-filter: blur(10px);
+    font-size: calc(20px + 0.5vw);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    @media screen and (max-width: $mobile-max) {
+      & {
+        height: 10%;
+      }
+    }
+    & > *:nth-child(1) {
+      margin-left: 20px;
+      color: rgb(215, 215, 215);
+      transition: all 0.5s 0.5s;
+      display: flex;
+      align-items: center;
+      &:hover {
+        scale: 1.01;
+        color: rgb(163, 163, 163);
+      }
+      & span {
+        backdrop-filter: blur(40px);
+        background-color: #d7d7d771;
+        padding: 0px 5px;
+        border-radius: 10px;
+        font-size: calc(10px + 0.5vw);
+        color: rgb(215, 215, 215);
+        white-space: nowrap;
+        &:hover {
+          scale: 1.01;
+          color: rgb(215, 215, 215);
+        }
+      }
+      .close-file {
+        color: rgba(236, 56, 56, 0.733);
+        margin-right: 0.1vw;
+        &:hover {
+          color: rgba(197, 48, 48, 0.562);
+        }
+      }
+    }
+    input {
+      background-color: transparent;
+      border-width: 0px;
+      padding-left: 10px;
+      padding-block: 5px;
+      margin: 0px 10px 0px 20px;
+      color: rgb(234, 234, 234);
+      font-family: "poppins";
+      font-size: calc(10px + 0.4vw);
+      flex-grow: 1;
+      border-bottom: 1px solid rgba(161, 161, 161, 0.237);
+    }
+    input:focus {
+      outline: none;
+    }
+    input::placeholder {
+      color: rgb(207, 207, 207);
+      font-size: calc(10px + 0.4vw);
+    }
+    & > *:nth-child(4) {
+      color: white;
+      margin-left: 20px;
+      margin-right: 20px;
+      transition: all 0.5s 0.1s;
+      &:hover {
+        transform: translate(5px, 0px);
+        color: rgba(60, 251, 60, 0.4);
+      }
+    }
+  }
+  #{&}-call {
+    background-color: #39916a;
+    width: 100%;
+    height: 100%;
+  }
+}

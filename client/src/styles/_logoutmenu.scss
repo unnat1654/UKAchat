@@ -1,0 +1,125 @@
+@import "./functions";
+
+.logout-menu {
+  position: absolute;
+  bottom: 15px;
+  left: 80px;
+  backdrop-filter: blur(5px);
+  border-radius: 8px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  font-family: "poppins";
+  #{&}-item {
+    border: none;
+    color: #d7d7d7;
+    padding: 20px 25px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    p {
+      cursor: pointer;
+    }
+
+    &:hover {
+      transition: all 0.5s ease-in-out;
+    }
+
+    &:hover p {
+      color: white;
+      transition: all 0.5s ease-in-out;
+    }
+
+    &:hover .logout-menu-icon {
+      color: white;
+      transition: all 0.5s ease-in-out;
+      cursor: pointer;
+    }
+
+    @media screen and (max-width: $tablet-max) {
+      & {
+        padding: 15px 20px;
+        p {
+          font-size: 16px;
+        }
+      }
+    }
+    @media screen and (max-width: $mobile-max) {
+      & {
+        padding: 10px 15px;
+        p {
+          font-size: 15px;
+        }
+      }
+    }
+  }
+
+  #{&}-icon {
+    font-size: 25px;
+    @media screen and (max-width: $tablet-max) {
+      & {
+        font-size: 22px;
+      }
+    }
+    @media screen and (max-width: $mobile-max) {
+      & {
+        font-size: 20px;
+      }
+    }
+  }
+
+  hr {
+    margin: 0 12px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+  }
+
+  #{&}-button {
+    margin-block: 5px;
+    height: 47px;
+    font-size: 18px;
+    position: relative;
+    left: 130px;
+    border: none;
+    color: rgba(69, 69, 69, 0.705);
+    padding: 10px 15px;
+    cursor: pointer;
+    background: #e2e0438c;
+    // box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.2);
+    border-radius: 25px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+    &:hover {
+      background: rgb(165 163 21 / 60%);
+      color: rgb(199, 199, 199);
+      transition: all 0.25s ease-in-out;
+    }
+
+    @media screen and (max-width: $tablet-max) {
+      & {
+        height: 40px;
+        font-size: 16px;
+      }
+    }
+    @media screen and (max-width: $mobile-max) {
+      & {
+        height: 35px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  @media screen and (max-width: $tablet-max) {
+    & {
+      left: 60px;
+    }
+  }
+  @media screen and (max-width: $mobile-max) {
+    & {
+      left: 50px;
+      bottom: 8px;
+    }
+  }
+}

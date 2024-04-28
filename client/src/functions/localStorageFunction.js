@@ -55,12 +55,12 @@ export const saveAllOldMessages = async () => {
 // This function saves all the messages in a room that were sent using web sockets to the server
 export const roomSaveOldMessages = async (room) => {
   if (localStorage.getItem(`room${room}`)) {
-    const saveMessages = await axios.post(
+    const { data } = await axios.post(
       `${import.meta.env.VITE_SERVER}/message/save-backup-messages`,
       [{ room, messages: JSON.parse(localStorage.getItem(`room${room}`)) }]
     );
     localStorage.removeItem(`room${room}`);
-    return saveMessages;
+    return data;
   }
   return { success: true };
 };
