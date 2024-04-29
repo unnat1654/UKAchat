@@ -164,16 +164,18 @@ export const getLastMessageController = async (req, res) => {
         { user2: userId, user1: cid },
       ],
     };
-    const { chats } = await chatRoomModel.findOne(query, {
+    const data = await chatRoomModel.findOne(query, {
       chats: { $slice: -1 },
     });
-    let lastMessage = chats[0];
-    if (lastMessage) {
+    const chats = data?.chats;
+    if (data && chats[0]) {
+      const lastMessage = chats[0];
       res.status(200).send({
         success: true,
         lastMessageInfo: {
           ...(lastMessage?.text && { lastMessage: lastMessage.text }),
-          ...(lastMessage?.media && { lastMessage: "File Shared" }),
+          ...(lastMessage?.media &&
+            !lastMessage?.text && { lastMessage: "File Shared" }),
           timeSent: lastMessage.timeSent,
         },
       });
@@ -199,14 +201,14 @@ export const getMessagesController = async (req, res) => {
   const { _id } = req.user;
   const room = req.query.room;
   const page = parseInt(req.query.page);
-  if (page == 0) {
-    res.status(200).send({
-      success: true,
-      message: "No messages found",
-      messages: [],
-    });
-    return;
-  }
+  // if (page == 0) {
+  //   res.status(200).send({
+  //     success: true,
+  //     message: "No messages found",
+  //     messages: [],
+  //   });
+  //   return;
+  // }
   const firstTimeInNum = parseInt(req.query.firstTime); //oldest local message time
   const lastTimeInNum = parseInt(req.query.lastTime); //last local stored message time
   let newMessagesCount = 0;
@@ -219,7 +221,17 @@ export const getMessagesController = async (req, res) => {
     const { totalMessages } = await chatRoomModel
       .findById(room)
       .select("totalMessages");
-    if (totalMessages < -(fromEndIndex + 1)) {
+    if (totalMessages == 0) {
+      fetchfrom = 0;
+      fetchTill = 0;
+      res.status(200).send({
+        success: true,
+        message: "No messages found",
+        newMessagesCount,
+        messages: [],
+      });
+      return;
+    } else if (totalMessages < -(fromEndIndex + 1)) {
       fetchfrom = -totalMessages;
       fetchTill = totalMessages - (page - 1) * chatsPerPage;
     }

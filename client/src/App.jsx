@@ -23,22 +23,22 @@ function App() {
   };
 
   return (
-    <Beforeunload onBeforeunload={handleBeforeUnload}>
-      <div>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/profile-info" element={<UserInfo />} />
-          <Route
-            path="/profile-picture-upload"
-            element={<ProfilePictureUpload />}
-          />
-          <Route path="/create-group" element={<CreateGroup />} />
-        </Routes>
-      </div>
-    </Beforeunload>
+    // <Beforeunload onBeforeunload={handleBeforeUnload}>
+    <div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/profile-info" element={<UserInfo />} />
+        <Route
+          path="/profile-picture-upload"
+          element={<ProfilePictureUpload />}
+        />
+        <Route path="/create-group" element={<CreateGroup />} />
+      </Routes>
+    </div>
+    // </Beforeunload>
   );
 }
 

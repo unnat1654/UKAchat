@@ -91,7 +91,8 @@ const OtherChats = ({
         <div className="otherchats-chat">
           <span className="otherchats-chat-name">{name}</span>
           <span className="otherchats-chat-message">
-            {lastMessageInfo?.lastMessage?.slice(0, 20)}...
+            {lastMessageInfo?.lastMessage?.slice(0, 20)}
+            {lastMessageInfo?.lastMessage?.length > 20 ? "..." : ""}
           </span>
         </div>
         <div className="otherchats-info">

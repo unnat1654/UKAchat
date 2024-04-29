@@ -78,7 +78,6 @@ export const signUpController = async (req, res) => {
       email,
       password: hashedPassword,
       name: { first_name, last_name },
-      last_name,
       DOB,
       phone,
       photo: { secure_url: secureUrl, public_id: publicId },
