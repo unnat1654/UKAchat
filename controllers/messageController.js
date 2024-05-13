@@ -221,17 +221,15 @@ export const getMessagesController = async (req, res) => {
     const { totalMessages } = await chatRoomModel
       .findById(room)
       .select("totalMessages");
-    if (totalMessages == 0) {
-      fetchfrom = 0;
-      fetchTill = 0;
-      res.status(200).send({
+    if(totalMessages==0){
+      return res.status(200).send({
         success: true,
         message: "No messages found",
         newMessagesCount,
         messages: [],
       });
-      return;
-    } else if (totalMessages < -(fromEndIndex + 1)) {
+    }
+    if (totalMessages < -(fromEndIndex + 1)) {
       fetchfrom = -totalMessages;
       fetchTill = totalMessages - (page - 1) * chatsPerPage;
     }
@@ -271,7 +269,7 @@ export const getMessagesController = async (req, res) => {
         });
       }
 
-      res.status(200).send({
+      return res.status(200).send({
         success: true,
         message: "Messages found successfully",
         newMessagesCount,
@@ -279,7 +277,7 @@ export const getMessagesController = async (req, res) => {
         totalPages: Math.ceil(totalMessages / chatsPerPage),
       });
     } else {
-      res.status(200).send({
+      return res.status(200).send({
         success: true,
         message: "No messages found",
         newMessagesCount,

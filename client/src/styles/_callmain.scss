@@ -17,6 +17,7 @@
     height: 30vh;
     width: 30vh;
     transform: translateX(-50%) translateY(-50%);
+    border-radius:100%;
   }
   #{&}-cut-call-icon {
     position: absolute;
@@ -118,6 +119,7 @@
   #{&}-photo{
     width: 30%;
     height:max-content;
+    border-radius: 100%;
   }
   #{&}-username{
     font-size:calc(10px + 1vw);

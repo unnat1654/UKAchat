@@ -1,18 +1,14 @@
 import React, { useCallback } from "react";
 import UserIcon from "../UserIcon";
-import { IoCallSharp, IoVideocam} from "react-icons/io5";
-import { HiMiniVideoCamera } from "react-icons/hi2";
+import { IoCallSharp, IoVideocam } from "react-icons/io5";
 import { useActiveChat } from "../../context/activeChatContext";
-import { useAuth } from "../../context/authContext";
-import { useSocket } from "../../context/socketContext";
-import peer from "../../services/peer";
 
-const ChatNavbar = ({ callRoom,handleVoiceCall,handleVideoCall,useMyStream}) => {
-  const [activeChat,setActiveChat]=useActiveChat();
+const ChatNavbar = ({ callRoom, sendCall }) => {
+  const [activeChat, setActiveChat] = useActiveChat();
 
   return (
     <div className="chat-navbar">
-      {callRoom!=activeChat?.room &&
+      {(!callRoom.room || (callRoom.room != activeChat?.room || callRoom.type!="voice")) &&
         (activeChat?.photo ? (
           <img
             src={activeChat?.photo}
@@ -24,10 +20,20 @@ const ChatNavbar = ({ callRoom,handleVoiceCall,handleVideoCall,useMyStream}) => 
         ))}
 
       <span>{activeChat?.username}</span>
-      {!callRoom && (
+      {!callRoom.room && (
         <React.Fragment>
-          <IoCallSharp onClick={handleVoiceCall} className="chat-navbar-phone" />
-          <IoVideocam onClick={handleVideoCall} className="chat-navbar-videocall" />
+          <IoCallSharp
+            onClick={() => {
+              sendCall("voice");
+            }}
+            className="chat-navbar-phone"
+          />
+          <IoVideocam
+            onClick={() => {
+              sendCall("video");
+            }}
+            className="chat-navbar-videocall"
+          />
         </React.Fragment>
       )}
     </div>

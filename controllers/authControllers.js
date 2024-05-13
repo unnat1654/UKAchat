@@ -114,7 +114,7 @@ export const loginController = async (req, res) => {
         message: "user not found",
       });
     }
-    if (verifyPassword(password, user.password)) {
+    else if (verifyPassword(password, user.password)) {
       const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
         expiresIn: "7d",
       });
@@ -123,6 +123,7 @@ export const loginController = async (req, res) => {
         message: "User logged in successfully.",
         user: {
           email: user.email,
+          username:user.username,
           first_name: user.name.first_name,
           last_name: user.name.last_name,
           DOB: user.DOB,

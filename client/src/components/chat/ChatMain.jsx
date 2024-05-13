@@ -169,16 +169,8 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
 
   useEffect(() => {
     const handleScroll = async () => {
-      // console.log(
-      //   "ScrollTop:" +
-      //     scrollRef.current.scrollTop +
-      //     "\nScrollHeight:" +
-      //     scrollRef.current.scrollHeight +
-      //     "\nclientHeight:" +
-      //     scrollRef.current.clientHeight
-      // );
 
-      if (scrollRef.current.scrollTop == 0) {
+      if (scrollRef.current && scrollRef.current.scrollTop == 0) {
         setFetchPrev(true);
         console.log("length", activeChat.messages.length);
         console.log(activeChat);
@@ -202,6 +194,7 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
           setPageChanging(true);
         }
       } else if (
+        scrollRef.current &&
         scrollRef.current.scrollTop + scrollRef.current.clientHeight >=
         scrollRef.current.scrollHeight - 10
       ) {
@@ -217,9 +210,9 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
         setPageChanging(false);
       }
     };
-    scrollRef.current.addEventListener("scroll", handleScroll);
+    scrollRef.current?.addEventListener("scroll", handleScroll);
 
-    return () => scrollRef.current.removeEventListener("scroll", handleScroll);
+    return () => scrollRef.current?.removeEventListener("scroll", handleScroll);
   }, [scrollRef.current && scrollRef.current.scrollTop]);
 
   useEffect(() => {

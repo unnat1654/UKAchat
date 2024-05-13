@@ -9,7 +9,7 @@ import { saveAllOldMessages } from "../functions/localStorageFunction";
 const Layout = () => {
   const [auth, setAuth] = useAuth();
   const [sideBarTab, setSideBarTab] = useState("chats");
-  const [myStream,setMyStream] =useState();
+  const [myCall,setMyCall] =useState({stream:"",room:"",ringing:false,type:"voice"});
   const [showInviteBox, setShowInviteBox] = useState({
     isShow: false,
     searchedId: "",
@@ -56,12 +56,12 @@ const Layout = () => {
           <ChatMenu
             sideBarTab={sideBarTab}
             setShowInviteBox={setShowInviteBox}
-            useMyStream={[myStream,setMyStream]}
+            useMyCall={[myCall,setMyCall]}
           />
           <ChattingSection
             showInviteBox={showInviteBox}
             setShowInviteBox={setShowInviteBox}
-            useMyStream={[myStream,setMyStream]}
+            useMyCall={[myCall,setMyCall]}
           />
         </div>
 

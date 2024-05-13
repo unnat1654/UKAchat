@@ -951,6 +951,7 @@
   height: 30vh;
   width: 30vh;
   transform: translateX(-50%) translateY(-50%);
+  border-radius: 100%;
 }
 .callmain .callmain-cut-call-icon {
   position: absolute;
@@ -1034,6 +1035,7 @@
   width: 30%;
   height: -moz-max-content;
   height: max-content;
+  border-radius: 100%;
 }
 .incoming-call .incoming-call-username {
   font-size: calc(10px + 1vw);

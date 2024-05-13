@@ -7,35 +7,31 @@ import { useAuth } from "../../../context/authContext";
 import { useActiveChat } from "../../../context/activeChatContext";
 import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 import Invites from "../../invite/Invites";
-import LoadingScreen from "../../loaders/LoadingScreen"
+import LoadingScreen from "../../loaders/LoadingScreen";
 import peer from "../../../services/peer";
 import IncomingCall from "../../call/IncomingCall";
 import { useSocket } from "../../../context/socketContext";
 
-const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyStream }) => {
+const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyCall }) => {
   const [searchInput, setSearchInput] = useState("");
-  const [callerInfo, setCallerInfo] = useState({room:"abc",username:"abcusername",photo:"",offer:"abcoffer",type:"voice"});
+  const [callInfo, setCallInfo] = useState({
+    room: "",
+    username: "",
+    photo: "",
+    offer: "",
+    type: "voice",
+  });
+  const [myCall,setMyCall] =useMyCall;
   const [activeColor, setActiveColor] = useState("");
   const [invitesArray, setInvitesArray] = useState([]);
-  const [contactDetailsArray, setContactDetailsArray] =
-    useContactDetailsArray();
+  const [contactDetailsArray, setContactDetailsArray] = useContactDetailsArray();
   const [activeChat, setActiveChat] = useActiveChat();
   const [auth, setAuth] = useAuth();
-  const socket=useSocket();
-
-  const handleIncomingVoiceCall = useCallback(
-    async ({ room, offer, username, photo }) => {
-      if (callerInfo.username != "") return;
-      setCallerInfo({username,photo,offer,room,type:"voice"});
-    },
-    [auth]
-  );
+  const socket = useSocket();
 
   const getContactDetails = async () => {
     try {
-      const contactDetails = await axios.get(
-        `${import.meta.env.VITE_SERVER}/contact/get-contacts`
-      );
+      const contactDetails = await axios.get(`${import.meta.env.VITE_SERVER}/contact/get-contacts`);
       if (contactDetails?.data?.success) {
         setContactDetailsArray({
           searchedNewUser: false,
@@ -50,9 +46,7 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyStream }) => {
   //get contacts and set that user is online
   const getInvites = async () => {
     try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_SERVER}/request/show-requests`
-      );
+      const { data } = await axios.get(`${import.meta.env.VITE_SERVER}/request/show-requests`);
       if (data?.success) {
         setInvitesArray(data?.invites);
       }
@@ -109,20 +103,45 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyStream }) => {
     }
   }, [invitesArray.length]);
 
+  const handleIncomingCall = useCallback(
+    async (info) => {
+      console.log("event recieved:incoming-call"+JSON.stringify(info));
+      //info={room,offer,username,photo,type:"voice"|"video"}
+      if (callInfo.username != "") return;
+      setCallInfo(info);
+    },
+    [auth]
+  );
+  const handleIncomingCallEnd=useCallback((info)=>{
+      console.log("event recieved:incoming-call-ended");
+      setCallInfo({room: "",
+      username: "",
+      photo: "",
+      offer: "",
+      type: "voice"});
+    }
+  )
+
   useEffect(() => {
-    if(socket){
-    socket.on("incoming-call:voice", handleIncomingVoiceCall);
-    return () => {
-      socket.off("incoming-call:voice", handleIncomingVoiceCall);
-    };
-  }
-  }, [socket, handleIncomingVoiceCall]);
+    if (socket) {
+      socket.on("incoming-call", handleIncomingCall);
+      socket.on("incoming-call-ended",handleIncomingCallEnd);
+      return () => {
+        socket.off("incoming-call", handleIncomingCall);
+      };
+    }
+  }, [socket, handleIncomingCall]);
 
   return (
     <div className="chatmenu">
       {sideBarTab == "chats" && (
         <React.Fragment>
-          {callerInfo.room && <IncomingCall callerInfo={callerInfo} setCallerInfo={setCallerInfo} useMyStream={useMyStream}/>}
+          {callInfo.room && (
+            <IncomingCall
+              useCallInfo={[callInfo,setCallInfo]}
+              useMyCall={useMyCall}
+            />
+          )}
           <Tilt className="chatmenu-search-bar">
             <input
               name="searchInput"
@@ -145,8 +164,7 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyStream }) => {
                   key={c._id}
                   onClick={() => {
                     setActiveColor(c._id);
-                  }}
-                >
+                  }}>
                   <OtherChats
                     name={c.username}
                     photo={c?.photo?.secure_url}
@@ -171,8 +189,7 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyStream }) => {
               photo={invite?.senderUserId?.photo?.secure_url}
               sender={invite?.senderUserId?.username}
               id={invite?.senderUserId}
-              setInvitesArray={setInvitesArray}
-            ></Invites>
+              setInvitesArray={setInvitesArray}></Invites>
           ))}
         </React.Fragment>
       )}
