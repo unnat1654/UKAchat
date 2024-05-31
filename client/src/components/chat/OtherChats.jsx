@@ -39,9 +39,8 @@ const OtherChats = ({
         return;
       }
       if (activeChat?.c_id != id) {
-        const roomResponse = await axios.post(
-          `${import.meta.env.VITE_SERVER}/contact/create-room`,
-          { contactId: id }
+        const roomResponse = await axios.get(
+          `${import.meta.env.VITE_SERVER}/contact/get-room/${id}`,
         );
         if (roomResponse?.data?.success) {
           const room = roomResponse?.data?.room;

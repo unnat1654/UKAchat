@@ -4,7 +4,7 @@ import { LuUserPlus } from "react-icons/lu";
 const SendInvite = ({inviteId,contactName}) => {
   const handleClick=async()=>{
     try {
-      const {data}=await axios.post(`${import.meta.env.VITE_SERVER}/request/send-request`,{sentToId:inviteId,sendType:"chat",timeSent:Date.now()});
+      const {data}=await axios.post(`${import.meta.env.VITE_SERVER}/request/send-request`,{sentToId:inviteId,timeSent:Date.now()});
       if(data?.success){
         console.log(data?.message);
       }

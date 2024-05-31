@@ -23,7 +23,7 @@ export const saveBulkMessagesController = async (req, res) => {
         { chats: { $slice: -1 } }
       );
       if (user1 != userId && user2 != userId) {
-        res.status(403).send({
+        return res.status(403).send({
           success: false,
           message: "Access Forbidden",
         });
@@ -109,7 +109,7 @@ export const saveBulkMessagesController = async (req, res) => {
 export const sendMessageController = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { room, receiver, text, doc, extension, timeSent } = req.body;
+    const { room, text, doc, extension, timeSent } = req.body;
     let secureUrl, publicId;
     if (doc) {
       const { secure_url, public_id } = await cloudinary.uploader.upload(doc, {
@@ -152,9 +152,9 @@ export const sendMessageController = async (req, res) => {
 
 //GET  /get-last-message/:cid
 export const getLastMessageController = async (req, res) => {
-  const { cid } = req.params;
-  const userId = req.user._id;
   try {
+    const { cid } = req.params;
+    const userId = req.user._id;
     const query = {
       $or: [
         { user1: userId, user2: cid },
@@ -195,22 +195,13 @@ export const getLastMessageController = async (req, res) => {
 //get 200 messages in a batch from a contact
 //GET  /get-messages?room=""&page=""&firstTime=""&lastTime=""
 export const getMessagesController = async (req, res) => {
-  const { _id } = req.user;
-  const room = req.query.room;
-  const page = parseInt(req.query.page);
-  // if (page == 0) {
-  //   res.status(200).send({
-  //     success: true,
-  //     message: "No messages found",
-  //     messages: [],
-  //   });
-  //   return;
-  // }
-  const firstTimeInNum = parseInt(req.query.firstTime); //oldest local message time
-  const lastTimeInNum = parseInt(req.query.lastTime); //last local stored message time
-  let newMessagesCount = 0;
-
   try {
+    const { _id } = req.user;
+    const room = req.query.room;
+    const firstTimeInNum = parseInt(req.query.firstTime); //oldest local message time
+    const lastTimeInNum = parseInt(req.query.lastTime); //last local stored message time
+    let newMessagesCount = 0;
+    const page = parseInt(req.query.page);
     const chatsPerPage = 100;
     const fromEndIndex = -(chatsPerPage * parseInt(page));
     let fetchfrom = fromEndIndex;
@@ -218,7 +209,7 @@ export const getMessagesController = async (req, res) => {
     const { totalMessages } = await chatRoomModel
       .findById(room)
       .select("totalMessages");
-    if(totalMessages==0){
+    if (totalMessages == 0) {
       return res.status(200).send({
         success: true,
         message: "No messages found",
@@ -256,11 +247,11 @@ export const getMessagesController = async (req, res) => {
           ...(chat.text
             ? { format: true, text: chat.text, file: "", extension: "" }
             : {
-                format: false,
-                file: chat.media.secure_url,
-                text: "",
-                extension: chat.media.extension,
-              }),
+              format: false,
+              file: chat.media.secure_url,
+              text: "",
+              extension: chat.media.extension,
+            }),
           timeSent: chat.timeSent,
           sent: chat.sender == _id,
         });

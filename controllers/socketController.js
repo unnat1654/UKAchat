@@ -30,7 +30,6 @@ const socketEvents = () => {
           const contactSocket = io.sockets.sockets.get(contactSocketId);
           if (contactSocket) {
             contactSocket.join(activeUserRooms[index]);
-            console.log(`${onlineContacts[index]} was added to room ${activeUserRooms[index]}`);
           }
         });
 
@@ -42,12 +41,6 @@ const socketEvents = () => {
       }
     });
 
-
-    // socket.on("join-room", (payload) => {
-    //   if (payload.roomsArray && payload.roomsArray.length) {
-    //     socket.join(payload.roomsArray);
-    //   }
-    // });
 
     socket.on("send-message", (message) => {
       console.log("send-message event occured", JSON.stringify(message));
@@ -71,10 +64,6 @@ const socketEvents = () => {
       }
     });
 
-    // socket.on("set-offline", async (token) => {
-    //   const { _id } = JWT.verify(token, process.env.JWT_SECRET);
-    //   await onlineUsers.setOffline(_id);
-    // });
 
 
     socket.on("send-call", (info) => {
@@ -85,6 +74,7 @@ const socketEvents = () => {
     });
 
     socket.on("accept-call", ({ room, ans }) => {
+      
       socket.to(room).emit("call-accepted", { room, ans });
     });
 

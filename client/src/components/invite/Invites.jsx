@@ -6,19 +6,13 @@ import AcceptIcon from "./AcceptIcon";
 import axios from "axios";
 
 const Invites = ({ sender, photo, id, active, setInvitesArray }) => {
-  const handleClick = () => {
-    console.log("clicked");
-  };
 
   const acceptInvite = async () => {
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_SERVER}/request/handle-request`,
-        { senderId: id, senderType: "chat", isAccepted: true }
+        { senderId: id, isAccepted: true }
       );
-      if (data?.success) {
-        console.log(data?.message);
-      }
       if (data) {
         setInvitesArray((prev) =>
           prev.filter((item) => item.senderUserId !== id)
@@ -33,11 +27,8 @@ const Invites = ({ sender, photo, id, active, setInvitesArray }) => {
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_SERVER}/request/handle-request`,
-        { senderId: id, senderType: "chat", isAccepted: false }
+        { senderId: id, isAccepted: false }
       );
-      if (data?.success) {
-        console.log(data?.message);
-      }
     } catch (error) {
       console.log(error);
     }

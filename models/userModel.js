@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema({
       trim: true,
     },
   },
+  verified: {
+    type: Boolean,
+    default: false
+  },
   DOB: {
     type: Date,
     required: true,
@@ -42,6 +46,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     immutable: true,
+    index:false
   },
   //cloudinary needs public_id, secure_url
   photo: {

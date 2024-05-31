@@ -117,7 +117,6 @@ export const useLiveMessages = (socket, activeChat, setActiveChat, page) => {
           `${import.meta.env.VITE_SERVER}/message/send-message-api`,
           {
             room,
-            receiver: activeChat?.c_id,
             text: text || "",
             doc: file || "",
             extension,

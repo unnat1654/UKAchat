@@ -1,12 +1,12 @@
-import { contactDetailsFinder, findOnlineContacts } from "../helpers/contactHelpers.js";
+import { contactDetailsFinder } from "../helpers/contactHelpers.js";
 import chatRoomModel from "../models/chatRoomModel.js";
 import userModel from "../models/userModel.js";
 
-//POST /create-room
+//GET /get-room
 export const getRoomController = async (req, res) => {
   try {
     const user1 = req.user._id;
-    const user2 = req.body.contactId;
+    const user2 = req.params.contactId;
     const roomAlreadyExists = await chatRoomModel.findOne({
       $or: [
         { user1: user1, user2: user2 },
@@ -35,30 +35,10 @@ export const getRoomController = async (req, res) => {
   }
 };
 
-//GET /get-online-contacts
-export const getOnlineContactController = async (req, res) => {
-  try {
-    const {activeUserRooms,onlineContacts}=findOnlineContacts(req.user._id);
-    res.status(200).send({
-      success: true,
-      message: "Active Rooms found Successfully",
-      activeUserRooms,
-      onlineContacts,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      success: false,
-      message: "Error while finding active rooms",
-      error,
-    });
-  }
-};
-
 //GET  /search-contact/:contactId
 export const searchContactContoller = async (req, res) => {
-  const { contactId } = req.params;
   try {
+    const { contactId } = req.params;
     if (contactId == req.user._id) {
       res.status(404).send({
         success: false,
