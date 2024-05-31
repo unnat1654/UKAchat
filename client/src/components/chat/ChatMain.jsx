@@ -267,7 +267,6 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
         <div ref={bottomRef} />
       </div>
       <div className="chatmain-sender">
-        {JSON.stringify(page)}
         <label htmlFor="upload-file">
           {doc ? (
             <>

@@ -134,6 +134,7 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyCall }) => {
 
   return (
     <div className="chatmenu">
+      
       {sideBarTab == "chats" && (
         <React.Fragment>
           {callInfo.room && (
@@ -155,8 +156,7 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyCall }) => {
               <IoSearchOutline />
             </span>
           </Tilt>
-          {/* {JSON.stringify(activeChat, null, "\t")} */}
-
+          {JSON.stringify({online:activeChat?.online, c_id:activeChat?.c_id})}
           <div className="chatmenu-allchats">
             <React.Fragment>
               {contactDetailsArray?.detailsArray.map((c) => (
@@ -178,7 +178,6 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyCall }) => {
               ))}
             </React.Fragment>
           </div>
-          {/* {JSON.stringify(activeChat, null, "\t")} */}
         </React.Fragment>
       )}
       {sideBarTab == "invites" && (

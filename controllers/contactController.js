@@ -1,8 +1,6 @@
-import { contactDetailsFinder } from "../helpers/contactHelpers.js";
+import { contactDetailsFinder, findOnlineContacts } from "../helpers/contactHelpers.js";
 import chatRoomModel from "../models/chatRoomModel.js";
 import userModel from "../models/userModel.js";
-import mongoose from "mongoose";
-import onlineUsers from "../helpers/onlineUsers.js";
 
 //POST /create-room
 export const getRoomController = async (req, res) => {
@@ -40,23 +38,7 @@ export const getRoomController = async (req, res) => {
 //GET /get-online-contacts
 export const getOnlineContactController = async (req, res) => {
   try {
-    const user = req.user._id;
-    const activeUserRooms = [];
-    const onlineContacts = [];
-    const JoinedRooms = await chatRoomModel.find({
-      $or: [{ user1: user }, { user2: user }],
-    });
-
-    await Promise.all(
-      JoinedRooms.map(async (room) => {
-        let contact = user == room.user2 ? room.user1 : room.user2;
-        const isonline = await onlineUsers.isOnline(contact);
-        if (isonline) {
-          activeUserRooms.push(room._id);
-          onlineContacts.push(contact);
-        }
-      })
-    );
+    const {activeUserRooms,onlineContacts}=findOnlineContacts(req.user._id);
     res.status(200).send({
       success: true,
       message: "Active Rooms found Successfully",
@@ -85,7 +67,7 @@ export const searchContactContoller = async (req, res) => {
     }
     const contact = await userModel
       .findOne({ _id: contactId })
-      .select("-password -DOB -email -phone -name -lastOnline");
+      .select("-password -DOB -email -phone -name");
     if (contact) {
       res.status(200).send({
         success: true,

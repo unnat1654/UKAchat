@@ -27,7 +27,6 @@ const Layout = () => {
     window.addEventListener("storage", backUpMessages);
     return () => window.removeEventListener("storage", backUpMessages);
   }, []);
-
   // const sendUserLastOnlineTime = async () => {
   //   try {
   //     await axios.patch(`${import.meta.env.VITE_SERVER}/contact/stay-online`);

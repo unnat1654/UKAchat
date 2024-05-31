@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { cloudinary } from "../config/cloudinary.js";
 import chatRoomModel from "../models/chatRoomModel.js";
 
@@ -16,8 +15,6 @@ export const saveBulkMessagesController = async (req, res) => {
     }
 
     for (const { room, messages } of chats) {
-      console.log(room);
-      console.log(JSON.stringify(messages));
       if (messages.length == 0) continue;
       const lastMessageTime = new Date(messages[messages.length - 1].timeSent);
       const firstMessageTime = new Date(messages[0].timeSent);

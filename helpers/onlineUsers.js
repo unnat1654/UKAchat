@@ -1,15 +1,32 @@
 import { client } from "../config/init_redis.js";
-class onlineUsers {
-  #hashname = "onlineUsers";
+import { findOnlineContacts } from "./contactHelpers.js";
 
-  async setOnline(userId) {
+class onlineUsers {
+
+  async setOnlineGetContacts(userId, socketId) {
+    this.setOnline(userId, socketId);
+    const {activeUserRooms,onlineContacts}=await findOnlineContacts(userId);
+    const contactSocketIds= await this.getSocketIds(onlineContacts);
+    return {activeUserRooms,onlineContacts,contactSocketIds};
+  }
+
+  async setOnline(userId, socketId) {
     if (!userId) {
       throw {
         error: "Error while setting user online",
         message: "UserId not provided",
       };
     }
-    await client.HSETNX(this.#hashname, userId, "");
+    await client.set(`onlineUsers:${userId}`, socketId);
+  }
+
+  async getSocketIds(contactIdArray) {
+    const contactSocketIds=await Promise.all(
+      contactIdArray.map(async (contactId) => {
+        return await client.get(`onlineUsers:${contactId}`);
+      })
+    );
+    return contactSocketIds;
   }
 
   async setOffline(userId) {
@@ -19,7 +36,9 @@ class onlineUsers {
         message: "UserId not provided",
       };
     }
-    await client.HDEL(this.#hashname, userId);
+    await client.DEL(`onlineUsers:${userId}`);
+    const { activeUserRooms } = await findOnlineContacts(userId);
+    return activeUserRooms;
   }
 
   async isOnline(userId) {
@@ -29,7 +48,7 @@ class onlineUsers {
         message: "UserId not provided",
       };
     }
-    let online = await client.HEXISTS(this.#hashname, String(userId));
+    let online = await client.EXISTS(`onlineUsers:${userId}`);
     return online == 1;
   }
 }

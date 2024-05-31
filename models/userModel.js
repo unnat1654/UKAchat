@@ -52,9 +52,6 @@ const userSchema = new mongoose.Schema({
       type: String,
     },
   },
-  lastOnline: {
-    type: Date,
-  },
 });
 
 export default mongoose.model("users", userSchema, "users");

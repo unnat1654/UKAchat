@@ -61,8 +61,6 @@ export const signUpController = async (req, res) => {
       publicId = public_id;
       secureUrl = secure_url;
     }
-    //hashing password
-    const hashedPassword = hashPassword(password);
 
     const existingUser = await userModel.findOne({
       $or: [{ email }, { phone }],
@@ -76,7 +74,7 @@ export const signUpController = async (req, res) => {
     const user = new userModel({
       username,
       email,
-      password: hashedPassword,
+      password: hashPassword(password),
       name: { first_name, last_name },
       DOB,
       phone,
@@ -164,10 +162,9 @@ export const forgotPasswordController = async (req, res) => {
         message: "user not found",
       });
     }
-    const hashedPassword = hashPassword(new_password);
     await userModel.findByIdAndUpdate(
       user._id,
-      { password: hashedPassword },
+      { password: hashPassword(new_password) },
       { runValidators: true }
     );
     res.status(200).send({

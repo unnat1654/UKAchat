@@ -17,7 +17,7 @@ function App() {
     localStorage.setItem("offline", true);
     if (auth?.token) {
       if (socket) {
-        socket.emit("set-offline", auth?.token);
+        socket.disconnect();
       }
     }
   };

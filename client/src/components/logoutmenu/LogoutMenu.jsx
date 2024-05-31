@@ -13,7 +13,7 @@ const LogoutMenu = ({ show, setShow }) => {
   const handleClick = () => {
     if (auth?.token) {
       if (socket) {
-        socket.emit("set-offline", auth?.token);
+        socket.disconnect();
       }
 
       localStorage.removeItem("auth");

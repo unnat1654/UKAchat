@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import axios from "axios";
 import ChatNavbar from "../../chat/ChatNavbar";
 import ChatMain from "../../chat/ChatMain";
 import CallMain from "../../call/CallMain";
@@ -24,48 +23,64 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox, useMyCall }) => {
     setActiveChat,
     page.currPage
   );
-  const [onlineUsers, setOnlineUsers] = useState({
-    onlineUserRooms: [],
-    onlineContacts: [],
-  });
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
-  const getOnlineUsers = async () => {
-    try {
-      const onlineUsersDetails = await axios.get(
-        `${import.meta.env.VITE_SERVER}/contact/get-online-contacts`
-      );
-      if (onlineUsersDetails?.data?.success) {
-        setOnlineUsers({
-          onlineUserRooms: onlineUsersDetails?.data?.activeUserRooms,
-          onlineContacts: onlineUsersDetails?.data?.onlineContacts,
-        });
-        socket.emit("join-room", {
-          roomsArray: onlineUsersDetails?.data?.activeUserRooms,
-        });
-      } else {
-        console.log(onlineUsersDetails?.data?.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+
+  const getOnlineUsers = (onlineContacts) => {
+    console.log(onlineContacts);
+    if(!onlineContacts) return;
+    setOnlineUsers(onlineContacts);
   };
+
+  const newContactOnline = useCallback((c_id) => {
+    console.log(`Server notification: new contact online: ${c_id}`);
+    if (onlineUsers?.includes(c_id)) return;
+    setOnlineUsers([...onlineUsers, c_id]);
+  }, [onlineUsers]);
+
+  const newContactOffline = useCallback((c_id) => {
+    console.log(`Server notification: new contact offline: ${c_id}`);
+    if(!onlineUsers) return;
+    setOnlineUsers(onlineUsers?.filter(user => user !== c_id));
+  }, [onlineUsers]);
+
   useEffect(() => {
+    if (socket) {
+      socket.on("get-online-contacts", getOnlineUsers);
+      socket.on("new-contact-online", newContactOnline);
+      socket.on("one-contact-went-offline", newContactOffline);
+      return () => {
+        socket.off("get-online-contacts", getOnlineUsers);
+        socket.off("new-contact-online", newContactOnline);
+        socket.off("one-contact-went-offline", newContactOffline);
+      }
+    }
+  }, [ socket,onlineUsers]);
+
+  const setActiveChatDetails = useCallback(() => {
+    if (!contactDetailsArray || !activeChat?.room || !onlineUsers) return;
     const contactObject = contactDetailsArray.detailsArray.find(
-      (contactDetailsObject) => contactDetailsObject._id == activeChat?.c_id
+      (contactDetailsObject) => contactDetailsObject._id == activeChat.c_id
     );
+    if (!contactObject) {
+      return;
+    }
     let online = false;
-    if (activeChat?.room && onlineUsers.onlineUserRooms.indexOf(activeChat.room) >= 0) {
+    if (activeChat.room && onlineUsers.includes(activeChat.c_id)) {
       online = true;
     }
-    if (contactObject) {
-      setActiveChat((prev) => ({
-        ...prev,
-        username: contactObject.username,
-        photo: contactObject?.photo?.secure_url,
-        online,
-      }));
-    }
-  }, [activeChat?.room]);
+    setActiveChat((prev) => ({
+      ...prev,
+      username: contactObject.username,
+      photo: contactObject.photo?.secure_url,
+      online,
+    }));
+
+  }, [contactDetailsArray, onlineUsers, activeChat.room]);
+
+  useEffect(() => {
+    setActiveChatDetails();
+  }, [setActiveChatDetails,onlineUsers]);
 
   const sendStreams = useCallback(() => {
     if (!myCall.stream) return;
@@ -82,9 +97,9 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox, useMyCall }) => {
   const sendCall = useCallback(async (type) => {
     if (
       (activeChat?.online == false ||
-      activeChat?.room == "" ||
-      auth?.user?.username == "" ||
-      myCall?.room != "")
+        activeChat?.room == "" ||
+        auth?.user?.username == "" ||
+        myCall?.room != "")
     ) {
       return;
     } else {
@@ -102,7 +117,7 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox, useMyCall }) => {
       });
       setMyCall({ stream, type, room: activeChat?.room, ringing: true });
     }
-  },[activeChat?.room,auth?.user,myCall?.room,activeChat?.online]);
+  }, [activeChat?.room, auth?.user, myCall?.room, activeChat?.online]);
 
   useEffect(() => {
     if (auth?.token) {
@@ -205,18 +220,20 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox, useMyCall }) => {
             callRoom={{ room: myCall.room, type: myCall.type }}
             sendCall={(type) => sendCall(type)}
           />
+          {JSON.stringify(onlineUsers)}
           {myCall.room && myCall.room === activeChat?.room ? (
             <CallMain callType={myCall.type} endCall={endCall} />
           ) : (
             <ChatMain
               addLiveMessage={addLiveMessage}
-              onlineContacts={onlineUsers.onlineContacts}
+              onlineContacts={onlineUsers}
               page={page}
               setPage={setPage}
             />
           )}
         </>
       )}
+      
     </div>
   );
 };

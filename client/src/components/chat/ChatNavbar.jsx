@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import UserIcon from "../UserIcon";
 import { IoCallSharp, IoVideocam } from "react-icons/io5";
 import { useActiveChat } from "../../context/activeChatContext";
@@ -18,7 +18,6 @@ const ChatNavbar = ({ callRoom, sendCall }) => {
         ) : (
           <UserIcon classNameProp="chat-navbar-icon" />
         ))}
-
       <span>{activeChat?.username}</span>
       {!callRoom.room && (
         <React.Fragment>
