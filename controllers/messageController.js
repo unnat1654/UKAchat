@@ -3,7 +3,6 @@ import { saveMultipleRoomMessages } from "../helpers/messageHelpers.js";
 import chatRoomModel from "../models/chatRoomModel.js";
 import queryCache from "../helpers/queryCacheHelpers.js";
 
-
 //POST  /save-backup-messages
 export const saveBulkMessagesController = async (req, res) => {
   try {
@@ -23,8 +22,8 @@ export const saveBulkMessagesController = async (req, res) => {
       console.log(error);
       return res.status(409).send({
         success: false,
-        message: "Error while saving messages"
-      })
+        message: "Error while saving messages",
+      });
     }
 
     res.status(201).send({
@@ -92,20 +91,28 @@ export const getLastMessageController = async (req, res) => {
     const { cid } = req.params;
     const userId = req.user._id;
 
-    let chat= await queryCache.get(`chatRoomModel-findOne-lastChat:${userId},${cid}`);
-    if(!chat) {
+    let chat = await queryCache.get(
+      `chatRoomModel-findOne-lastChat:${userId},${cid}`
+    );
+    if (!chat) {
       const query = {
         $or: [
           { user1: userId, user2: cid },
           { user2: userId, user1: cid },
         ],
       };
-      const { chats } = await chatRoomModel.findOne(query, {
-        chats: { $slice: -1 },
-      }).select("chats");
+      const { chats } = await chatRoomModel
+        .findOne(query, {
+          chats: { $slice: -1 },
+        })
+        .select("chats");
       if (chats.length) chat = chats[0];
 
-      await queryCache.set(`chatRoomModel-findOne-lastChat:${userId},${cid}`, chat, 10);
+      await queryCache.set(
+        `chatRoomModel-findOne-lastChat:${userId},${cid}`,
+        chat,
+        10
+      );
     }
 
     if (!chat) {
@@ -117,11 +124,10 @@ export const getLastMessageController = async (req, res) => {
 
     res.status(200).send({
       success: true,
-      message:"last message found successfully",
+      message: "last message found successfully",
       lastMessageInfo: {
         ...(chat.text && { lastMessage: chat.text }),
-        ...(chat.media &&
-          !chat.text && { lastMessage: "File Shared" }),
+        ...(chat.media && !chat.text && { lastMessage: "File Shared" }),
         timeSent: chat.timeSent,
       },
     });
@@ -144,10 +150,18 @@ export const getMessagesController = async (req, res) => {
     const firstTimeInNum = +req.query.firstTime; //oldest local message time
     const lastTimeInNum = +req.query.lastTime; //last local stored message time
     const page = +req.query.page;
+    if (page < 1) {
+      res.status(200).send({
+        success: true,
+        message: "No messages found",
+        messages: [],
+      });
+      return;
+    }
     const chatsPerPage = 100;
     const fromEndIndex = -(chatsPerPage * page);
 
-    const { totalMessages} = await chatRoomModel
+    const { totalMessages } = await chatRoomModel
       .findById(room)
       .select("totalMessages");
     if (totalMessages == 0) {
@@ -165,10 +179,9 @@ export const getMessagesController = async (req, res) => {
       fetchfrom = -totalMessages;
       fetchTill = totalMessages - (page - 1) * chatsPerPage;
     }
-    const { chats } = await chatRoomModel.findOne(
-      { _id: room },
-      { chats: { $slice: [fetchfrom, fetchTill] } }
-    ).select("chats");
+    const { chats } = await chatRoomModel
+      .findOne({ _id: room }, { chats: { $slice: [fetchfrom, fetchTill] } })
+      .select("chats");
 
     if (!chats.length) {
       return res.status(200).send({
@@ -199,11 +212,11 @@ export const getMessagesController = async (req, res) => {
         ...(chat.text
           ? { format: true, text: chat.text, file: "", extension: "" }
           : {
-            format: false,
-            file: chat.media.secure_url,
-            text: "",
-            extension: chat.media.extension,
-          }),
+              format: false,
+              file: chat.media.secure_url,
+              text: "",
+              extension: chat.media.extension,
+            }),
         timeSent: chat.timeSent,
         sent: chat.sender == _id,
       });
@@ -216,7 +229,6 @@ export const getMessagesController = async (req, res) => {
       messages: formatMessages,
       totalPages: Math.ceil(totalMessages / chatsPerPage),
     });
-
   } catch (error) {
     console.log(error);
     res.status(500).send({

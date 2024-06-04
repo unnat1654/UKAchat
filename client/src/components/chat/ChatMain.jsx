@@ -9,6 +9,7 @@ import {
   getLSMsgTimeRange,
   getRoomLSMessages,
 } from "../../functions/localStorageFunction";
+import CircleLoader from "../loaders/CircleLoader";
 
 const ChatMain = ({ addLiveMessage, page, setPage }) => {
   const bottomRef = useRef(null);
@@ -22,6 +23,7 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
   const [newScrollHeight, setNewScrollHeight] = useState(0);
   const [toDel, setToDel] = useState(0);
   const [fetchPrev, setFetchPrev] = useState(true);
+  const [loading, setLoading] = useState(false);
   let prevMessageDate = "";
 
   const fetchPageMessages = async () => {
@@ -69,6 +71,7 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
           messages: displayMessages,
           totalPages: data?.totalPages,
         }));
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -169,7 +172,6 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
 
   useEffect(() => {
     const handleScroll = async () => {
-
       if (scrollRef.current && scrollRef.current.scrollTop == 0) {
         setFetchPrev(true);
         console.log("length", activeChat.messages.length);
@@ -181,11 +183,9 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
           activeChat?.messages?.length >= 100 &&
           page.currPage != activeChat?.totalPages;
         const condition = condition1 || condition2;
-        // console.log("c1", condition1);
-        // console.log("c2", condition2);
-        // console.log(condition);
         if (condition) {
           console.log("if");
+          setLoading(true);
           setNewScrollHeight(scrollRef.current.scrollHeight);
           setPage((prev) => ({
             prevPage: prev.currPage,
@@ -196,9 +196,10 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
       } else if (
         scrollRef.current &&
         scrollRef.current.scrollTop + scrollRef.current.clientHeight >=
-        scrollRef.current.scrollHeight - 10
+          scrollRef.current.scrollHeight - 10
       ) {
         if (page.prevPage >= 1) {
+          setLoading(true);
           setFetchPrev(false);
           setPage((prev) => ({
             currPage: prev.prevPage,
@@ -240,6 +241,14 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
   return (
     <div className="chatmain">
       <div ref={scrollRef} className="chatmain-messages">
+        {console.log("Loading:", loading)}
+        {fetchPrev && loading && (
+          <CircleLoader
+            color="#008cffa2"
+            secondaryColor="white"
+            size={"40px"}
+          />
+        )}
         {activeChat?.messages?.length &&
           activeChat?.messages?.map((m) => {
             let DateSent = new Date(m.timeSent).toLocaleDateString("en-GB");
@@ -264,6 +273,13 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
               </React.Fragment>
             );
           })}
+        {!fetchPrev && loading && (
+          <CircleLoader
+            color="#008cffa2"
+            secondaryColor="white"
+            size={"40px"}
+          />
+        )}
         <div ref={bottomRef} />
       </div>
       <div className="chatmain-sender">

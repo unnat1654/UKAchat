@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
   },
   verified: {
     type: Boolean,
-    default: false
+    default: false,
   },
   DOB: {
     type: Date,
@@ -55,6 +55,14 @@ const userSchema = new mongoose.Schema({
     secure_url: {
       type: String,
     },
+  },
+  groups: {
+    type: [
+      {
+        type: mongoose.ObjectId,
+        ref: "groups",
+      },
+    ],
   },
 });
 

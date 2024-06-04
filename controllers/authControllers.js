@@ -24,13 +24,19 @@ export const signUpController = async (req, res) => {
 
     //checking User Entries
     if (!username) {
-      return res.status(404).send({ success: false, message: "Username is required" });
+      return res
+        .status(404)
+        .send({ success: false, message: "Username is required" });
     }
     if (!email) {
-      return res.status(404).send({ success: false, message: "Email is required" });
+      return res
+        .status(404)
+        .send({ success: false, message: "Email is required" });
     }
     if (!password) {
-      return res.status(404).send({ success: false, message: "Password is required" });
+      return res
+        .status(404)
+        .send({ success: false, message: "Password is required" });
     }
     if (!first_name) {
       return res
@@ -53,13 +59,21 @@ export const signUpController = async (req, res) => {
         .send({ success: false, message: "Phone Number is required" });
     }
 
-    let existingUser = await queryCache.get(`userModel-findOne:${email},${phone}`);
+    let existingUser = await queryCache.get(
+      `userModel-findOne:${email},${phone}`
+    );
     if (!existingUser) {
-      existingUser = await userModel.findOne({
-        $or: [{ email }, { phone }],
-      }).select("_id password");
-      await queryCache.set(`userModel-findOne:${email},${phone}`,existingUser,600);
-      await queryCache.set(`userModel-findOne:${email}`,existingUser,600);
+      existingUser = await userModel
+        .findOne({
+          $or: [{ email }, { phone }],
+        })
+        .select("_id password");
+      await queryCache.set(
+        `userModel-findOne:${email},${phone}`,
+        existingUser,
+        600
+      );
+      await queryCache.set(`userModel-findOne:${email}`, existingUser, 600);
     }
 
     if (existingUser) {
@@ -87,7 +101,9 @@ export const signUpController = async (req, res) => {
       name: { first_name, last_name },
       DOB,
       phone,
-      ...(publicId && { photo: { secure_url: secureUrl, public_id: publicId } }),
+      ...(publicId && {
+        photo: { secure_url: secureUrl, public_id: publicId },
+      }),
     });
     await user.save();
 
@@ -97,7 +113,7 @@ export const signUpController = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
       message: "Error while signing up.",
       error,
@@ -111,10 +127,14 @@ export const loginController = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email) {
-      res.status(404).send({ success: false, message: "Email is required" });
+      return res
+        .status(404)
+        .send({ success: false, message: "Email is required" });
     }
     if (!password) {
-      res.status(404).send({ success: false, message: "Password is required" });
+      return res
+        .status(404)
+        .send({ success: false, message: "Password is required" });
     }
 
     let user = await queryCache.get(`userModel-findOne:${email}`);
@@ -152,7 +172,7 @@ export const loginController = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
       message: "Error while logging in",
       error,
@@ -165,10 +185,14 @@ export const forgotPasswordController = async (req, res) => {
   try {
     const { email, new_password } = req.body;
     if (!email) {
-      res.status(404).send({ success: false, message: "Email is required" });
+      return res
+        .status(404)
+        .send({ success: false, message: "Email is required" });
     }
     if (!new_password) {
-      res.status(404).send({ success: false, message: "Password is required" });
+      return res
+        .status(404)
+        .send({ success: false, message: "Password is required" });
     }
     let user = await queryCache.get(`userModel-findOne:${email}`);
     if (!user) {
@@ -186,13 +210,13 @@ export const forgotPasswordController = async (req, res) => {
       { password: hashPassword(new_password) },
       { runValidators: true }
     );
-    res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "password changed successfully",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
       message: "Error while updating password",
     });
