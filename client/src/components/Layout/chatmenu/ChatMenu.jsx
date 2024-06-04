@@ -156,7 +156,6 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyCall }) => {
               <IoSearchOutline />
             </span>
           </Tilt>
-          {JSON.stringify({online:activeChat?.online, c_id:activeChat?.c_id})}
           <div className="chatmenu-allchats">
             <React.Fragment>
               {contactDetailsArray?.detailsArray.map((c) => (

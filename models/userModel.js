@@ -46,7 +46,6 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     immutable: true,
-    index:false
   },
   //cloudinary needs public_id, secure_url
   photo: {

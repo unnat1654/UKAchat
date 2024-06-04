@@ -1,32 +1,32 @@
 import { createClient } from "redis";
 
-export const client = createClient({
+export const redisClient = createClient({
     port: process.env.REDIS_PORT,
     host: `${process.env.REDIS_HOST}`
 });
 
-client.on("connect",()=>{
+redisClient.on("connect",()=>{
     console.log("Connected to redis server...");
 });
-client.on("ready",()=>{
+redisClient.on("ready",()=>{
     console.log("Redis server is Up and Ready...".bgYellow.red);
 });
-client.on("error",(err)=>{
+redisClient.on("error",(err)=>{
     console.log(`${err.message}`.bgRed.black);
-    client.quit();
+    redisClient.quit();
 });
-client.on("end",()=>{
+redisClient.on("end",()=>{
     console.log("Redis server disconnected".bgYellow.red);
     
 });
 
 process.on("SIGINT",()=>{
-    client.quit();
+    redisClient.quit();
 });
 
 export const connectRedis = async ()=>{
     try {
-        await client.connect();
+        await redisClient.connect();
     } catch (error) {
     }
 };

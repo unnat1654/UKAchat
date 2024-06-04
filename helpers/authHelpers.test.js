@@ -1,4 +1,4 @@
-import { verifyPassword } from "./authHelpers";
+import { verifyPassword } from "./authHelpers.js";
 
 test("verifying abcd for password", () => {
   expect(

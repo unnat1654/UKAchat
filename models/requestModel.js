@@ -4,19 +4,19 @@ const requestSchema=new mongoose.Schema({
     senderUserId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"users",
-    },
-    senderGroupId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"groups"
+        required: true,
+        immutable: true,
     },
     recieverId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"users",
-        required:true
+        required:true,
+        immutable: true,
     },
     timeSent:{
         type:Date,
-        required:true
+        required:true,
+        immutable: true,
     }
 })
 

@@ -1,4 +1,4 @@
-import { client } from "../config/init_redis.js";
+import { redisClient} from "../config/init_redis.js";
 import { findOnlineContacts } from "./contactHelpers.js";
 
 class onlineUsers {
@@ -17,13 +17,13 @@ class onlineUsers {
         message: "UserId not provided",
       };
     }
-    await client.set(`onlineUsers:${userId}`, socketId);
+    await redisClient.set(`onlineUsers:${userId}`, socketId);
   }
 
   async getSocketIds(contactIdArray) {
     const contactSocketIds=await Promise.all(
       contactIdArray.map(async (contactId) => {
-        return await client.get(`onlineUsers:${contactId}`);
+        return await redisClient.get(`onlineUsers:${contactId}`);
       })
     );
     return contactSocketIds;
@@ -36,7 +36,7 @@ class onlineUsers {
         message: "UserId not provided",
       };
     }
-    await client.DEL(`onlineUsers:${userId}`);
+    await redisClient.DEL(`onlineUsers:${userId}`);
     const { activeUserRooms } = await findOnlineContacts(userId);
     return activeUserRooms;
   }
@@ -48,7 +48,7 @@ class onlineUsers {
         message: "UserId not provided",
       };
     }
-    let online = await client.EXISTS(`onlineUsers:${userId}`);
+    let online = await redisClient.EXISTS(`onlineUsers:${userId}`);
     return online == 1;
   }
 }

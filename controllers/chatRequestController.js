@@ -1,5 +1,6 @@
 import requestModel from "../models/requestModel.js";
 import chatRoomModel from "../models/chatRoomModel.js";
+import queryCache from "../helpers/queryCacheHelpers.js";
 
 //POST   /send-request
 export const sendRequestController = async (req, res) => {
@@ -7,40 +8,46 @@ export const sendRequestController = async (req, res) => {
     const { sentToId, timeSent } = req.body;
     const user = req.user._id;
 
-    const roomAlready = await chatRoomModel.findOne({ $or: [{ user1: sentToId, user2: user }, { user2: sentToId, user1: user }] });
+    let roomAlready = await queryCache.get(`chatRoomModel-findOne-nochats:${user},${sentToId}`);
+    if (!roomAlready) {
+      roomAlready = await chatRoomModel.findOne({ $or: [{ user1: sentToId, user2: user }, { user2: sentToId, user1: user }] }).select("_id user1 user2");
+      await queryCache.set(`chatRoomModel-findOne-nochats:${user},${sentToId}`, roomAlready, 300);
+    }
+    
     if (roomAlready) {
       return res.status(404).send({
         success: false,
         message: "The invited user is already connected.",
       });
     }
-    const invitesToContact = await requestModel.find({
-      recieverId: sentToId,
-    });
-    const UserInvitedAlready = await requestModel.findOne({
-      $or: [
-        { recieverId: sentToId, senderUserId: user },
-        { senderUserId: sentToId, recieverId: user },
-      ],
-    });
-    if (UserInvitedAlready) {
-      return res.status(200).send({
+
+    let invitesToContact = await queryCache.get(`requestModel-find:${sentToId}`);
+    if (!invitesToContact) {
+      invitesToContact = await requestModel.find({
+        recieverId: sentToId,
+      }).select("-_id senderUserId recieverId");
+      if (invitesToContact.length) {
+        await queryCache.set(`requestModel-find:${sentToId}`, invitesToContact, 20);
+      }
+    }
+
+    const UserInvitedAlready = invitesToContact.filter(invite => invite.senderUserId == user || invite.recieverId == user);
+
+
+    if (UserInvitedAlready.length || invitesToContact >= 50) {
+      return res.status(409).send({
         success: false,
-        message: "Invite already shared between both users",
+        message: UserInvitedAlready.length > 0 ? "Invite shared already" : "Invited user has too many pending invites",
       });
     }
-    if (invitesToContact >= 50) {
-      return res.status(200).send({
-        success: false,
-        message: "Invited user has too many pending invites",
-      });
-    }
+
     const invite = new requestModel({
       senderUserId: user,
       recieverId: sentToId,
       timeSent: timeSent,
     });
     await invite.save();
+
     res.status(201).send({
       success: true,
       message: "Invite sent successfully",
@@ -61,30 +68,32 @@ export const sendRequestController = async (req, res) => {
 export const showRequestsController = async (req, res) => {
   try {
     const user = req.user._id;
-    const invites = await requestModel
-      .find({
-        recieverId: user,
-      })
-      .sort({ timeSent: -1 })
-      .populate({ path: "senderUserId", select: "username photo" });
+
+    let invites = await queryCache.get(`requestModel-find-sorted:${user}`);
+    if (!invites) {
+      invites = await requestModel
+        .find({
+          recieverId: user,
+        })
+        .sort({ timeSent: -1 })
+        .select("-recieverId")
+        .populate({ path: "senderUserId", select: "_id username photo" });
+      await queryCache.set(`requestModel-find-sorted:${user}`, invites, 10);
+    }
+
     if (!invites) {
       return res.status(200).send({
         success: true,
         message: "No pending invites",
       });
     }
-    if (invites.length == 50) {
-      return res.status(200).send({
-        success: true,
-        message: "Maximum possible invites reached",
-        invites,
-      });
-    }
+
     res.status(200).send({
       success: true,
-      message: "Invites fetched successfully",
+      message: invites.length === 50 ? "Maximum possible invites reached" : "Invites fetched successfully",
       invites,
     });
+
   } catch (error) {
     console.log(error);
     res.status(500).send({

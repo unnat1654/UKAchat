@@ -220,7 +220,6 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox, useMyCall }) => {
             callRoom={{ room: myCall.room, type: myCall.type }}
             sendCall={(type) => sendCall(type)}
           />
-          {JSON.stringify(onlineUsers)}
           {myCall.room && myCall.room === activeChat?.room ? (
             <CallMain callType={myCall.type} endCall={endCall} />
           ) : (
