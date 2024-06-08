@@ -6,6 +6,7 @@ import {
   addGroupMemberController,
   removeGroupMemberController,
   leaveGroupController,
+  getGroupController,
   getAllGroupsController,
   getGroupLastMessageController,
   getGroupMessagesController,
@@ -25,6 +26,9 @@ router.post("/remove-group-member", isLoggedIn, removeGroupMemberController);
 // leave group
 router.post("/leave-group", isLoggedIn, leaveGroupController);
 
+// get single group
+router.get("/get-group/:gid", isLoggedIn, getGroupController);
+
 // get all groups
 router.get("/get-all-groups", isLoggedIn, getAllGroupsController);
 
@@ -41,4 +45,4 @@ router.get(
 //get 200 messages in a batch from a group
 router.get("/get-group-messages", isLoggedIn, getGroupMessagesController);
 
-export default Router;
+export default router;

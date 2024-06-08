@@ -5,11 +5,23 @@ import onlineUsers from "./onlineUsers.js";
 export const contactDetailsFinder = async (user, limit) => {
   try {
     const query = { $or: [{ user1: user }, { user2: user }] };
-    let roomsData = await chatRoomModel.find(query, { chats: { $slice: -1 } }); //roomsData:[{_id,user1,user2,chats:[{sender,text,media,timeSent}]}]
+    let roomsData = await chatRoomModel
+      .find(query)
+      .select({ _id: 1, user1: 1, user2: 1, chats: { $slice: -1 } })
+      .populate({ path: "user1", select: "_id username photo" })
+      .populate({ path: "user2", select: "_id username photo" }); //roomsData:[{_id,user1,user2,chats:[{sender,text,media,timeSent}]}]
     if (roomsData.length == 0) {
       return [];
     }
-    roomsData.sort((a, b) => {
+
+    const filteredRoomData = roomsData.map((roomData) => {
+      return {
+        _id: roomData._id,
+        contact: roomData.user1._id == user ? roomData.user2 : roomData.user1,
+        chats: roomData.chats,
+      };
+    });
+    filteredRoomData.sort((a, b) => {
       const timeA = a.chats.length
         ? a.chats[a.chats.length - 1]?.timeSent
         : new Date(0);
@@ -18,46 +30,7 @@ export const contactDetailsFinder = async (user, limit) => {
         : new Date(0);
       return timeB - timeA;
     });
-    let numberOfContacts = roomsData.length;
-    if (limit) {
-      numberOfContacts = roomsData.length > limit ? limit : roomsData.length;
-    }
-    const contacts = [];
-    for (let i = 0; i < numberOfContacts; i++) {
-      if (roomsData[i].user1 == user) {
-        contacts.push(roomsData[i].user2);
-        continue;
-      }
-      contacts.push(roomsData[i].user1);
-    }
-    // const contactDetailsArray = await userModel.find(
-    //   { _id: { $in: contacts } },
-    //   { username: 1, _id: 1, photo: 1 }
-    // );
-
-    const contactDetailsArray = await userModel.aggregate([
-      { $match: { _id: { $in: contacts } } }, // Filter by IDs in the contacts array
-      {
-        $addFields: {
-          __order: { $indexOfArray: [contacts, "$_id"] },
-        },
-      },
-      { $sort: { __order: 1 } }, // Sort based on the order in the contacts array
-      {
-        $project: {
-          _id: 1,
-          username: 1,
-          photo: 1,
-        },
-      },
-    ]);
-    //sort the contactDetailsArray according to the sorted contacts array
-    // contactDetailsArray.sort((a, b) => {
-    //   const indexA = contacts.indexOf(a._id);
-    //   const indexB = contacts.indexOf(b._id);
-    //   return indexA - indexB;
-    // });
-    return contactDetailsArray;
+    return filteredRoomData;
   } catch (error) {
     console.log(error);
     throw new Error(
@@ -84,6 +57,6 @@ export const findOnlineContacts = async (userId) => {
         }
       })
     );
-  } catch (e) { }
+  } catch (e) {}
   return { activeUserRooms, onlineContacts };
-}
+};

@@ -1,32 +1,24 @@
-import { createClient } from "redis";
+import createClient from "ioredis";
 
-export const redisClient = createClient({
-    port: process.env.REDIS_PORT,
-    host: `${process.env.REDIS_HOST}`
-});
-
-redisClient.on("connect",()=>{
-    console.log("Connected to redis server...");
-});
-redisClient.on("ready",()=>{
-    console.log("Redis server is Up and Ready...".bgYellow.red);
-});
-redisClient.on("error",(err)=>{
-    console.log(`${err.message}`.bgRed.black);
-    redisClient.quit();
-});
-redisClient.on("end",()=>{
-    console.log("Redis server disconnected".bgYellow.red);
-    
+export const redisClient = new createClient({
+  port: process.env.REDIS_PORT,
+  host: process.env.REDIS_HOST,
 });
 
-process.on("SIGINT",()=>{
-    redisClient.quit();
+redisClient.on("connect", () => {
+  console.log("Connected to redis server...");
+});
+redisClient.on("ready", () => {
+  console.log("Redis server is Up and Ready...".bgYellow.red);
+});
+redisClient.on("error", (err) => {
+  console.log(`${err.message}`.bgRed.black);
+  redisClient.quit();
+});
+redisClient.on("end", () => {
+  console.log("Redis server disconnected".bgYellow.red);
 });
 
-export const connectRedis = async ()=>{
-    try {
-        await redisClient.connect();
-    } catch (error) {
-    }
-};
+process.on("SIGINT", () => {
+  redisClient.quit();
+});

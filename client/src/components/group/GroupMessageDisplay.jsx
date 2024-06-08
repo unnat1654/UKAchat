@@ -1,37 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { IoCloudDownloadOutline } from "react-icons/io5";
+import React from "react";
 import { convertTimeTo12 } from "../../functions/timeFunction";
 import { getFileType } from "../../functions/regexFunctions";
-import { decrypt } from "../../functions/encryptionFunctions";
+import { IoCloudDownloadOutline } from "react-icons/io5";
 
-const MessageDisplay = ({
-  format,
-  timeSent,
-  file,
-  text,
-  sent,
-  extension,
-  iv,
-  sharedKey,
-}) => {
+const MessageDisplay = ({ format, timeSent, file, text, sent, extension }) => {
   let fileType = "";
-  const [messageDecrypted, setMessageDecrypted] = useState("");
-  if (!format) fileType = getFileType(extension);
-  const decryption = async () => {
-    const message = await decrypt(sharedKey, iv, text);
-    setMessageDecrypted(message);
-  };
-  useEffect(() => {
-    if (!text) {
-      return;
-    }
-    decryption();
-  }, []);
+
+  if (!format) {
+    fileType = getFileType(extension);
+  }
   return (
     <>
       {format ? (
         <div className={`message-box message-box-text ${sent ? "sent" : ""}`}>
-          <p className="message-box-message">{messageDecrypted}</p>
+          <p className="message-box-message">{text}</p>
           <span className="message-box-time">{convertTimeTo12(timeSent)}</span>
         </div>
       ) : (

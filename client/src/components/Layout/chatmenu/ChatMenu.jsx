@@ -5,136 +5,32 @@ import Tilt from "react-parallax-tilt";
 import axios from "axios";
 import { useAuth } from "../../../context/authContext";
 import { useActiveChat } from "../../../context/activeChatContext";
-import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 import Invites from "../../invite/Invites";
 import IncomingCall from "../../call/IncomingCall";
 import { useSocket } from "../../../context/socketContext";
+import OtherGroups from "../../group/OtherGroups";
+import { useIncomingCall } from "../../../hooks/IncomingCallHook";
+import { useTabDetails } from "../../../hooks/TabDetailsHook";
 
 const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyCall }) => {
   const [searchInput, setSearchInput] = useState("");
-  const [callInfo, setCallInfo] = useState({
-    room: "",
-    username: "",
-    photo: "",
-    offer: "",
-    type: "voice",
-  });
-  const [myCall, setMyCall] = useMyCall;
-  const [activeColor, setActiveColor] = useState("");
-  const [invitesArray, setInvitesArray] = useState([]);
-  const [contactDetailsArray, setContactDetailsArray] =
-    useContactDetailsArray();
-  const [activeChat, setActiveChat] = useActiveChat();
-  const [auth, setAuth] = useAuth();
   const socket = useSocket();
-
-  const getContactDetails = async () => {
-    try {
-      const contactDetails = await axios.get(
-        `${import.meta.env.VITE_SERVER}/contact/get-contacts`
-      );
-      if (contactDetails?.data?.success) {
-        setContactDetailsArray({
-          searchedNewUser: false,
-          detailsArray: contactDetails?.data?.contactDetailsArray,
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  //get contacts and set that user is online
-  const getInvites = async () => {
-    try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_SERVER}/request/show-requests`
-      );
-      if (data?.success) {
-        setInvitesArray(data?.invites);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleSearch = async () => {
-    try {
-      if (searchInput == "") {
-        getContactDetails();
-        setShowInviteBox((prev) => ({ ...prev, isShow: false }));
-        return;
-      }
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_SERVER}/contact/search-contact/${searchInput}`
-      );
-      if (data?.success) {
-        setContactDetailsArray({
-          searchedNewUser: true,
-          detailsArray: [data?.contact],
-        });
-      } else {
-        console.log(data?.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const callInfo = useIncomingCall(socket);
+  const [activeColor, setActiveColor] = useState("");
+  const [auth, setAuth] = useAuth();
+  const {
+    handleSearch,
+    contactDetailsArray,
+    invitesArray,
+    setInvitesArray,
+    groupDetailsArray,
+  } = useTabDetails(searchInput, sideBarTab, auth);
 
   const handleKeyDown = (event) => {
     if (event.keyCode === 13 && event.target.name === "searchInput") {
       handleSearch();
     }
   };
-
-  useEffect(() => {
-    if (auth?.token) {
-      getInvites();
-      getContactDetails();
-    }
-  }, [auth?.token]);
-
-  useEffect(() => {
-    if (auth?.token && sideBarTab == "invites") {
-      getInvites();
-    }
-  }, [sideBarTab]);
-
-  useEffect(() => {
-    if (auth?.token) {
-      getContactDetails();
-    }
-  }, [invitesArray.length]);
-
-  const handleIncomingCall = useCallback(
-    async (info) => {
-      console.log("event recieved:incoming-call" + JSON.stringify(info));
-      //info={room,offer,username,photo,type:"voice"|"video"}
-      if (callInfo.username != "") return;
-      setCallInfo(info);
-    },
-    [auth]
-  );
-  const handleIncomingCallEnd = useCallback((info) => {
-    console.log("event recieved:incoming-call-ended");
-    setCallInfo({
-      room: "",
-      username: "",
-      photo: "",
-      offer: "",
-      type: "voice",
-    });
-  });
-
-  useEffect(() => {
-    if (socket) {
-      socket.on("incoming-call", handleIncomingCall);
-      socket.on("incoming-call-ended", handleIncomingCallEnd);
-      return () => {
-        socket.off("incoming-call", handleIncomingCall);
-      };
-    }
-  }, [socket, handleIncomingCall]);
 
   return (
     <div className="chatmenu">
@@ -169,13 +65,15 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyCall }) => {
                   }}
                 >
                   <OtherChats
-                    name={c.username}
-                    photo={c?.photo?.secure_url}
+                    room={c?._id}
+                    name={c.contact.username}
+                    photo={c.contact.photo?.secure_url}
                     notify={c.online}
-                    id={c._id}
-                    active={c._id === activeColor}
+                    id={c.contact._id}
+                    active={c.contact._id === activeColor}
                     searched={contactDetailsArray.searchedNewUser}
                     setShowInviteBox={setShowInviteBox}
+                    lastMessage={c.chats[0]}
                   />
                 </div>
               ))}
@@ -199,8 +97,39 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyCall }) => {
 
       {sideBarTab == "groups" && (
         <React.Fragment>
-          {/* <LoadingScreen></LoadingScreen> */}
-          <div>Groups</div>
+          {/* <Tilt className="chatmenu-search-bar">
+            <input
+              name="searchInput"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              type="text"
+              placeholder="search for groups..."
+              onKeyDown={handleKeyDown}
+            />
+            <span onClick={handleSearch}>
+              <IoSearchOutline />
+            </span>
+          </Tilt> */}
+          <div className="chatmenu-allchats">
+            <React.Fragment>
+              {groupDetailsArray?.map((group) => (
+                <div
+                  key={group._id}
+                  onClick={() => {
+                    setActiveColor(group._id);
+                  }}
+                >
+                  <OtherGroups
+                    name={group.name}
+                    photo={group?.photo?.secure_url}
+                    // notify={c.online}
+                    id={group._id}
+                    active={group._id === activeColor}
+                  />
+                </div>
+              ))}
+            </React.Fragment>
+          </div>
         </React.Fragment>
       )}
     </div>

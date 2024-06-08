@@ -2,12 +2,12 @@ import axios from "axios";
 
 export const addMessageToLocalStorage = (
   room,
-  { format, sent, text, file, extension, timeSent }
+  { format, sent, text, iv, file, extension, timeSent }
 ) => {
   let olderMessages = localStorage.getItem(`room${room}`)
     ? JSON.parse(localStorage.getItem(`room${room}`))
     : [];
-  olderMessages.push({ format, sent, text, file, extension, timeSent });
+  olderMessages.push({ format, sent, text, iv, file, extension, timeSent });
   console.log(olderMessages);
   localStorage.setItem(`room${room}`, JSON.stringify(olderMessages));
   window.dispatchEvent(new Event("storage"));

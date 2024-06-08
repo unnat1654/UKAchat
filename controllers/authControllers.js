@@ -139,7 +139,9 @@ export const loginController = async (req, res) => {
 
     let user = await queryCache.get(`userModel-findOne:${email}`);
     if (!user) {
-      user = await userModel.findOne({ email }).select("_id password");
+      user = await userModel
+        .findOne({ email })
+        .select("_id username name DOB photo password");
       await queryCache.set(`userModel-findOne:${email}`);
     }
     if (!user) {

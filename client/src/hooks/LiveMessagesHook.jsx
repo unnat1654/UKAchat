@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import axios from "axios";
 import { chunkString } from "../functions/regexFunctions";
 import {
@@ -6,25 +6,17 @@ import {
   roomSaveOldMessages,
 } from "../functions/localStorageFunction";
 
-export const useLiveMessages = (socket, activeChat, setActiveChat, page) => {
-  const [liveMessages, setLiveMessages] = useState(new Map());
+export const useSendMessages = (socket, activeChat, setActiveChat, page) => {
   let receivingFiles = new Map();
   let chunkSize = 500000;
   useEffect(() => {
     const onReceiveMessage = (message) => {
-      const { room, format, text, file, timeSent, extension } = message;
-      let newLiveMessages = new Map(liveMessages);
-
-      setLiveMessages(
-        newLiveMessages.set(room, [
-          ...(newLiveMessages.has(room) ? newLiveMessages.get(room) : []),
-          { format, sent: false, text, file, timeSent, extension },
-        ])
-      );
+      const { room, format, text, iv, file, timeSent, extension } = message;
       addMessageToLocalStorage(room, {
         format,
         sent: false,
         text,
+        iv,
         file,
         extension,
         timeSent,
@@ -35,9 +27,9 @@ export const useLiveMessages = (socket, activeChat, setActiveChat, page) => {
           ...prev,
           messages: [
             ...(prev.messages ? prev.messages : []),
-            { format, sent: false, text, file, timeSent, extension },
+            { format, sent: false, text, iv, file, timeSent, extension },
           ],
-          //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date, extension}
+          //format {format:bool(F for file:T for text), sent:bool, text:"",iv:"", file:link, timeSent:Date, extension}
         }));
       }
     };
@@ -55,6 +47,7 @@ export const useLiveMessages = (socket, activeChat, setActiveChat, page) => {
           room,
           format: false,
           text: "",
+          iv: "",
           file: value,
           timeSent,
         });
@@ -76,6 +69,7 @@ export const useLiveMessages = (socket, activeChat, setActiveChat, page) => {
     room,
     format,
     text,
+    iv,
     file,
     extension,
     timeSent
@@ -87,6 +81,7 @@ export const useLiveMessages = (socket, activeChat, setActiveChat, page) => {
           room,
           format,
           text,
+          iv,
           file,
           timeSent,
           extension,
@@ -103,6 +98,7 @@ export const useLiveMessages = (socket, activeChat, setActiveChat, page) => {
         format,
         sent: true,
         text: text ? text : "",
+        iv: text ? iv : "",
         file: file ? file : "",
         extension: extension ? extension : "",
         timeSent,
@@ -118,6 +114,7 @@ export const useLiveMessages = (socket, activeChat, setActiveChat, page) => {
           {
             room,
             text: text || "",
+            iv: iv || "",
             doc: file || "",
             extension,
             timeSent,
@@ -130,31 +127,16 @@ export const useLiveMessages = (socket, activeChat, setActiveChat, page) => {
         console.log(error);
       }
     }
-    const oldMessages = liveMessages.get(room);
-    if (oldMessages && oldMessages.length) {
-      setLiveMessages(
-        liveMessages.set(room, [
-          ...oldMessages,
-          { format, sent: true, text, file, timeSent, extension },
-        ])
-      );
-    } else {
-      setLiveMessages(
-        liveMessages.set(room, [
-          { format, sent: true, text, file, timeSent, extension },
-        ])
-      );
-    }
     if (room == activeChat.room && page <= 2) {
       setActiveChat((prev) => ({
         ...prev,
         messages: [
           ...prev.messages,
-          { format, sent: true, text, file, timeSent, extension },
-        ], //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date, extension}
+          { format, sent: true, text, iv, file, timeSent, extension },
+        ], //format {format:bool(F for file:T for text), sent:bool, text:"", iv:"", file:link, timeSent:Date, extension}
       }));
     }
   };
 
-  return [liveMessages, addLiveMessage];
+  return addLiveMessage;
 };

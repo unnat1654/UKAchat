@@ -4,36 +4,34 @@ import Tilt from "react-parallax-tilt";
 import RejectIcon from "./RejectIcon";
 import AcceptIcon from "./AcceptIcon";
 import axios from "axios";
+import {
+  generateKeyPair,
+  saveUserRoomKey,
+} from "../../functions/encryptionFunctions";
 
 const Invites = ({ sender, photo, id, active, setInvitesArray }) => {
-
-  const acceptInvite = async () => {
+  const handleInvite = async (isAccepted) => {
     try {
+      const userKeys = await generateKeyPair();
       const { data } = await axios.post(
         `${import.meta.env.VITE_SERVER}/request/handle-request`,
-        { senderId: id, isAccepted: true }
+        { senderId: id, isAccepted, userPublicKey: userKeys.publicKey }
       );
-      if (data) {
-        setInvitesArray((prev) =>
-          prev.filter((item) => item.senderUserId !== id)
+      if (!data?.success) return;
+      setInvitesArray((prev) =>
+        prev.filter((item) => item.senderUserId !== id)
+      );
+      if (isAccepted) {
+        saveUserRoomKey(
+          data?.roomId,
+          userKeys.privateKey,
+          data.contactPublicKey
         );
       }
     } catch (error) {
       console.log(error);
     }
   };
-
-  const rejectInvite = async () => {
-    try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_SERVER}/request/handle-request`,
-        { senderId: id, isAccepted: false }
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <Tilt
       tiltMaxAngleX={1}
@@ -48,10 +46,10 @@ const Invites = ({ sender, photo, id, active, setInvitesArray }) => {
         <span className="invites-chat-name">{sender}</span>
       </div>
       <div className="invites-buttons">
-        <div className="accept-button" onClick={acceptInvite}>
+        <div className="accept-button" onClick={() => handleInvite(true)}>
           <AcceptIcon />
         </div>
-        <div className="reject-button" onClick={rejectInvite}>
+        <div className="reject-button" onClick={() => handleInvite(false)}>
           <RejectIcon />
         </div>
       </div>

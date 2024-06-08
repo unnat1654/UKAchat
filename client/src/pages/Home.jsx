@@ -1,4 +1,4 @@
-import React, { useState,useEffect, useCallback} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import background from "../assets/Chill-Lofi-Background-Wallpaper-Full-HD-Free-Download-for-PC-Laptop-Macbook-231121-Wallpaperxyz.com-1.gif";
 import ChattingSection from "../components/Layout/chatmenu/ChattingSection";
 import ChatMenu from "../components/Layout/chatmenu/ChatMenu";
@@ -6,10 +6,16 @@ import SideBar from "../components/Layout/chatmenu/SideBar";
 import { ContactDetailsProvider } from "../context/ContactDetailsContext";
 import { useAuth } from "../context/authContext";
 import { saveAllOldMessages } from "../functions/localStorageFunction";
+import { GroupDetailsProvider } from "../context/groupDetailsContext";
 const Layout = () => {
   const [auth, setAuth] = useAuth();
   const [sideBarTab, setSideBarTab] = useState("chats");
-  const [myCall,setMyCall] =useState({stream:"",room:"",ringing:false,type:"voice"});
+  const [myCall, setMyCall] = useState({
+    stream: "",
+    room: "",
+    ringing: false,
+    type: "voice",
+  });
   const [showInviteBox, setShowInviteBox] = useState({
     isShow: false,
     searchedId: "",
@@ -44,29 +50,31 @@ const Layout = () => {
   //   }, 1000 * 5);
   // }, []);
   return (
-    <ContactDetailsProvider>
-      <div className="layout">
-        <div className="main">
-          <SideBar
-            sideBarTab={sideBarTab}
-            setSideBarTab={setSideBarTab}
-            setShowInviteBox={setShowInviteBox}
-          />
-          <ChatMenu
-            sideBarTab={sideBarTab}
-            setShowInviteBox={setShowInviteBox}
-            useMyCall={[myCall,setMyCall]}
-          />
-          <ChattingSection
-            showInviteBox={showInviteBox}
-            setShowInviteBox={setShowInviteBox}
-            useMyCall={[myCall,setMyCall]}
-          />
-        </div>
+    <GroupDetailsProvider>
+      <ContactDetailsProvider>
+        <div className="layout">
+          <div className="main">
+            <SideBar
+              sideBarTab={sideBarTab}
+              setSideBarTab={setSideBarTab}
+              setShowInviteBox={setShowInviteBox}
+            />
+            <ChatMenu
+              sideBarTab={sideBarTab}
+              setShowInviteBox={setShowInviteBox}
+              useMyCall={[myCall, setMyCall]}
+            />
+            <ChattingSection
+              showInviteBox={showInviteBox}
+              setShowInviteBox={setShowInviteBox}
+              useMyCall={[myCall, setMyCall]}
+            />
+          </div>
 
-        <img src={background} alt="background" className="background" />
-      </div>
-    </ContactDetailsProvider>
+          <img src={background} alt="background" className="background" />
+        </div>
+      </ContactDetailsProvider>
+    </GroupDetailsProvider>
   );
 };
 

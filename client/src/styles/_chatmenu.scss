@@ -17,12 +17,12 @@
   overflow-y: scroll;
   @media screen and (max-width: $tablet-max) {
     & {
-      min-width: 65%;
+      min-width: 60%;
     }
   }
   @media screen and (max-width: $mobile-max) {
     & {
-      min-width: 90%;
+      min-width: 95%;
     }
   }
   #{&}-creategroup {

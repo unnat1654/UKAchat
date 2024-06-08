@@ -1,19 +1,38 @@
 import requestModel from "../models/requestModel.js";
 import chatRoomModel from "../models/chatRoomModel.js";
 import queryCache from "../helpers/queryCacheHelpers.js";
+import { randomUUID } from "crypto";
 
 //POST   /send-request
 export const sendRequestController = async (req, res) => {
   try {
-    const { sentToId, timeSent } = req.body;
+    const { sentToId, senderPublicKey, timeSent } = req.body;
     const user = req.user._id;
-
-    let roomAlready = await queryCache.get(`chatRoomModel-findOne-nochats:${user},${sentToId}`);
-    if (!roomAlready) {
-      roomAlready = await chatRoomModel.findOne({ $or: [{ user1: sentToId, user2: user }, { user2: sentToId, user1: user }] }).select("_id user1 user2");
-      await queryCache.set(`chatRoomModel-findOne-nochats:${user},${sentToId}`, roomAlready, 300);
+    if (!senderPublicKey || roomId) {
+      return res.status(404).send({
+        success: false,
+        message: "Sender Public key or room id to be generated missing.",
+      });
     }
-    
+    let roomAlready = await queryCache.get(
+      `chatRoomModel-findOne-nochats:${user},${sentToId}`
+    );
+    if (!roomAlready) {
+      roomAlready = await chatRoomModel
+        .findOne({
+          $or: [
+            { user1: sentToId, user2: user },
+            { user2: sentToId, user1: user },
+          ],
+        })
+        .select("_id user1 user2");
+      await queryCache.set(
+        `chatRoomModel-findOne-nochats:${user},${sentToId}`,
+        roomAlready,
+        300
+      );
+    }
+
     if (roomAlready) {
       return res.status(404).send({
         success: false,
@@ -21,29 +40,43 @@ export const sendRequestController = async (req, res) => {
       });
     }
 
-    let invitesToContact = await queryCache.get(`requestModel-find:${sentToId}`);
+    let invitesToContact = await queryCache.get(
+      `requestModel-find:${sentToId}`
+    );
     if (!invitesToContact) {
-      invitesToContact = await requestModel.find({
-        recieverId: sentToId,
-      }).select("-_id senderUserId recieverId");
+      invitesToContact = await requestModel
+        .find({
+          recieverId: sentToId,
+        })
+        .select("-_id senderUserId recieverId");
       if (invitesToContact.length) {
-        await queryCache.set(`requestModel-find:${sentToId}`, invitesToContact, 20);
+        await queryCache.set(
+          `requestModel-find:${sentToId}`,
+          invitesToContact,
+          20
+        );
       }
     }
 
-    const UserInvitedAlready = invitesToContact.filter(invite => invite.senderUserId == user || invite.recieverId == user);
-
+    const UserInvitedAlready = invitesToContact.filter(
+      (invite) => invite.senderUserId == user || invite.recieverId == user
+    );
 
     if (UserInvitedAlready.length || invitesToContact >= 50) {
       return res.status(409).send({
         success: false,
-        message: UserInvitedAlready.length > 0 ? "Invite shared already" : "Invited user has too many pending invites",
+        message:
+          UserInvitedAlready.length > 0
+            ? "Invite shared already"
+            : "Invited user has too many pending invites",
       });
     }
 
     const invite = new requestModel({
       senderUserId: user,
+      senderPublicKey,
       recieverId: sentToId,
+      roomId: randomUUID(),
       timeSent: timeSent,
     });
     await invite.save();
@@ -51,8 +84,8 @@ export const sendRequestController = async (req, res) => {
     res.status(201).send({
       success: true,
       message: "Invite sent successfully",
+      roomId: invite.roomId,
     });
-
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -61,7 +94,6 @@ export const sendRequestController = async (req, res) => {
       error,
     });
   }
-
 };
 
 //GET  /show-requests
@@ -90,10 +122,12 @@ export const showRequestsController = async (req, res) => {
 
     res.status(200).send({
       success: true,
-      message: invites.length === 50 ? "Maximum possible invites reached" : "Invites fetched successfully",
+      message:
+        invites.length === 50
+          ? "Maximum possible invites reached"
+          : "Invites fetched successfully",
       invites,
     });
-
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -108,12 +142,12 @@ export const showRequestsController = async (req, res) => {
 export const handleRequestController = async (req, res) => {
   try {
     const user = req.user._id;
-    const { senderId, isAccepted } = req.body;
+    const { senderId, isAccepted, userPublicKey } = req.body;
     if (!senderId) {
       return res.status(404).send({
         success: false,
-        message: "senderId Missing"
-      })
+        message: "senderId Missing",
+      });
     }
     const invite = await requestModel.findOneAndDelete({
       senderUserId: senderId,
@@ -131,22 +165,27 @@ export const handleRequestController = async (req, res) => {
         message: "Invite Rejected",
       });
     }
-    if (!isAccepted) {//isAccepted is undefined or null
+    if (!isAccepted) {
+      //isAccepted is undefined or null
       return res.status(404).send({
         success: false,
         message: "Acceptence missing?",
       });
     }
     const room = new chatRoomModel({
+      _id: invite.roomId,
       user1: user,
+      user1PublicKey: userPublicKey,
       user2: senderId,
+      user2PublicKey: invite.senderPublicKey,
     });
     await room.save();
     res.status(200).send({
       success: true,
       message: "Invite accepted successfully",
+      roomId: room._id,
+      contactPublicKey: invite.senderPublicKey,
     });
-
   } catch (error) {
     console.log(error);
     res.status(500).send({

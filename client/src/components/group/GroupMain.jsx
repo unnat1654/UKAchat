@@ -10,24 +10,11 @@ import {
   getRoomLSMessages,
 } from "../../functions/localStorageFunction";
 import CircleLoader from "../loaders/CircleLoader";
-import { useSharedKey } from "../../hooks/sharedKeyHook";
-import { encrypt } from "../../functions/encryptionFunctions";
-import { useSocket } from "../../context/socketContext";
-import { useSendMessages } from "../../hooks/LiveMessagesHook";
 
-const ChatMain = () => {
+const ChatMain = ({ addLiveMessage, page, setPage }) => {
   const bottomRef = useRef(null);
   const scrollRef = useRef(null);
-  const sharedKey = useSharedKey();
   const [activeChat, setActiveChat] = useActiveChat();
-  const socket = useSocket();
-  const [page, setPage] = useState({ prevPage: 0, currPage: 1 });
-  const addLiveMessage = useSendMessages(
-    socket,
-    activeChat,
-    setActiveChat,
-    page.currPage
-  );
   const [typedMessage, setTypedMessage] = useState("");
   const [doc, setDoc] = useState("");
   const [fileName, setFileName] = useState("");
@@ -37,7 +24,6 @@ const ChatMain = () => {
   const [toDel, setToDel] = useState(0);
   const [fetchPrev, setFetchPrev] = useState(true);
   const [loading, setLoading] = useState(false);
-
   let prevMessageDate = "";
 
   const fetchPageMessages = async () => {
@@ -91,7 +77,6 @@ const ChatMain = () => {
       console.log(error);
     }
   };
-
   const handleDoc = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -159,15 +144,13 @@ const ChatMain = () => {
     setExtension("");
   };
 
-  const handleSend = async () => {
+  const handleSend = () => {
     if (!activeChat.room && !doc && !typedMessage) return;
-    const { cipherText, iv } = await encrypt(sharedKey, typedMessage);
     addLiveMessage(
       activeChat.online,
       activeChat.room,
       typedMessage != "", //false->file true->text
-      cipherText, //text
-      iv,
+      typedMessage, //text
       doc, //file
       extension,
       Date.now()
@@ -258,6 +241,7 @@ const ChatMain = () => {
   return (
     <div className="chatmain">
       <div ref={scrollRef} className="chatmain-messages">
+        {console.log("Loading:", loading)}
         {fetchPrev && loading && (
           <CircleLoader
             color="#008cffa2"
@@ -268,17 +252,15 @@ const ChatMain = () => {
         {activeChat?.messages?.length &&
           activeChat?.messages?.map((m) => {
             let DateSent = new Date(m.timeSent).toLocaleDateString("en-GB");
-            let showDateCondition = false;
+            let condition = false;
             if (DateSent !== prevMessageDate) {
-              showDateCondition = true;
+              condition = true;
               prevMessageDate = DateSent;
             }
 
             return (
               <React.Fragment key={m.timeSent}>
-                {showDateCondition && (
-                  <div className="date-tag">{DateSent}</div>
-                )}
+                {condition && <div className="date-tag">{DateSent}</div>}
 
                 <MessageDisplay
                   format={m.format}
@@ -287,8 +269,6 @@ const ChatMain = () => {
                   timeSent={m.timeSent}
                   sent={m.sent}
                   extension={m.extension}
-                  iv={m.iv}
-                  sharedKey={sharedKey}
                 />
               </React.Fragment>
             );

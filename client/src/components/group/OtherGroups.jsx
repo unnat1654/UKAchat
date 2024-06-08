@@ -2,78 +2,47 @@ import React, { useEffect, useState } from "react";
 import UserIcon from "../UserIcon";
 import Tilt from "react-parallax-tilt";
 import axios from "axios";
-
-import { useActiveChat } from "../../context/activeChatContext";
+import { useActiveGroup } from "../../context/activeGroupContext";
 import { convertTimeTo12 } from "../../functions/timeFunction";
 import {
   getLSMsgTimeRange,
   getRoomLSMessages,
 } from "../../functions/localStorageFunction";
-import { decrypt, getRoomSharedKey } from "../../functions/encryptionFunctions";
 
-const OtherChats = ({
-  room,
-  name,
-  photo,
-  notify,
-  id,
-  active,
-  searched,
-  setShowInviteBox,
-  lastMessage,
-}) => {
-  const [lastTextMessage, setLastTextMessage] = useState("");
-  const [activeChat, setActiveChat] = useActiveChat();
-
-  const decryptMessage = async () => {
-    const textMessage = await decrypt(
-      getRoomSharedKey(room),
-      lastMessage.iv,
-      lastMessage.text
+const OtherGroups = ({ name, photo, id, active }) => {
+  const [activeGroup, setActiveGroup] = useActiveGroup();
+  const [lastMessageInfo, setLastMessageInfo] = useState({});
+  const getLastMessageInfo = async () => {
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_SERVER}/group/get-group-last-message/${id}`
     );
-    setLastTextMessage(textMessage);
+    setLastMessageInfo(data?.lastMessageInfo);
   };
-
-  useEffect(() => {
-    if (lastMessage.text) {
-      decryptMessage();
-    }
-  }, []);
-
   const handleClick = async () => {
-    //get room id and set Active chat context to clicked contact
     try {
-      if (searched) {
-        setShowInviteBox({
-          isShow: true,
-          searchedId: id,
-          searchedUsername: name,
-        });
-        return;
-      }
-      if (activeChat?.c_id != id) {
-        const roomResponse = await axios.get(
-          `${import.meta.env.VITE_SERVER}/contact/get-room/${id}`
+      if (activeGroup?.id != id) {
+        const groupResponse = await axios.get(
+          `${import.meta.env.VITE_SERVER}/group/get-group/${id}`
         );
-        if (roomResponse?.data?.success) {
-          const room = roomResponse?.data?.room;
-          const [firstTime, lastTime] = getLSMsgTimeRange(room);
+        if (groupResponse?.data?.success) {
+          const group = groupResponse?.data?.group;
+          const [firstTime, lastTime] = getLSMsgTimeRange(group);
           const messagesResponse = await axios.get(
             `${
               import.meta.env.VITE_SERVER
-            }/message/get-messages?room=${room}&page=1${
+            }/group/get-group-messages?group=${group}&page=1${
               firstTime ? `&firstTime=${firstTime}` : ""
             }${lastTime ? `&lastTime=${lastTime}` : ""}`
           );
           const recievedMessages = messagesResponse?.data?.messages;
           if (messagesResponse?.data?.success) {
             const msgInLS = getRoomLSMessages(
-              room,
+              group,
               0 == messagesResponse.data.newMessagesCount
             ); // if new messages are found then getRoomLSMessages are not required
-            setActiveChat({
+            setActiveGroup({
               c_id: id,
-              room,
+              group,
               messages: [
                 ...(recievedMessages ? recievedMessages : []),
                 ...msgInLS,
@@ -86,6 +55,9 @@ const OtherChats = ({
       console.log(error);
     }
   };
+  useEffect(() => {
+    getLastMessageInfo();
+  }, []);
   return (
     <div onClick={handleClick}>
       <Tilt
@@ -99,31 +71,27 @@ const OtherChats = ({
         )}
         <div className="otherchats-chat">
           <span className="otherchats-chat-name">{name}</span>
-          {lastMessage && (
-            <span className="otherchats-chat-message">
-              {lastMessage.sender != id && "You: "}
-              {lastMessage.media && "File Shared"}
-              {lastTextMessage?.slice(0, 20)}
-              {lastTextMessage?.length > 20 ? "..." : ""}
-            </span>
-          )}
+          <span className="otherchats-chat-message">
+            {lastMessageInfo?.lastMessage?.slice(0, 20)}
+            {lastMessageInfo?.lastMessage?.length > 20 ? "..." : ""}
+          </span>
         </div>
         <div className="otherchats-info">
           <span className="otherchats-info-time">
-            {lastMessage?.timeSent
-              ? convertTimeTo12(lastMessage?.timeSent)
+            {lastMessageInfo?.timeSent
+              ? convertTimeTo12(lastMessageInfo?.timeSent)
               : ""}
           </span>
-          <span className="otherchats-info-notification">
+          {/* <span className="otherchats-info-notification">
             {notify ? <div className="notification"></div> : <div></div>}
-          </span>
+          </span> */}
         </div>
       </Tilt>
     </div>
   );
 };
 
-OtherChats.defaultProps = {
+OtherGroups.defaultProps = {
   active: false,
 };
-export default OtherChats;
+export default OtherGroups;

@@ -1,19 +1,30 @@
 import mongoose from "mongoose";
 
-
-
 const userRoomSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   user1: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
     required: true,
     index: true,
   },
+  user1PublicKey: {
+    type: String,
+    required: true,
+  },
   user2: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
     required: true,
     index: true,
+  },
+  user2PublicKey: {
+    type: String,
+    required: true,
   },
   chats: {
     type: [
@@ -26,6 +37,10 @@ const userRoomSchema = new mongoose.Schema({
         text: {
           type: String,
           maxLength: 30000,
+        },
+        iv: {
+          type: String,
+          maxLength: 500,
         },
         media: {
           public_id: {

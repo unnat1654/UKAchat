@@ -565,12 +565,12 @@
 }
 @media screen and (max-width: 1080px) {
   .chatmenu {
-    min-width: 65%;
+    min-width: 60%;
   }
 }
 @media screen and (max-width: 480px) {
   .chatmenu {
-    min-width: 90%;
+    min-width: 95%;
   }
 }
 .chatmenu .chatmenu-creategroup {
@@ -1220,13 +1220,12 @@
 }
 @media screen and (max-width: 1080px) {
   .chattingsection {
-    min-width: 50%;
+    min-width: 70%;
   }
 }
 @media screen and (max-width: 480px) {
   .chattingsection {
-    min-width: 90vw;
-    max-width: 90vw;
+    min-width: 95%;
   }
 }
 

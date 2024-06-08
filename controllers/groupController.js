@@ -1,11 +1,17 @@
 import { cloudinary } from "../config/cloudinary.js";
 import groupModel from "../models/groupModel.js";
 import userModel from "../models/userModel.js";
+import chatRoomModel from "../models/chatRoomModel.js";
+import mongoose from "mongoose";
+
+const convertToObjectIdArray = (stringArray) => {
+  return stringArray.map((str) => new mongoose.Types.ObjectId(str));
+};
 
 // POST /create-group
 export const createGroupController = async (req, res) => {
   try {
-    const { name, photo, description, members, createdAt } = req.body;
+    const { name, photo, description, members } = req.body;
     const user = req.user._id;
 
     // checking entries
@@ -15,22 +21,24 @@ export const createGroupController = async (req, res) => {
         .send({ success: false, message: "Name is required" });
     }
 
-    for (const member in members) {
-      const roomAlready = await chatRoomModel
-        .findOne({
-          $or: [
-            { user1: member, user2: user },
-            { user2: member, user1: user },
-          ],
-        })
-        .select("_id");
-      if (!roomAlready) {
-        return res.status(404).send({
-          success: false,
-          message: "Not all members are your contacts",
-        });
-      }
-    }
+    await Promise.all(
+      members.map(async (member) => {
+        const roomAlready = await chatRoomModel
+          .findOne({
+            $or: [
+              { user1: member, user2: user },
+              { user2: member, user1: user },
+            ],
+          })
+          .select("_id");
+        if (!roomAlready) {
+          return res.status(404).send({
+            success: false,
+            message: "Not all members are your contacts",
+          });
+        }
+      })
+    );
 
     // cloudinary return values
     let publicId;
@@ -54,7 +62,6 @@ export const createGroupController = async (req, res) => {
       description: description,
       admin: [user],
       members: groupMembers,
-      createdAt: createdAt,
     });
     const createdGroup = await group.save();
 
@@ -83,8 +90,8 @@ export const createGroupController = async (req, res) => {
 export const addGroupMemberController = async (req, res) => {
   try {
     // const userId = req.user._id;
-    const { group, users } = req.body;
-    let membersToAdd = users;
+    const { group, contacts } = req.body;
+    let membersToAdd = contacts;
     const foundGroup = await groupModel.findById(group).select("_id members");
     if (!foundGroup) {
       return res.status(404).send({
@@ -93,10 +100,11 @@ export const addGroupMemberController = async (req, res) => {
       });
     }
 
-    const members = foundGroup.members;
-    for (const user in users) {
-      if (members.includes(user)) {
-        membersToAdd = membersToAdd.filter((member) => member != user);
+    const groupMembers = foundGroup.members;
+
+    for (const contact in contacts) {
+      if (groupMembers.includes(contact)) {
+        membersToAdd = membersToAdd.filter((member) => member != contact);
       }
     }
     if (!membersToAdd) {
@@ -106,10 +114,12 @@ export const addGroupMemberController = async (req, res) => {
       });
     }
 
+    const membersToAddObjectId = convertToObjectIdArray(membersToAdd);
+
     const update = {
       $push: {
         members: {
-          $each: membersToAdd,
+          $each: membersToAddObjectId,
         },
       },
     };
@@ -143,7 +153,7 @@ export const addGroupMemberController = async (req, res) => {
 export const removeGroupMemberController = async (req, res) => {
   try {
     const user = req.user._id;
-    const { group, users } = req.body;
+    const { group, contacts } = req.body;
 
     const foundGroup = await groupModel.findById(group).select("_id admin");
 
@@ -159,28 +169,28 @@ export const removeGroupMemberController = async (req, res) => {
         message: "You need admin privilages to remove users",
       });
     }
-    if (!users) {
+    if (!contacts) {
       return res.status(304).send({
         success: false,
         message: "No users to remove",
       });
     }
 
+    const membersToRemoveObjectId = convertToObjectIdArray(contacts);
+
     const update = {
       $pull: {
         members: {
-          $in: users,
+          $in: membersToRemoveObjectId,
         },
       },
     };
-    await groupModel.findByIdAndUpdate(group, update, {
-      runValidators: true,
-    });
+    await groupModel.findByIdAndUpdate(group, update);
 
     const userUpdate = { $pull: { groups: foundGroup._id } };
 
     await Promise.all(
-      users.map(async (member) => {
+      contacts.map(async (member) => {
         await userModel.findByIdAndUpdate(member, userUpdate);
       })
     );
@@ -246,10 +256,45 @@ export const leaveGroupController = async (req, res) => {
   }
 };
 
+// GET /get-group/:gid
+export const getGroupController = async (req, res) => {
+  try {
+    const user = req.user._id;
+    const group = req.params.gid;
+
+    const groupAlready = await groupModel.findById(group);
+    console.log(groupAlready);
+
+    if (!groupAlready) {
+      return res.status(404).send({
+        success: false,
+        message: "Group Not Found",
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "Group exists",
+      group: groupAlready._id,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while getting group",
+      error,
+    });
+  }
+};
+
+// GET /get-all-groups
 export const getAllGroupsController = async (req, res) => {
   try {
     const user = req.user._id;
-    const groups = await userModel.findById(user).select("groups").populate(); // populate with group details
+    const groups = await userModel.findById(user).select("groups").populate({
+      path: "groups",
+      select: "_id name description members admin photo",
+    });
     if (!groups) {
       return res.status(201).send({
         success: true,
@@ -259,7 +304,7 @@ export const getAllGroupsController = async (req, res) => {
     return res.status(201).send({
       success: true,
       message: "Groups fetched successfully",
-      groups,
+      groups: groups.groups,
     });
   } catch (error) {
     console.log(error);
@@ -323,23 +368,22 @@ export const sendGroupMessageController = async (req, res) => {
   }
 };
 
+// GET /get-group-last-message/:gid
 export const getGroupLastMessageController = async (req, res) => {
   try {
     const { gid } = req.params;
     const userId = req.user._id;
 
-    const { chats } = await groupModel
-      .findById(gid, {
-        chats: { $slice: -1 },
-      })
-      .select("chats -_id");
+    const { chats } = await groupModel.findById(gid, {
+      chats: { $slice: -1 },
+    });
 
     let chat = null;
     if (chats.length) {
       chat = chats[0];
     }
     if (!chat) {
-      res.status(200).send({
+      return res.status(200).send({
         success: false,
         message: "No Messages Found",
       });
@@ -370,12 +414,11 @@ export const getGroupMessagesController = async (req, res) => {
   const group = req.query.group;
   const page = parseInt(req.query.page);
   if (page == 0) {
-    res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "No messages found",
       messages: [],
     });
-    return;
   }
   const firstTimeInNum = parseInt(req.query.firstTime); //oldest local message time
   const lastTimeInNum = parseInt(req.query.lastTime); //last local stored message time
@@ -387,7 +430,7 @@ export const getGroupMessagesController = async (req, res) => {
     let fetchfrom = fromEndIndex;
     let fetchTill = chatsPerPage;
     const { totalMessages } = await groupModel
-      .findById(group)
+      .findById(new mongoose.Types.ObjectId(group))
       .select("totalMessages");
     if (totalMessages == 0) {
       fetchfrom = 0;
@@ -439,7 +482,7 @@ export const getGroupMessagesController = async (req, res) => {
         });
       }
 
-      res.status(200).send({
+      return res.status(200).send({
         success: true,
         message: "Messages found successfully",
         newMessagesCount,
@@ -447,7 +490,7 @@ export const getGroupMessagesController = async (req, res) => {
         totalPages: Math.ceil(totalMessages / chatsPerPage),
       });
     } else {
-      res.status(200).send({
+      return res.status(200).send({
         success: true,
         message: "No messages found",
         newMessagesCount,

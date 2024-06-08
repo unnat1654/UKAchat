@@ -8,9 +8,9 @@ import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import chatRequestRoutes from "./routes/chatRequestRoutes.js";
+import groupRoutes from "./routes/groupRoutes.js";
 import connectDB from "./config/db.js";
-import { connectRedis } from "./config/init_redis.js";
-import {socketModule} from "./config/socket_config.js";
+import { socketModule } from "./config/socket_config.js";
 import socketEvents from "./controllers/socketController.js";
 
 //configure env
@@ -35,9 +35,6 @@ connectDB();
 socketModule.init(httpServer);
 socketEvents();
 
-//connect to redis
-connectRedis();
-
 //Welcome
 app.get("/home", (req, res) => {
   res.send({
@@ -50,6 +47,7 @@ app.use("/api/v0/auth", authRoutes);
 app.use("/api/v0/contact", contactRoutes);
 app.use("/api/v0/message", messageRoutes);
 app.use("/api/v0/request", chatRequestRoutes);
+app.use("/api/v0/group", groupRoutes);
 
 //port
 const PORT = process.env.PORT || 8080;

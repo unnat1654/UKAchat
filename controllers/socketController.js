@@ -15,10 +15,11 @@ const socketEvents = () => {
         const { _id } = JWT.verify(payload.token, process.env.JWT_SECRET);
         socket.chatAppUserId = _id;
 
-        const { activeUserRooms, onlineContacts, contactSocketIds } = await onlineUsers.setOnlineGetContacts(_id, socket.id);
+        const { activeUserRooms, onlineContacts, contactSocketIds } =
+          await onlineUsers.setOnlineGetContacts(_id, socket.id);
 
         socket.join(activeUserRooms);
-        
+
         //to the emitter of the event only, send the contact ids and the respective contact ids
         socket.emit("get-online-contacts", onlineContacts);
 
@@ -34,37 +35,40 @@ const socketEvents = () => {
         });
 
         socket.to(activeUserRooms).emit("new-contact-online", _id);
-
       } catch (error) {
         // socket.in(socket.id).emit("get-online-contacts", []);
         console.log(error);
+        socket.disconnect();
       }
     });
-
 
     socket.on("send-message", (message) => {
       console.log("send-message event occured", JSON.stringify(message));
       socket.to(message.room).emit("receive-message", message);
-      //message->{room:"",format:T(text)/F(file),text:"",file:"",timeSent:Date,extension:String}
+      //message->{room:"",format:T(text)/F(file),text:"", iv:"", file:"",timeSent:Date,extension:String}
     });
 
     socket.on("send-buffer", ({ room, timeSent, numberOfChunks, chunk }) => {
       console.log("send-buffer event occured");
-      socket.to(room).emit("receive-buffer", { room, timeSent, numberOfChunks, chunk });
+      socket
+        .to(room)
+        .emit("receive-buffer", { room, timeSent, numberOfChunks, chunk });
     });
 
     socket.on("disconnect", async () => {
       try {
         if (!socket.chatAppUserId) return;
-        const activeUserRooms = await onlineUsers.setOffline(socket.chatAppUserId);
+        const activeUserRooms = await onlineUsers.setOffline(
+          socket.chatAppUserId
+        );
         if (!activeUserRooms.length) return;
-        socket.to(activeUserRooms).emit("one-contact-went-offline", socket.chatAppUserId);
+        socket
+          .to(activeUserRooms)
+          .emit("one-contact-went-offline", socket.chatAppUserId);
       } catch (e) {
         console.log(e);
       }
     });
-
-
 
     socket.on("send-call", (info) => {
       //info={room,offer,username,photo,type}
@@ -74,7 +78,6 @@ const socketEvents = () => {
     });
 
     socket.on("accept-call", ({ room, ans }) => {
-      
       socket.to(room).emit("call-accepted", { room, ans });
     });
 

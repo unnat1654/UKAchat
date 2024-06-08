@@ -6,7 +6,7 @@ const ActiveChatProvider = ({ children }) => {
     c_id: "",
     room: "",
     username: "",
-    messages: [], //format {format:bool(F for file:T for text), sent:bool, text:"", file:link, timeSent:Date, extension}
+    messages: [], //format {format:bool(F for file:T for text), sent:bool, text:"", iv:"", file:link, timeSent:Date, extension}
     online: false,
     photo: "", //securl_url
     totalPages: 0,
