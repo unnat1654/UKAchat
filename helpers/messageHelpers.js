@@ -1,4 +1,4 @@
-import { cloudinary } from "../config/cloudinary.js";
+import {cloudinary} from "../server.js"
 import chatRoomModel from "../models/chatRoomModel.js";
 
 export const saveMultipleRoomMessages = async (userChats, userId) => {

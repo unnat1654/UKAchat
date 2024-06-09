@@ -1,4 +1,4 @@
-import { redisClient } from "../config/init_redis.js";
+import { redisClient } from "../config/redis_config.js";
 
 class queryCahce {
   async set(key, value, timeSec) {
