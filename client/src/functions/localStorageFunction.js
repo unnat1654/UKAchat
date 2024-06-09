@@ -8,7 +8,6 @@ export const addMessageToLocalStorage = (
     ? JSON.parse(localStorage.getItem(`room${room}`))
     : [];
   olderMessages.push({ format, sent, text, iv, file, extension, timeSent });
-  console.log(olderMessages);
   localStorage.setItem(`room${room}`, JSON.stringify(olderMessages));
   window.dispatchEvent(new Event("storage"));
 };
@@ -43,8 +42,6 @@ export const saveAllOldMessages = async () => {
         rooms.forEach((room) => {
           localStorage.removeItem(room);
         });
-      } else {
-        console.log(data);
       }
     } catch (error) {
       console.log(error);

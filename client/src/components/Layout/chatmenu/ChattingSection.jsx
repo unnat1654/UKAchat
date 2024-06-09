@@ -7,17 +7,14 @@ import { useActiveChat } from "../../../context/activeChatContext";
 import SendInvite from "../../invite/SendInvite";
 import { useAuth } from "../../../context/authContext";
 import { useSocket } from "../../../context/socketContext";
-import { useOnlineUsers } from "../../../hooks/onlineUsersHook";
 import { useCaller } from "../../../hooks/callerHook";
 
-const ChattingSection = ({ showInviteBox, setShowInviteBox, useMyCall }) => {
+const ChattingSection = ({ showInviteBox, setShowInviteBox, useMyCall,onlineUsers}) => {
   const [activeChat, setActiveChat] = useActiveChat();
   const socket = useSocket();
   const [auth, setAuth] = useAuth();
   const [contactDetailsArray, setContactDetailsArray] =
     useContactDetailsArray();
-
-  const onlineUsers = useOnlineUsers(socket);
 
   const { myCall, sendCall, endCall } = useCaller(
     socket,
@@ -29,7 +26,7 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox, useMyCall }) => {
   const setActiveChatDetails = useCallback(() => {
     if (!contactDetailsArray || !activeChat?.room || !onlineUsers) return;
     const contactObject = contactDetailsArray.detailsArray.find(
-      (contactDetailsObject) => contactDetailsObject._id == activeChat.c_id
+      (contactDetailsObject) => contactDetailsObject.contact._id == activeChat.c_id
     );
     if (!contactObject) {
       return;
@@ -40,11 +37,11 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox, useMyCall }) => {
     }
     setActiveChat((prev) => ({
       ...prev,
-      username: contactObject.username,
-      photo: contactObject.photo?.secure_url,
+      username: contactObject.contact.username,
+      photo: contactObject.contact.photo?.secure_url,
       online,
     }));
-  }, [contactDetailsArray, onlineUsers, activeChat.room]);
+  }, [contactDetailsArray, onlineUsers, activeChat?.room]);
   useEffect(() => {
     setActiveChatDetails();
   }, [setActiveChatDetails, onlineUsers]);
@@ -55,6 +52,7 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox, useMyCall }) => {
         <SendInvite
           inviteId={showInviteBox.searchedId}
           contactName={showInviteBox.searchedUsername}
+          setShowInviteBox={setShowInviteBox}
         />
       )}
       {!showInviteBox.isShow && (

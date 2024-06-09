@@ -22,11 +22,11 @@ const MessageDisplay = ({
     setMessageDecrypted(message);
   };
   useEffect(() => {
-    if (!text) {
+    if (!text || !sharedKey) {
       return;
     }
     decryption();
-  }, []);
+  }, [sharedKey]);
   return (
     <>
       {format ? (

@@ -131,7 +131,7 @@ export const getPublicKeyController = async (req, res) => {
   try {
     const userId = req.user._id;
     const rooms = req.query.rooms;
-    if (!rooms || rooms.length) {
+    if (!rooms || !rooms.length) {
       return res.status(404).send({
         success: false,
         message: "rooms query not found",
@@ -164,7 +164,7 @@ export const getPublicKeyController = async (req, res) => {
       contactPublicKeys[roomDetails._id] =
         roomDetails.user1 == userId
           ? roomDetails.user2PublicKey
-          : roomDetails.user2PublicKey;
+          : roomDetails.user1PublicKey;
     }
 
     return res.status(200).send({

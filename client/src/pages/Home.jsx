@@ -7,6 +7,7 @@ import { ContactDetailsProvider } from "../context/ContactDetailsContext";
 import { useAuth } from "../context/authContext";
 import { saveAllOldMessages } from "../functions/localStorageFunction";
 import { GroupDetailsProvider } from "../context/groupDetailsContext";
+import { useOnlineUsers } from "../hooks/onlineUsersHook";
 const Layout = () => {
   const [auth, setAuth] = useAuth();
   const [sideBarTab, setSideBarTab] = useState("chats");
@@ -16,6 +17,7 @@ const Layout = () => {
     ringing: false,
     type: "voice",
   });
+  const onlineUsers=useOnlineUsers();
   const [showInviteBox, setShowInviteBox] = useState({
     isShow: false,
     searchedId: "",
@@ -33,22 +35,6 @@ const Layout = () => {
     window.addEventListener("storage", backUpMessages);
     return () => window.removeEventListener("storage", backUpMessages);
   }, []);
-  // const sendUserLastOnlineTime = async () => {
-  //   try {
-  //     await axios.patch(`${import.meta.env.VITE_SERVER}/contact/stay-online`);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-  //Every five seconds we check if the user had the home page opened
-  //we send a simple request and in the backend a field containing the last online time is updated
-  //to check if a user is online check if that last online is close in time to the current time
-  //uncomment it to resume functionality
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     sendUserLastOnlineTime();
-  //   }, 1000 * 5);
-  // }, []);
   return (
     <GroupDetailsProvider>
       <ContactDetailsProvider>
@@ -63,11 +49,13 @@ const Layout = () => {
               sideBarTab={sideBarTab}
               setShowInviteBox={setShowInviteBox}
               useMyCall={[myCall, setMyCall]}
+              onlineUsers={onlineUsers}
             />
             <ChattingSection
               showInviteBox={showInviteBox}
               setShowInviteBox={setShowInviteBox}
               useMyCall={[myCall, setMyCall]}
+              onlineUsers={onlineUsers}
             />
           </div>
 

@@ -1,9 +1,9 @@
 import { cloudinary } from "../config/cloudinary.js";
 import chatRoomModel from "../models/chatRoomModel.js";
 
-export const saveMultipleRoomMessages = async (chats, userId) => {
+export const saveMultipleRoomMessages = async (userChats, userId) => {
   await Promise.all(
-    chats.map(async ({ room, messages }) => {
+    userChats.map(async ({ room, messages }) => {
       if (messages.length == 0) return;
       const lastMessageTime = new Date(messages[messages.length - 1].timeSent);
       const firstMessageTime = new Date(messages[0].timeSent);
@@ -16,12 +16,12 @@ export const saveMultipleRoomMessages = async (chats, userId) => {
         throw new Error("Access Forbidden");
       }
       const contactId = user1 == userId ? user2 : user1;
-      const lastSavedMessageTime = chats[0].timeSent;
-      if (lastMessageTime <= lastSavedMessageTime) {
+      const lastSavedMessageTime = chats[0]?.timeSent;
+      if (lastSavedMessageTime && lastMessageTime <= lastSavedMessageTime) {
         //case 1: all messages are already saved
         return;
       }
-      if (firstMessageTime <= lastSavedMessageTime) {
+      if (lastSavedMessageTime && firstMessageTime <= lastSavedMessageTime) {
         //case 2: some messages are saved while some are not
         let lastSavedMessageIndex = -1;
         for (let i = 0; i < messages.length; i++) {

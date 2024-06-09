@@ -1,58 +1,14 @@
-import React, { useCallback } from "react";
+import React from "react";
 import Tilt from "react-parallax-tilt";
 import UserIcon from "../UserIcon";
 import { useSocket } from "../../context/socketContext";
 import { IoCallSharp, IoVideocam, IoCloseOutline } from "react-icons/io5";
-import peer from "../../services/peer";
+import { useIncomingCall } from "../../hooks/IncomingCallHook";
 
-const IncomingCall = ({ useCallInfo, useMyCall }) => {
+const IncomingCall = ({  useMyCall }) => {
   const socket = useSocket();
-  const [myCall, setMyCall] = useMyCall;
-  const [callInfo, setCallInfo] = useCallInfo;
-  
-  const sendStreams = useCallback(() => {
-    if(!myCall.stream) return;
-    for (const track of myCall.stream?.getTracks()) {
-      peer.peer.addTrack(track, myCall.stream);
-    }
-    console.log("sending Streams");
-  }, [myCall?.stream]);
-
-  const acceptIncomingCall = useCallback(async () => {
-    try{
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      ...(callInfo?.type == "video" && { video: true }),
-    }); 
-    sendStreams();
-    const ans = await peer.getAnswer(callInfo.offer);
-    socket.emit("accept-call", { room: callInfo.room, ans });
-    setCallInfo({
-      room: "",
-      username: "",
-      photo: "",
-      offer: "",
-      type: "voice",
-    });
-    setMyCall({room:callInfo.room,ringing:false,stream,type:callInfo.type});
-    console.log("acceptIncomingCall function ran");
-  }catch(error){
-    console.log(error);
-  }
-  }, [socket,sendStreams,myCall]);
-
-  const declineIncomingCall = useCallback(async () => {
-    setCallInfo({
-      room: "",
-      username: "",
-      photo: "",
-      offer: "",
-      type: "voice",
-    });
-    socket.emit("decline-call", callInfo.room);
-    console.log("declineIncomingCall function ran");
-  }, [socket]);
-
+  const {callInfo,acceptIncomingCall,declineIncomingCall} = useIncomingCall(socket,useMyCall);
+  if(callInfo.room){
   return (
     <Tilt tiltMaxAngleX={1} className="incoming-call">
       {callInfo.photo ? (
@@ -71,7 +27,10 @@ const IncomingCall = ({ useCallInfo, useMyCall }) => {
         <IoCloseOutline className="incoming-call-buttons-decline" onClick={declineIncomingCall} />
       </div>
     </Tilt>
-  );
+  );} else {
+    return <></>;
+  }
 };
+
 
 export default IncomingCall;

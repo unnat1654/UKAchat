@@ -7,6 +7,6 @@ export const useSharedKey = (activeChat) => {
     if (activeChat?.room) {
       setSharedKey(getRoomSharedKey(activeChat.room));
     }
-  }, [activeChat.room]);
+  }, [activeChat?.room]);
   return sharedKey;
 };

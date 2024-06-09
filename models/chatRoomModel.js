@@ -3,8 +3,6 @@ import mongoose from "mongoose";
 const userRoomSchema = new mongoose.Schema({
   _id: {
     type: String,
-    required: true,
-    unique: true,
   },
   user1: {
     type: mongoose.Schema.Types.ObjectId,

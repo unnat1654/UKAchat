@@ -29,7 +29,6 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
   const fetchPageMessages = async () => {
     try {
       const [firstTime, lastTime] = getLSMsgTimeRange(activeChat.room);
-      console.log("fetchPageMessages ran");
       if (page.currPage == 1 && page && page.prevPage == 1) return;
       const { data } = await axios.get(
         `${import.meta.env.VITE_SERVER}/message/get-messages?room=${

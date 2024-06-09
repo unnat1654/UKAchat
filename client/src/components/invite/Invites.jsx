@@ -22,7 +22,7 @@ const Invites = ({ sender, photo, id, active, setInvitesArray }) => {
         prev.filter((item) => item.senderUserId !== id)
       );
       if (isAccepted) {
-        saveUserRoomKey(
+        await saveUserRoomKey(
           data?.roomId,
           userKeys.privateKey,
           data.contactPublicKey

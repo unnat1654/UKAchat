@@ -19,7 +19,7 @@ const socketEvents = () => {
           await onlineUsers.setOnlineGetContacts(_id, socket.id);
 
         socket.join(activeUserRooms);
-
+        console.log(onlineContacts)
         //to the emitter of the event only, send the contact ids and the respective contact ids
         socket.emit("get-online-contacts", onlineContacts);
 
@@ -33,7 +33,7 @@ const socketEvents = () => {
             contactSocket.join(activeUserRooms[index]);
           }
         });
-
+       
         socket.to(activeUserRooms).emit("new-contact-online", _id);
       } catch (error) {
         // socket.in(socket.id).emit("get-online-contacts", []);

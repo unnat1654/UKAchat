@@ -6,7 +6,7 @@ import {
   saveUserRoomKey,
 } from "../../functions/encryptionFunctions";
 
-const SendInvite = ({ inviteId, contactName }) => {
+const SendInvite = ({ inviteId, contactName, setShowInviteBox }) => {
   const handleClick = async () => {
     try {
       const userKeys = await generateKeyPair();
@@ -19,10 +19,12 @@ const SendInvite = ({ inviteId, contactName }) => {
         }
       );
       if (data?.success) {
-        saveUserRoomKey(data?.roomId, userKeys.privateKey);
-        console.log(data?.message);
-      } else if (data?.success === false) {
-        console.log(data?.message);
+        await saveUserRoomKey(data?.roomId, userKeys.privateKey);
+        setShowInviteBox({
+          isShow: false,
+          searchedId: "",
+          searchedUsername: "",
+        });
       }
     } catch (error) {
       console.log(error);

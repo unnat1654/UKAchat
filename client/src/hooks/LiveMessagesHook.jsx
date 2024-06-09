@@ -34,7 +34,6 @@ export const useSendMessages = (socket, activeChat, setActiveChat, page) => {
       }
     };
     const onReceiveBuffer = ({ room, timeSent, numberOfChunks, chunk }) => {
-      console.log("recieved Event: receive buffer");
       const key = room + timeSent;
       const value = receivingFiles.has(key)
         ? receivingFiles.get(key) + chunk
@@ -90,7 +89,6 @@ export const useSendMessages = (socket, activeChat, setActiveChat, page) => {
         let chunks = chunkString(file, chunkSize);
         let numberOfChunks = chunks.length;
         chunks.forEach((chunk) => {
-          console.log(chunk);
           socket.emit("send-buffer", { room, timeSent, numberOfChunks, chunk });
         });
       }

@@ -8,10 +8,10 @@ export const sendRequestController = async (req, res) => {
   try {
     const { sentToId, senderPublicKey, timeSent } = req.body;
     const user = req.user._id;
-    if (!senderPublicKey || roomId) {
+    if (!senderPublicKey) {
       return res.status(404).send({
         success: false,
-        message: "Sender Public key or room id to be generated missing.",
+        message: "Sender Public key missing.",
       });
     }
     let roomAlready = await queryCache.get(

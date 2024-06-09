@@ -4,7 +4,13 @@ import { useContactDetailsArray } from "../context/ContactDetailsContext";
 import { useGroupDetailsArray } from "../context/groupDetailsContext";
 import { deriveSharedkey } from "../functions/encryptionFunctions";
 
-export const useTabDetails = (searchInput, sideBarTab, auth) => {
+export const useTabDetails = (
+  searchInput,
+  sideBarTab,
+  auth,
+  setShowInviteBox,
+  onlineUsers
+) => {
   const [contactDetailsArray, setContactDetailsArray] =
     useContactDetailsArray();
   const [invitesArray, setInvitesArray] = useState([]);
@@ -35,13 +41,19 @@ export const useTabDetails = (searchInput, sideBarTab, auth) => {
 
   const getContactDetails = async () => {
     try {
-      const contactDetails = await axios.get(
+      const {data} = await axios.get(
         `${import.meta.env.VITE_SERVER}/contact/get-all-contacts`
       );
-      if (contactDetails?.data?.success) {
+      
+      if (data?.success) {
+        console.log(onlineUsers)
+        const completeDetails=data?.contactDetailsArray.map((contactDetails)=>{
+          return {...contactDetails,online:onlineUsers.includes(contactDetails.contact._id)}
+        });
+        console.log(completeDetails)
         setContactDetailsArray({
           searchedNewUser: false,
-          detailsArray: contactDetails?.data?.contactDetailsArray,
+          detailsArray: completeDetails,
         });
       }
     } catch (error) {
@@ -55,9 +67,9 @@ export const useTabDetails = (searchInput, sideBarTab, auth) => {
 
       const roomParams = new URLSearchParams();
       let needRequest = false;
-      Object.entries(userKeysObject).map(([roomId, roomKeys]) => {
+      Object.entries(userKeysObject).forEach(([roomId, roomKeys]) => {
         if (roomKeys.privateKey && !roomKeys.sharedKey) {
-          roomParams.append("users", roomId);
+          roomParams.append("rooms", roomId);
           needRequest = true;
         }
       });
@@ -67,19 +79,18 @@ export const useTabDetails = (searchInput, sideBarTab, auth) => {
         data: { success, contactPublicKeys },
       } = await axios.get(
         `${import.meta.env.VITE_SERVER}/contact/get-public-key`,
-        roomParams
+        { params: roomParams }
       );
       if (!success || !contactPublicKeys) return;
 
-      Object.entries(userKeysObject).map(([roomId, roomKeys]) => {
+      for(const [roomId,roomKeys] of Object.entries(userKeysObject)){
         if (contactPublicKeys[roomId]) {
-          userKeysObject[roomId].sharedKey = deriveSharedkey(
+          userKeysObject[roomId].sharedKey = await deriveSharedkey(
             roomKeys.privateKey,
             contactPublicKeys[roomId]
           );
         }
-      });
-
+      }
       localStorage.setItem(`userKeys`, JSON.stringify(userKeysObject));
     } catch (error) {
       console.log(error);
@@ -121,11 +132,20 @@ export const useTabDetails = (searchInput, sideBarTab, auth) => {
       fetchPublicKeys();
       getGroupDetails();
     }
-  }, [auth?.token]);
+  }, [auth?.token,onlineUsers]);
 
   useEffect(() => {
-    if (auth?.token && sideBarTab == "invites") {
+    if(!auth?.token){
+      return;
+    }
+    if (sideBarTab == "invites") {
       getInvites();
+    }
+    if(sideBarTab == "chats"){
+      getContactDetails();
+    }
+    if(sideBarTab == "groups"){
+      getGroupDetails();
     }
   }, [sideBarTab]);
 

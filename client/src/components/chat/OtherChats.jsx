@@ -35,7 +35,7 @@ const OtherChats = ({
   };
 
   useEffect(() => {
-    if (lastMessage.text) {
+    if (lastMessage?.text) {
       decryptMessage();
     }
   }, []);
@@ -51,7 +51,7 @@ const OtherChats = ({
         });
         return;
       }
-      if (activeChat?.c_id != id) {
+      if (activeChat?.c_id != id) {  
         const roomResponse = await axios.get(
           `${import.meta.env.VITE_SERVER}/contact/get-room/${id}`
         );
@@ -66,6 +66,7 @@ const OtherChats = ({
             }${lastTime ? `&lastTime=${lastTime}` : ""}`
           );
           const recievedMessages = messagesResponse?.data?.messages;
+          
           if (messagesResponse?.data?.success) {
             const msgInLS = getRoomLSMessages(
               room,

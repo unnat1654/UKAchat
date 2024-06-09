@@ -18,8 +18,8 @@ import { useSendMessages } from "../../hooks/LiveMessagesHook";
 const ChatMain = () => {
   const bottomRef = useRef(null);
   const scrollRef = useRef(null);
-  const sharedKey = useSharedKey();
   const [activeChat, setActiveChat] = useActiveChat();
+  const sharedKey = useSharedKey(activeChat);
   const socket = useSocket();
   const [page, setPage] = useState({ prevPage: 0, currPage: 1 });
   const addLiveMessage = useSendMessages(
@@ -43,7 +43,6 @@ const ChatMain = () => {
   const fetchPageMessages = async () => {
     try {
       const [firstTime, lastTime] = getLSMsgTimeRange(activeChat.room);
-      console.log("fetchPageMessages ran");
       if (page.currPage == 1 && page && page.prevPage == 1) return;
       const { data } = await axios.get(
         `${import.meta.env.VITE_SERVER}/message/get-messages?room=${
@@ -78,8 +77,6 @@ const ChatMain = () => {
           }
           setToDel(data?.messages?.length);
         }
-        // console.log("ac ", activeChat);
-        // console.log("dm ", displayMessages);
         setActiveChat((prev) => ({
           ...prev,
           messages: displayMessages,
@@ -191,8 +188,6 @@ const ChatMain = () => {
     const handleScroll = async () => {
       if (scrollRef.current && scrollRef.current.scrollTop == 0) {
         setFetchPrev(true);
-        console.log("length", activeChat.messages.length);
-        console.log(activeChat);
         const condition1 =
           page.currPage === 1 && activeChat?.messages?.length >= 100;
         const condition2 =
