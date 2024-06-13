@@ -101,7 +101,7 @@ export const getAllContactsController = async (req, res) => {
       `contactModel-all-contacts:${user}`
     );
     if (!contactDetailsArray) {
-      contactDetailsArray = await contactDetailsFinder(user, null);
+      contactDetailsArray = await contactDetailsFinder(user);
       // returing: {_id,username,photo:{securl_url,public_id}}
 
       await queryCache.set(

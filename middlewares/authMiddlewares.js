@@ -5,25 +5,24 @@ export const isLoggedIn = (req, res, next) => {
     const decodedToken = JWT.decode(req.headers.authorization, {
       complete: true,
     });
-    if (decodedToken && decodedToken.payload.exp) {
-      const expirationTime = decodedToken.payload.exp;
-      const currentTime = Math.floor(Date.now() / 1000);
-
-      if (currentTime > expirationTime) {
-        return res.status(401).send({
-          success: false,
-          message: "Token expired. Please login again",
-        });
-      } else {
-        const decode = JWT.verify(
-          req.headers.authorization,
-          process.env.JWT_SECRET
-        );
-        req.user = decode;
-      }
-    } else {
-      console.log("Invalid token format");
+    if (!decodedToken) {
+      return res.status(401).send({
+        success: false,
+        message: "token not valid",
+      });
     }
+    // const expirationTime = decodedToken.payload.exp;
+    // const currentTime = Math.floor(Date.now() / 1000);
+
+    // if (currentTime > expirationTime) {
+    //   
+    // } else {
+    const decode = JWT.verify(
+      req.headers.authorization,
+      process.env.JWT_SECRET
+    );
+    req.user = decode;
+    // }
     next();
   } catch (error) {
     console.log(error);

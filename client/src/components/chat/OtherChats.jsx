@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import UserIcon from "../UserIcon";
 import Tilt from "react-parallax-tilt";
 import axios from "axios";
@@ -25,22 +25,23 @@ const OtherChats = ({
   const [lastTextMessage, setLastTextMessage] = useState("");
   const [activeChat, setActiveChat] = useActiveChat();
 
-  const decryptMessage = async () => {
-    const textMessage = await decrypt(
-      getRoomSharedKey(room),
-      lastMessage.iv,
-      lastMessage.text
-    );
+  const decryptMessage = useCallback( async () => {
+    let textMessage = "";
+    if (lastMessage?.text) {
+      textMessage = await decrypt(
+        getRoomSharedKey(room),
+        lastMessage.iv,
+        lastMessage.text
+      );
+    }
     setLastTextMessage(textMessage);
-  };
+  },[lastMessage]);
 
   useEffect(() => {
-    if (lastMessage?.text) {
-      decryptMessage();
-    }
-  }, []);
+    decryptMessage();
+  }, [decryptMessage]);
 
-  const handleClick = async () => {
+  const handleClick = useCallback(async () => {
     //get room id and set Active chat context to clicked contact
     try {
       if (searched) {
@@ -51,7 +52,7 @@ const OtherChats = ({
         });
         return;
       }
-      if (activeChat?.c_id != id) {  
+      if (activeChat?.c_id != id) {
         const roomResponse = await axios.get(
           `${import.meta.env.VITE_SERVER}/contact/get-room/${id}`
         );
@@ -66,7 +67,7 @@ const OtherChats = ({
             }${lastTime ? `&lastTime=${lastTime}` : ""}`
           );
           const recievedMessages = messagesResponse?.data?.messages;
-          
+
           if (messagesResponse?.data?.success) {
             const msgInLS = getRoomLSMessages(
               room,
@@ -86,7 +87,7 @@ const OtherChats = ({
     } catch (error) {
       console.log(error);
     }
-  };
+  },[activeChat?.room,searched]);
   return (
     <div onClick={handleClick}>
       <Tilt
@@ -102,9 +103,10 @@ const OtherChats = ({
           <span className="otherchats-chat-name">{name}</span>
           {lastMessage && (
             <span className="otherchats-chat-message">
-              {lastMessage.sender != id && "You: "}
-              {lastMessage.media && "File Shared"}
-              {lastTextMessage?.slice(0, 20)}
+              {lastMessage.sent && "You: "}
+              {!lastTextMessage
+                ? "File Shared"
+                : lastTextMessage?.slice(0, 20)}
               {lastTextMessage?.length > 20 ? "..." : ""}
             </span>
           )}

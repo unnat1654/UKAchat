@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import { convertTimeTo12 } from "../../functions/timeFunction";
 import { getFileType } from "../../functions/regexFunctions";
@@ -15,18 +15,22 @@ const MessageDisplay = ({
   sharedKey,
 }) => {
   let fileType = "";
+
   const [messageDecrypted, setMessageDecrypted] = useState("");
+
   if (!format) fileType = getFileType(extension);
-  const decryption = async () => {
+
+  const decryption = useCallback( async () => {
     const message = await decrypt(sharedKey, iv, text);
     setMessageDecrypted(message);
-  };
+  },[sharedKey,text]);
+  
   useEffect(() => {
     if (!text || !sharedKey) {
       return;
     }
     decryption();
-  }, [sharedKey]);
+  }, [decryption]);
   return (
     <>
       {format ? (

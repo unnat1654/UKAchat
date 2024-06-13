@@ -36,10 +36,11 @@ export const saveMultipleRoomMessages = async (userChats, userId) => {
         messages.splice(0, lastSavedMessageIndex + 1);
       }
       const formattedMessages = await Promise.all(
-        messages.map(async (message) => {
+        messages.map(async ({sent,text,iv,doc,extension,timeSent}) => {
+          console.log({sent,text,iv,doc,extension,timeSent})
           let secureUrl = "";
           let publicId = "";
-          if ("" !== message.file) {
+          if ("" !== doc) {
             const { secure_url, public_id } = await cloudinary.uploader.upload(
               doc,
               {
@@ -51,22 +52,22 @@ export const saveMultipleRoomMessages = async (userChats, userId) => {
             secureUrl = secure_url;
             publicId = public_id;
           }
-          if (!secureUrl && "" == message.text) {
+          if (!secureUrl && "" == text) {
             throw new Error(
               "Error while saving message backup, no text or file found."
             );
           }
           return {
-            sender: message.sent ? userId : contactId,
-            ...(message.text && { text: message.text, iv: message.iv }),
+            sender: sent ? userId : contactId,
+            ...(text && { text: text, iv: iv }),
             ...(secureUrl && {
               media: {
                 secure_url: secureUrl,
                 public_id: publicId,
-                extension: message.extension,
+                extension: extension,
               },
             }),
-            timeSent: new Date(message.timeSent),
+            timeSent: new Date(timeSent),
           };
         })
       );

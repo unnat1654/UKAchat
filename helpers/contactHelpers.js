@@ -1,8 +1,7 @@
 import chatRoomModel from "../models/chatRoomModel.js";
-import userModel from "../models/userModel.js";
 import onlineUsers from "./onlineUsers.js";
 
-export const contactDetailsFinder = async (user, limit) => {
+export const contactDetailsFinder = async (user) => {
   try {
     const query = { $or: [{ user1: user }, { user2: user }] };
     let roomsData = await chatRoomModel
@@ -14,19 +13,19 @@ export const contactDetailsFinder = async (user, limit) => {
       return [];
     }
 
-    const filteredRoomData = roomsData.map((roomData) => {
+    const filteredRoomData = roomsData.map(({ _id, user1, user2, chats }) => {
       return {
-        _id: roomData._id,
-        contact: roomData.user1._id == user ? roomData.user2 : roomData.user1,
-        chats: roomData.chats,
+        _id,
+        contact: user1._id == user ? user2 : user1,
+        ...(chats.length && { chats: { sent: user==chats[0].sender, ...(chats[0].text ? { text: chats[0].text, iv: chats[0].iv } : { file: "File Shared" }), timeSent: chats[0].timeSent } })
       };
     });
     filteredRoomData.sort((a, b) => {
-      const timeA = a.chats.length
-        ? a.chats[a.chats.length - 1]?.timeSent
+      const timeA = a.chats
+        ? a.chats.timeSent
         : new Date(0);
-      const timeB = b.chats.length
-        ? b.chats[b.chats.length - 1]?.timeSent
+      const timeB = b.chats
+        ? b.chats.timeSent
         : new Date(0);
       return timeB - timeA;
     });
@@ -57,6 +56,6 @@ export const findOnlineContacts = async (userId) => {
         }
       })
     );
-  } catch (e) {}
+  } catch (e) { }
   return { activeUserRooms, onlineContacts };
 };

@@ -204,9 +204,7 @@ export const loginController = async (req, res) => {
         message: "Entered email or password incorrect.",
       });
     }
-    const token = JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = JWT.sign({ _id: user._id }, process.env.JWT_SECRET);
     res.status(200).send({
       success: true,
       message: "User logged in successfully.",

@@ -7,19 +7,24 @@ import Invites from "../../invite/Invites";
 import IncomingCall from "../../call/IncomingCall";
 import OtherGroups from "../../group/OtherGroups";
 import { useTabDetails } from "../../../hooks/TabDetailsHook";
+import { useContactDetailsArray } from "../../../context/ContactDetailsContext";
 
 const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyCall, onlineUsers }) => {
   const [searchInput, setSearchInput] = useState("");
 
   const [activeColor, setActiveColor] = useState("");
   const [auth, setAuth] = useAuth();
-  const {
-    handleSearch,
-    contactDetailsArray,
-    invitesArray,
-    setInvitesArray,
-    groupDetailsArray,
-  } = useTabDetails(searchInput, sideBarTab, auth, setShowInviteBox,onlineUsers);
+  const [contactDetailsArray, setContactDetailsArray] =
+    useContactDetailsArray();
+  const { handleSearch, invitesArray, setInvitesArray, groupDetailsArray } =
+    useTabDetails(
+      searchInput,
+      sideBarTab,
+      auth,
+      setContactDetailsArray,
+      setShowInviteBox,
+      onlineUsers
+    );
 
   const handleKeyDown = (event) => {
     if (event.keyCode === 13 && event.target.name === "searchInput") {
@@ -30,9 +35,7 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyCall, onlineUsers }) => {
   return (
     <div className="chatmenu">
       {sideBarTab == "chats" && (
-        
         <React.Fragment>
-          {JSON.stringify(onlineUsers)}
           <IncomingCall useMyCall={useMyCall} />
           <Tilt className="chatmenu-search-bar">
             <input
@@ -56,19 +59,20 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyCall, onlineUsers }) => {
                   onClick={() => {
                     setActiveColor(c._id);
                   }}
-                >{c &&
-                  <OtherChats
-                    room={c._id}
-                    name={c.contact?.username}
-                    photo={c.contact?.photo?.secure_url}
-                    notify={c.online}
-                    id={c.contact?._id}
-                    active={c.contact?._id === activeColor}
-                    searched={contactDetailsArray.searchedNewUser}
-                    setShowInviteBox={setShowInviteBox}
-                    lastMessage={c.chats[0]}
-                  />
-                }
+                >
+                  {c && (
+                    <OtherChats
+                      room={c._id}
+                      name={c.contact?.username}
+                      photo={c.contact?.photo?.secure_url}
+                      notify={c.online}
+                      id={c.contact?._id}
+                      active={c.contact?._id === activeColor}
+                      searched={contactDetailsArray.searchedNewUser}
+                      setShowInviteBox={setShowInviteBox}
+                      lastMessage={c.chats}
+                    />
+                  )}
                 </div>
               ))}
             </React.Fragment>

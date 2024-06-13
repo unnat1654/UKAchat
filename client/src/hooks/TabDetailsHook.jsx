@@ -1,18 +1,17 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useContactDetailsArray } from "../context/ContactDetailsContext";
 import { useGroupDetailsArray } from "../context/groupDetailsContext";
 import { deriveSharedkey } from "../functions/encryptionFunctions";
+import { getRoomLSMessages } from "../functions/localStorageFunction";
 
 export const useTabDetails = (
   searchInput,
   sideBarTab,
   auth,
+  setContactDetailsArray,
   setShowInviteBox,
   onlineUsers
 ) => {
-  const [contactDetailsArray, setContactDetailsArray] =
-    useContactDetailsArray();
   const [invitesArray, setInvitesArray] = useState([]);
   const [groupDetailsArray, setGroupDetailsArray] = useGroupDetailsArray();
 
@@ -41,19 +40,35 @@ export const useTabDetails = (
 
   const getContactDetails = async () => {
     try {
-      const {data} = await axios.get(
+      const { data } = await axios.get(
         `${import.meta.env.VITE_SERVER}/contact/get-all-contacts`
       );
-      
+
       if (data?.success) {
-        console.log(onlineUsers)
-        const completeDetails=data?.contactDetailsArray.map((contactDetails)=>{
-          return {...contactDetails,online:onlineUsers.includes(contactDetails.contact._id)}
+        // const completeDetails = data?.contactDetailsArray.map(
+        //   (contactDetails) => {
+        //     return {
+        //       ...contactDetails,
+        //       online: onlineUsers.includes(contactDetails.contact._id),
+        //     };
+        //   }
+        // );
+        // console.log(completeDetails);
+        data?.contactDetailsArray.forEach((roomDetails,index,array)=>{
+          const lsRoomMessages=getRoomLSMessages(roomDetails._id,true);
+          array[index]={
+            ...roomDetails,
+            online: onlineUsers.includes(roomDetails.contact._id),
+            ...(lsRoomMessages.length && {chats:{
+              sent:lsRoomMessages.at(-1).sent,
+              timeSent:lsRoomMessages.at(-1).timeSent,
+              ...(lsRoomMessages.at(-1).text? {text:lsRoomMessages.at(-1).text,iv:lsRoomMessages.at(-1).iv}:{file:"file shared"})
+            }})
+          }
         });
-        console.log(completeDetails)
         setContactDetailsArray({
           searchedNewUser: false,
-          detailsArray: completeDetails,
+          detailsArray: data?.contactDetailsArray,
         });
       }
     } catch (error) {
@@ -83,7 +98,7 @@ export const useTabDetails = (
       );
       if (!success || !contactPublicKeys) return;
 
-      for(const [roomId,roomKeys] of Object.entries(userKeysObject)){
+      for (const [roomId, roomKeys] of Object.entries(userKeysObject)) {
         if (contactPublicKeys[roomId]) {
           userKeysObject[roomId].sharedKey = await deriveSharedkey(
             roomKeys.privateKey,
@@ -132,19 +147,19 @@ export const useTabDetails = (
       fetchPublicKeys();
       getGroupDetails();
     }
-  }, [auth?.token,onlineUsers]);
+  }, [auth?.token, onlineUsers]);
 
   useEffect(() => {
-    if(!auth?.token){
+    if (!auth?.token) {
       return;
     }
     if (sideBarTab == "invites") {
       getInvites();
     }
-    if(sideBarTab == "chats"){
+    if (sideBarTab == "chats") {
       getContactDetails();
     }
-    if(sideBarTab == "groups"){
+    if (sideBarTab == "groups") {
       getGroupDetails();
     }
   }, [sideBarTab]);
@@ -158,7 +173,6 @@ export const useTabDetails = (
 
   return {
     handleSearch,
-    contactDetailsArray,
     invitesArray,
     setInvitesArray,
     groupDetailsArray,

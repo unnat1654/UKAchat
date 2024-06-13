@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/authContext";
 import { useSocket } from "../../context/socketContext";
+import { LuHardDriveUpload, LuHardDriveDownload } from "react-icons/lu";
+import { Tooltip } from "antd";
 
 const LogoutMenu = ({ show, setShow }) => {
   const socket = useSocket();
@@ -19,7 +21,6 @@ const LogoutMenu = ({ show, setShow }) => {
       localStorage.removeItem("auth");
       setAuth({
         user: null,
-        token: "",
       });
       toast.success("Logout Successful");
       navigate("/login");
@@ -46,10 +47,34 @@ const LogoutMenu = ({ show, setShow }) => {
         </div>
         <hr />
         <div className="logout-menu-item">
-          <button className="logout-menu-button" onClick={handleClick}>
-            Logout
-          </button>
+          <LuHardDriveUpload className="logout-menu-icon" />
+          <p>Import Key</p>
         </div>
+        <hr />
+        <Tooltip
+          placement="top"
+          title={"Chatsddsd"}
+          trigger={"hover"}
+          arrow={{ pointAtCenter: true }}
+        >
+          <div className="logout-menu-item">
+            <LuHardDriveDownload className="logout-menu-icon" />
+            <p>Download Key</p>
+          </div>
+        </Tooltip>
+        <hr />
+        <Tooltip
+          placement="top"
+          title={"Chats"}
+          trigger={"hover"}
+          arrow={{ pointAtCenter: true }}
+        >
+          <div className="logout-menu-item">
+            <button className="logout-menu-button" onClick={handleClick}>
+              Logout
+            </button>
+          </div>
+        </Tooltip>
       </div>
     );
   }

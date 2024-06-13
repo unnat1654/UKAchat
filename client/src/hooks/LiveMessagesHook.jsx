@@ -6,21 +6,37 @@ import {
   roomSaveOldMessages,
 } from "../functions/localStorageFunction";
 
-export const useSendMessages = (socket, activeChat, setActiveChat, page) => {
+export const useSendMessages = (
+  socket,
+  activeChat,
+  setActiveChat,
+  page,
+  contactDetailsArray,
+  setContactDetailsArray
+) => {
   let receivingFiles = new Map();
   let chunkSize = 500000;
+  const getUpdatedArray = (detailsArray, room, message) => {
+    const index = detailsArray.findIndex((item) => item._id === room);
+
+    if (index == -1) {
+      return detailsArray;
+    }
+    const [targetObject] = detailsArray.splice(index, 1);
+    targetObject.chats = message;
+    detailsArray.unshift(targetObject);
+    return detailsArray;
+  };
   useEffect(() => {
-    const onReceiveMessage = (message) => {
-      const { room, format, text, iv, file, timeSent, extension } = message;
-      addMessageToLocalStorage(room, {
-        format,
-        sent: false,
-        text,
-        iv,
-        file,
-        extension,
-        timeSent,
-      });
+    const onReceiveMessage = ({
+      room,
+      format,
+      text,
+      iv,
+      file,
+      timeSent,
+      extension,
+    }) => {
       if (activeChat && activeChat?.room == room && page <= 2) {
         console.log(page);
         setActiveChat((prev) => ({
@@ -32,6 +48,23 @@ export const useSendMessages = (socket, activeChat, setActiveChat, page) => {
           //format {format:bool(F for file:T for text), sent:bool, text:"",iv:"", file:link, timeSent:Date, extension}
         }));
       }
+      setContactDetailsArray({
+        ...contactDetailsArray,
+        detailsArray: getUpdatedArray(contactDetailsArray.detailsArray, room, {
+          sent: false,
+          ...(text ? { text, iv }:{ file: "file shared"}),
+          timeSent,
+        }),
+      });
+      addMessageToLocalStorage(room, {
+        format,
+        sent: false,
+        text,
+        iv,
+        file,
+        extension,
+        timeSent,
+      });
     };
     const onReceiveBuffer = ({ room, timeSent, numberOfChunks, chunk }) => {
       const key = room + timeSent;
@@ -114,7 +147,7 @@ export const useSendMessages = (socket, activeChat, setActiveChat, page) => {
             text: text || "",
             iv: iv || "",
             doc: file || "",
-            extension,
+            extension:extension||"",
             timeSent,
           }
         );
@@ -125,6 +158,14 @@ export const useSendMessages = (socket, activeChat, setActiveChat, page) => {
         console.log(error);
       }
     }
+    setContactDetailsArray({
+      ...contactDetailsArray,
+      detailsArray: getUpdatedArray(contactDetailsArray.detailsArray, room, {
+        sent: true,
+        ...(text ? { text, iv }:{ file: "file shared" }),
+        timeSent,
+      }),
+    });
     if (room == activeChat.room && page <= 2) {
       setActiveChat((prev) => ({
         ...prev,

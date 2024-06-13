@@ -4,12 +4,14 @@ import ChattingSection from "../components/Layout/chatmenu/ChattingSection";
 import ChatMenu from "../components/Layout/chatmenu/ChatMenu";
 import SideBar from "../components/Layout/chatmenu/SideBar";
 import { ContactDetailsProvider } from "../context/ContactDetailsContext";
-import { useAuth } from "../context/authContext";
 import { saveAllOldMessages } from "../functions/localStorageFunction";
 import { GroupDetailsProvider } from "../context/groupDetailsContext";
-import { useOnlineUsers } from "../hooks/onlineUsersHook";
+import { useOnlineUsers } from "../hooks/OnlineUsersHook";
+import { useSocket } from "../context/socketContext";
+import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 const Layout = () => {
-  const [auth, setAuth] = useAuth();
+  const navigate = useNavigate();
   const [sideBarTab, setSideBarTab] = useState("chats");
   const [myCall, setMyCall] = useState({
     stream: "",
@@ -17,7 +19,8 @@ const Layout = () => {
     ringing: false,
     type: "voice",
   });
-  const onlineUsers=useOnlineUsers();
+  const [auth, setAuth] = useAuth();
+  const onlineUsers = useOnlineUsers(useSocket());
   const [showInviteBox, setShowInviteBox] = useState({
     isShow: false,
     searchedId: "",
@@ -25,13 +28,17 @@ const Layout = () => {
   });
   let count = 0;
   useEffect(() => {
+    if (!localStorage.getItem("auth")) {
+      navigate("/login");
+    }
+  }, [auth]);
+  useEffect(() => {
     const backUpMessages = () => {
       if (count > 10) {
         saveAllOldMessages();
         count = 0;
       }
     };
-
     window.addEventListener("storage", backUpMessages);
     return () => window.removeEventListener("storage", backUpMessages);
   }, []);

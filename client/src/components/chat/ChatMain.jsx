@@ -1,9 +1,7 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useRef, useEffect } from "react";
-import { PiUploadSimple, PiX } from "react-icons/pi";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import MessageDisplay from "./MessageDisplay";
 import { useActiveChat } from "../../context/activeChatContext";
-import { TbArrowBigRightLinesFilled } from "react-icons/tb";
 import axios from "axios";
 import {
   getLSMsgTimeRange,
@@ -11,27 +9,15 @@ import {
 } from "../../functions/localStorageFunction";
 import CircleLoader from "../loaders/CircleLoader";
 import { useSharedKey } from "../../hooks/sharedKeyHook";
-import { encrypt } from "../../functions/encryptionFunctions";
-import { useSocket } from "../../context/socketContext";
-import { useSendMessages } from "../../hooks/LiveMessagesHook";
+import MessageSender from "./MessasgeSender";
 
 const ChatMain = () => {
   const bottomRef = useRef(null);
   const scrollRef = useRef(null);
   const [activeChat, setActiveChat] = useActiveChat();
   const sharedKey = useSharedKey(activeChat);
-  const socket = useSocket();
   const [page, setPage] = useState({ prevPage: 0, currPage: 1 });
-  const addLiveMessage = useSendMessages(
-    socket,
-    activeChat,
-    setActiveChat,
-    page.currPage
-  );
-  const [typedMessage, setTypedMessage] = useState("");
-  const [doc, setDoc] = useState("");
-  const [fileName, setFileName] = useState("");
-  const [extension, setExtension] = useState("");
+
   const [pageChanging, setPageChanging] = useState(false);
   const [newScrollHeight, setNewScrollHeight] = useState(0);
   const [toDel, setToDel] = useState(0);
@@ -40,7 +26,7 @@ const ChatMain = () => {
 
   let prevMessageDate = "";
 
-  const fetchPageMessages = async () => {
+  const fetchPageMessages = useCallback(async () => {
     try {
       const [firstTime, lastTime] = getLSMsgTimeRange(activeChat.room);
       if (page.currPage == 1 && page && page.prevPage == 1) return;
@@ -87,152 +73,62 @@ const ChatMain = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  },[pageChanging]);
 
-  const handleDoc = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const allowedExtensions = [
-        "jpg",
-        "jpeg",
-        "png",
-        "gif",
-        "bmp",
-        "mp4",
-        "avi",
-        "mov",
-        "mp3",
-        "pdf",
-        "doc",
-        "docx",
-        "xls",
-        "xlsx",
-        "ppt",
-        "pptx",
-      ];
-      const allowedMimeTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/bmp",
-        "video/mp4",
-        "video/avi",
-        "video/quicktime",
-        "audio/mpeg",
-        "application/pdf",
-        "application/msword",
-        "application/vnd.ms-excel",
-        "application/vnd.ms-powerpoint",
-      ];
-
-      const fileExtension = file.name.split(".").pop().toLowerCase();
-      setExtension(fileExtension);
-      // if (
-      //   !allowedExtensions.includes(fileExtension) ||
-      //   !allowedMimeTypes.includes(file.type)
-      // ) {
-      //   alert(
-      //     "Error: Only images, videos, audios, PDFs, Word, Excel, and PowerPoint files are allowed."
-      //   );
-      //   setDoc("");
-      //   setFileName("");
-      //   return;
-      // }
-
-      setFileName(file.name);
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        setDoc(reader.result);
-      };
-      setTypedMessage("");
-    }
-  };
-
-  const removeFile = (e) => {
-    e.preventDefault();
-    setDoc("");
-    setFileName("");
-    setExtension("");
-  };
-
-  const handleSend = async () => {
-    if (!activeChat.room && !doc && !typedMessage) return;
-    const { cipherText, iv } = await encrypt(sharedKey, typedMessage);
-    addLiveMessage(
-      activeChat.online,
-      activeChat.room,
-      typedMessage != "", //false->file true->text
-      cipherText, //text
-      iv,
-      doc, //file
-      extension,
-      Date.now()
-    );
-    setDoc("");
-    setFileName("");
-    setTypedMessage("");
-    setExtension("");
-  };
-
-  const handleKeyDown = (e) => {
-    if (
-      e.keyCode === 13 &&
-      (e.target.name === "chatInput" || e.target.name === "fileInput")
-    ) {
-      if (typedMessage != "" || doc) handleSend();
-    }
-  };
-
-  useEffect(() => {
-    const handleScroll = async () => {
-      if (scrollRef.current && scrollRef.current.scrollTop == 0) {
-        setFetchPrev(true);
-        const condition1 =
-          page.currPage === 1 && activeChat?.messages?.length >= 100;
-        const condition2 =
-          page.currPage > 1 &&
-          activeChat?.messages?.length >= 100 &&
-          page.currPage != activeChat?.totalPages;
-        const condition = condition1 || condition2;
-        if (condition) {
-          console.log("if");
-          setLoading(true);
-          setNewScrollHeight(scrollRef.current.scrollHeight);
-          setPage((prev) => ({
-            prevPage: prev.currPage,
-            currPage: prev.currPage + 1,
-          }));
-          setPageChanging(true);
-        }
-      } else if (
-        scrollRef.current &&
-        scrollRef.current.scrollTop + scrollRef.current.clientHeight >=
-          scrollRef.current.scrollHeight - 10
-      ) {
-        if (page.prevPage >= 1) {
-          setLoading(true);
-          setFetchPrev(false);
-          setPage((prev) => ({
-            currPage: prev.prevPage,
-            prevPage: prev.prevPage - 1,
-          }));
-          setPageChanging(true);
-        }
-      } else {
-        setPageChanging(false);
+  const handleScroll = useCallback(async () => {
+    if (scrollRef.current && scrollRef.current.scrollTop == 0) {
+      setFetchPrev(true);
+      const condition1 =
+        page.currPage === 1 && activeChat?.messages?.length >= 100;
+      const condition2 =
+        page.currPage > 1 &&
+        activeChat?.messages?.length >= 100 &&
+        page.currPage != activeChat?.totalPages;
+      const condition = condition1 || condition2;
+      if (condition) {
+        console.log("if");
+        setLoading(true);
+        setNewScrollHeight(scrollRef.current.scrollHeight);
+        setPage((prev) => ({
+          prevPage: prev.currPage,
+          currPage: prev.currPage + 1,
+        }));
+        setPageChanging(true);
       }
-    };
+    } else if (
+      scrollRef.current &&
+      scrollRef.current.scrollTop + scrollRef.current.clientHeight >=
+        scrollRef.current.scrollHeight - 10
+    ) {
+      if (page.prevPage >= 1) {
+        setLoading(true);
+        setFetchPrev(false);
+        setPage((prev) => ({
+          currPage: prev.prevPage,
+          prevPage: prev.prevPage - 1,
+        }));
+        setPageChanging(true);
+      }
+    } else {
+      setPageChanging(false);
+    }
+  },[scrollRef.current && scrollRef.current.scrollTop]);
+  
+  useEffect(() => {
     scrollRef.current?.addEventListener("scroll", handleScroll);
-
     return () => scrollRef.current?.removeEventListener("scroll", handleScroll);
   }, [scrollRef.current && scrollRef.current.scrollTop]);
+
+  
+  useEffect(() => {
+    setPage({ prevPage: 0, currPage: 1 });
+  }, [activeChat.room]);
 
   useEffect(() => {
     if (pageChanging) {
       fetchPageMessages();
     }
-  }, [pageChanging]);
+  }, [fetchPageMessages]);
 
   useEffect(() => {
     //scroll to bottom every time messages change except when old messages are loaded
@@ -245,10 +141,7 @@ const ChatMain = () => {
           : scrollRef.current.scrollHeight - newScrollHeight;
     }
   }, [activeChat.messages]);
-  useEffect(() => {
-    setTypedMessage("");
-    setPage({ prevPage: 0, currPage: 1 });
-  }, [activeChat.room]);
+
 
   return (
     <div className="chatmain">
@@ -297,48 +190,7 @@ const ChatMain = () => {
         )}
         <div ref={bottomRef} />
       </div>
-      <div className="chatmain-sender">
-        <label htmlFor="upload-file">
-          {doc ? (
-            <>
-              <PiX className="close-file" onClick={removeFile} />
-              <span className="upload-file-name">
-                {fileName.length > 12
-                  ? `${fileName.slice(0, 8)}...${fileName.split(".").pop()}`
-                  : fileName}
-              </span>
-            </>
-          ) : (
-            <PiUploadSimple />
-          )}
-        </label>
-        <input
-          type="file"
-          id="upload-file"
-          onChange={handleDoc}
-          onKeyDown={handleKeyDown}
-          name="fileInput"
-          accept="*"
-          // accept="image/*, video/*, audio/*, application/pdf, application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint"
-          hidden
-        />
-        <input
-          name="chatInput"
-          type="text"
-          value={typedMessage}
-          onChange={(e) => {
-            if (doc) return;
-            setTypedMessage(e.target.value);
-          }}
-          placeholder="type your message..."
-          onKeyDown={handleKeyDown}
-        />
-        <TbArrowBigRightLinesFilled
-          onClick={() => {
-            if (typedMessage || doc) handleSend();
-          }}
-        />
-      </div>
+      <MessageSender sharedKey={sharedKey} page={page.currPage}/>
     </div>
   );
 };

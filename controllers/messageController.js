@@ -14,7 +14,7 @@ export const saveBulkMessagesController = async (req, res) => {
     if (!chats) {
       return res.status(404).send({
         success: false,
-        message: "room or messages not found",
+        message: "chats not found",
       });
     }
 

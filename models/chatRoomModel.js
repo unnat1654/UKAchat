@@ -1,5 +1,37 @@
 import mongoose from "mongoose";
 
+const chatSchema = new mongoose.Schema({
+  sender: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+    required: true,
+  },
+  text: {
+    type: String,
+    maxLength: 30000,
+  },
+  iv: {
+    type: String,
+    maxLength: 500,
+  },
+  media: {
+    public_id: {
+      type: String,
+    },
+    secure_url: {
+      type: String,
+    },
+    extension: {
+      type: String,
+    },
+  },
+  timeSent: {
+    type: Date,
+    required: true,
+  },
+},{_id:false});
+
+
 const userRoomSchema = new mongoose.Schema({
   _id: {
     type: String,
@@ -25,38 +57,7 @@ const userRoomSchema = new mongoose.Schema({
     required: true,
   },
   chats: {
-    type: [
-      {
-        sender: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "users",
-          required: true,
-        },
-        text: {
-          type: String,
-          maxLength: 30000,
-        },
-        iv: {
-          type: String,
-          maxLength: 500,
-        },
-        media: {
-          public_id: {
-            type: String,
-          },
-          secure_url: {
-            type: String,
-          },
-          extension: {
-            type: String,
-          },
-        },
-        timeSent: {
-          type: Date,
-          required: true,
-        },
-      },
-    ],
+    type: [chatSchema],
     default: [],
   },
   totalMessages: {
