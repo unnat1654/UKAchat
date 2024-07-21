@@ -120,9 +120,9 @@ const ChatMenu = ({ sideBarTab, setShowInviteBox, useMyCall, onlineUsers }) => {
                   <OtherGroups
                     name={group.name}
                     photo={group?.photo?.secure_url}
-                    // notify={c.online}
                     id={group._id}
                     active={group._id === activeColor}
+                    lastMessage={group?.chats[0]}
                   />
                 </div>
               ))}

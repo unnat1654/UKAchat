@@ -25,7 +25,7 @@ const OtherChats = ({
   const [lastTextMessage, setLastTextMessage] = useState("");
   const [activeChat, setActiveChat] = useActiveChat();
 
-  const decryptMessage = useCallback( async () => {
+  const decryptMessage = useCallback(async () => {
     let textMessage = "";
     if (lastMessage?.text) {
       textMessage = await decrypt(
@@ -35,7 +35,7 @@ const OtherChats = ({
       );
     }
     setLastTextMessage(textMessage);
-  },[lastMessage]);
+  }, [lastMessage]);
 
   useEffect(() => {
     decryptMessage();
@@ -87,7 +87,7 @@ const OtherChats = ({
     } catch (error) {
       console.log(error);
     }
-  },[activeChat?.room,searched]);
+  }, [activeChat?.room, searched]);
   return (
     <div onClick={handleClick}>
       <Tilt
@@ -104,9 +104,7 @@ const OtherChats = ({
           {lastMessage && (
             <span className="otherchats-chat-message">
               {lastMessage.sent && "You: "}
-              {!lastTextMessage
-                ? "File Shared"
-                : lastTextMessage?.slice(0, 20)}
+              {!lastTextMessage ? "File Shared" : lastTextMessage?.slice(0, 20)}
               {lastTextMessage?.length > 20 ? "..." : ""}
             </span>
           )}

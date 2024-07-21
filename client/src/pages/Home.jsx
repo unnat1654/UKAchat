@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import background from "../assets/Chill-Lofi-Background-Wallpaper-Full-HD-Free-Download-for-PC-Laptop-Macbook-231121-Wallpaperxyz.com-1.gif";
 import ChattingSection from "../components/Layout/chatmenu/ChattingSection";
+import GroupChattingSection from "../components/Layout/chatmenu/GroupChattingSection";
 import ChatMenu from "../components/Layout/chatmenu/ChatMenu";
 import SideBar from "../components/Layout/chatmenu/SideBar";
 import { ContactDetailsProvider } from "../context/ContactDetailsContext";
@@ -58,12 +59,15 @@ const Layout = () => {
               useMyCall={[myCall, setMyCall]}
               onlineUsers={onlineUsers}
             />
-            <ChattingSection
-              showInviteBox={showInviteBox}
-              setShowInviteBox={setShowInviteBox}
-              useMyCall={[myCall, setMyCall]}
-              onlineUsers={onlineUsers}
-            />
+            {sideBarTab == "chats" && (
+              <ChattingSection
+                showInviteBox={showInviteBox}
+                setShowInviteBox={setShowInviteBox}
+                useMyCall={[myCall, setMyCall]}
+                onlineUsers={onlineUsers}
+              />
+            )}
+            {sideBarTab == "groups" && <GroupChattingSection />}
           </div>
 
           <img src={background} alt="background" className="background" />

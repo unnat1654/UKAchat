@@ -3,7 +3,16 @@ import { convertTimeTo12 } from "../../functions/timeFunction";
 import { getFileType } from "../../functions/regexFunctions";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 
-const MessageDisplay = ({ format, timeSent, file, text, sent, extension }) => {
+const GroupMessageDisplay = ({
+  format,
+  timeSent,
+  file,
+  text,
+  sent,
+  sender,
+  extension,
+  user,
+}) => {
   let fileType = "";
 
   if (!format) {
@@ -12,12 +21,19 @@ const MessageDisplay = ({ format, timeSent, file, text, sent, extension }) => {
   return (
     <>
       {format ? (
-        <div className={`message-box message-box-text ${sent ? "sent" : ""}`}>
+        <div
+          className={`message-box message-box-text ${
+            sent || sender == user ? "sent" : ""
+          }`}
+        >
+          <p className="message-box-sender">
+            {sent || sender == user ? "You: " : `${sender}: `}
+          </p>
           <p className="message-box-message">{text}</p>
           <span className="message-box-time">{convertTimeTo12(timeSent)}</span>
         </div>
       ) : (
-        <div className={`message-box ${sent ? "sent" : ""}`}>
+        <div className={`message-box ${sent || sender == user ? "sent" : ""}`}>
           {fileType == "image" && (
             <>
               <img
@@ -79,4 +95,4 @@ const MessageDisplay = ({ format, timeSent, file, text, sent, extension }) => {
   );
 };
 
-export default MessageDisplay;
+export default GroupMessageDisplay;

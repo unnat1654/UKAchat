@@ -4,49 +4,30 @@ import Tilt from "react-parallax-tilt";
 import axios from "axios";
 import { useActiveGroup } from "../../context/activeGroupContext";
 import { convertTimeTo12 } from "../../functions/timeFunction";
-import {
-  getLSMsgTimeRange,
-  getRoomLSMessages,
-} from "../../functions/localStorageFunction";
 
-const OtherGroups = ({ name, photo, id, active }) => {
+const OtherGroups = ({ name, photo, id, active, lastMessage }) => {
   const [activeGroup, setActiveGroup] = useActiveGroup();
-  const [lastMessageInfo, setLastMessageInfo] = useState({});
-  const getLastMessageInfo = async () => {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_SERVER}/group/get-group-last-message/${id}`
-    );
-    setLastMessageInfo(data?.lastMessageInfo);
-  };
   const handleClick = async () => {
     try {
       if (activeGroup?.id != id) {
         const groupResponse = await axios.get(
           `${import.meta.env.VITE_SERVER}/group/get-group/${id}`
         );
+        console.log(groupResponse.data);
         if (groupResponse?.data?.success) {
           const group = groupResponse?.data?.group;
-          const [firstTime, lastTime] = getLSMsgTimeRange(group);
           const messagesResponse = await axios.get(
             `${
               import.meta.env.VITE_SERVER
-            }/group/get-group-messages?group=${group}&page=1${
-              firstTime ? `&firstTime=${firstTime}` : ""
-            }${lastTime ? `&lastTime=${lastTime}` : ""}`
+            }/group/get-group-messages?group=${group}&page=1&firstTime=""&lastTime=""`
           );
+          console.log(messagesResponse.data);
           const recievedMessages = messagesResponse?.data?.messages;
           if (messagesResponse?.data?.success) {
-            const msgInLS = getRoomLSMessages(
-              group,
-              0 == messagesResponse.data.newMessagesCount
-            ); // if new messages are found then getRoomLSMessages are not required
             setActiveGroup({
-              c_id: id,
-              group,
-              messages: [
-                ...(recievedMessages ? recievedMessages : []),
-                ...msgInLS,
-              ],
+              group: groupResponse.data.group,
+              messages: [...(recievedMessages ? recievedMessages : [])],
+              user: groupResponse.data.user,
             });
           }
         }
@@ -55,9 +36,6 @@ const OtherGroups = ({ name, photo, id, active }) => {
       console.log(error);
     }
   };
-  useEffect(() => {
-    getLastMessageInfo();
-  }, []);
   return (
     <div onClick={handleClick}>
       <Tilt
@@ -72,14 +50,16 @@ const OtherGroups = ({ name, photo, id, active }) => {
         <div className="otherchats-chat">
           <span className="otherchats-chat-name">{name}</span>
           <span className="otherchats-chat-message">
-            {lastMessageInfo?.lastMessage?.slice(0, 20)}
-            {lastMessageInfo?.lastMessage?.length > 20 ? "..." : ""}
+            {lastMessage.sender != id && "You: "}
+            {lastMessage.media && "File Shared"}
+            {lastMessage?.text?.slice(0, 20)}
+            {lastMessage?.text?.length > 20 ? "..." : ""}
           </span>
         </div>
         <div className="otherchats-info">
           <span className="otherchats-info-time">
-            {lastMessageInfo?.timeSent
-              ? convertTimeTo12(lastMessageInfo?.timeSent)
+            {lastMessage?.timeSent
+              ? convertTimeTo12(lastMessage?.timeSent)
               : ""}
           </span>
           {/* <span className="otherchats-info-notification">

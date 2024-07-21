@@ -1,20 +1,18 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useRef, useEffect } from "react";
 import { PiUploadSimple, PiX } from "react-icons/pi";
-import MessageDisplay from "./MessageDisplay";
-import { useActiveChat } from "../../context/activeChatContext";
+import GroupMessageDisplay from "./GroupMessageDisplay";
+import { useActiveGroup } from "../../context/activeGroupContext";
 import { TbArrowBigRightLinesFilled } from "react-icons/tb";
 import axios from "axios";
-import {
-  getLSMsgTimeRange,
-  getRoomLSMessages,
-} from "../../functions/localStorageFunction";
 import CircleLoader from "../loaders/CircleLoader";
+import { useSendGroupMessages } from "../../hooks/LiveGroupMessagesHook";
+import ManageMembersMenu from "../managegroupmembersmenu/ManageMembersMenu";
 
-const ChatMain = ({ addLiveMessage, page, setPage }) => {
+const GroupMain = () => {
   const bottomRef = useRef(null);
   const scrollRef = useRef(null);
-  const [activeChat, setActiveChat] = useActiveChat();
+  const [activeGroup, setActiveGroup] = useActiveGroup();
   const [typedMessage, setTypedMessage] = useState("");
   const [doc, setDoc] = useState("");
   const [fileName, setFileName] = useState("");
@@ -24,48 +22,49 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
   const [toDel, setToDel] = useState(0);
   const [fetchPrev, setFetchPrev] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState({ prevPage: 0, currPage: 1 });
+  const { addGroupLiveMessage } = useSendGroupMessages(
+    activeGroup,
+    setActiveGroup,
+    page.currPage
+  );
   let prevMessageDate = "";
 
   const fetchPageMessages = async () => {
     try {
-      const [firstTime, lastTime] = getLSMsgTimeRange(activeChat.room);
       if (page.currPage == 1 && page && page.prevPage == 1) return;
       const { data } = await axios.get(
-        `${import.meta.env.VITE_SERVER}/message/get-messages?room=${
-          activeChat?.room
+        `${import.meta.env.VITE_SERVER}/group/get-group-messages?group=${
+          activeGroup?.group
         }&page=${fetchPrev ? page.currPage : page.prevPage}${
           page.currPage == 1
-            ? `&firstTime=${firstTime}&lastTime=${lastTime}`
-            : ""
         }`
       );
+      console.log(activeGroup);
       if (data?.success) {
         let displayMessages = [];
         if (page.currPage > page.prevPage) {
           if (fetchPrev) {
             displayMessages = [
               ...data?.messages,
-              ...activeChat?.messages.slice(0, toDel != 0 ? -toDel : 100),
+              ...activeGroup?.messages.slice(0, toDel != 0 ? -toDel : 100),
             ];
           } else {
             if (page.currPage == 1) {
               displayMessages = [
-                ...activeChat?.messages.slice(toDel),
+                ...activeGroup?.messages.slice(toDel),
                 ...data?.messages,
-                ...getRoomLSMessages(activeChat?.room, page.currPage == 1),
               ];
             } else {
               displayMessages = [
-                ...activeChat?.messages.slice(toDel),
+                ...activeGroup?.messages.slice(toDel),
                 ...data?.messages,
               ];
             }
           }
           setToDel(data?.messages?.length);
         }
-        // console.log("ac ", activeChat);
-        // console.log("dm ", displayMessages);
-        setActiveChat((prev) => ({
+        setActiveGroup((prev) => ({
           ...prev,
           messages: displayMessages,
           totalPages: data?.totalPages,
@@ -144,13 +143,13 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
   };
 
   const handleSend = () => {
-    if (!activeChat.room && !doc && !typedMessage) return;
-    addLiveMessage(
-      activeChat.online,
-      activeChat.room,
+    if (!activeGroup.group && !doc && !typedMessage) return;
+    addGroupLiveMessage(
+      activeGroup.group,
       typedMessage != "", //false->file true->text
       typedMessage, //text
       doc, //file
+      true,
       extension,
       Date.now()
     );
@@ -173,14 +172,14 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
     const handleScroll = async () => {
       if (scrollRef.current && scrollRef.current.scrollTop == 0) {
         setFetchPrev(true);
-        console.log("length", activeChat.messages.length);
-        console.log(activeChat);
+        console.log("length", activeGroup.messages.length);
+        console.log(activeGroup);
         const condition1 =
-          page.currPage === 1 && activeChat?.messages?.length >= 100;
+          page.currPage === 1 && activeGroup?.messages?.length >= 100;
         const condition2 =
           page.currPage > 1 &&
-          activeChat?.messages?.length >= 100 &&
-          page.currPage != activeChat?.totalPages;
+          activeGroup?.messages?.length >= 100 &&
+          page.currPage != activeGroup?.totalPages;
         const condition = condition1 || condition2;
         if (condition) {
           console.log("if");
@@ -231,16 +230,15 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
           ? newScrollHeight - scrollRef.current.scrollHeight - 100
           : scrollRef.current.scrollHeight - newScrollHeight;
     }
-  }, [activeChat.messages]);
+  }, [activeGroup.messages]);
   useEffect(() => {
     setTypedMessage("");
     setPage({ prevPage: 0, currPage: 1 });
-  }, [activeChat.room]);
+  }, [activeGroup.group]);
 
   return (
     <div className="chatmain">
       <div ref={scrollRef} className="chatmain-messages">
-        {console.log("Loading:", loading)}
         {fetchPrev && loading && (
           <CircleLoader
             color="#008cffa2"
@@ -248,8 +246,8 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
             size={"40px"}
           />
         )}
-        {activeChat?.messages?.length &&
-          activeChat?.messages?.map((m) => {
+        {activeGroup?.messages?.length &&
+          activeGroup?.messages?.map((m) => {
             let DateSent = new Date(m.timeSent).toLocaleDateString("en-GB");
             let condition = false;
             if (DateSent !== prevMessageDate) {
@@ -261,17 +259,21 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
               <React.Fragment key={m.timeSent}>
                 {condition && <div className="date-tag">{DateSent}</div>}
 
-                <MessageDisplay
+                <GroupMessageDisplay
                   format={m.format}
                   text={m.text}
                   file={m.file}
                   timeSent={m.timeSent}
-                  sent={m.sent}
+                  sent={m.sender == activeGroup?.user}
+                  sender={m.sender}
                   extension={m.extension}
+                  user={activeGroup?.user}
                 />
               </React.Fragment>
             );
           })}
+        <ManageMembersMenu show={true} />
+
         {!fetchPrev && loading && (
           <CircleLoader
             color="#008cffa2"
@@ -327,4 +329,4 @@ const ChatMain = ({ addLiveMessage, page, setPage }) => {
   );
 };
 
-export default ChatMain;
+export default GroupMain;

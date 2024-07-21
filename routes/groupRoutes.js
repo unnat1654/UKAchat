@@ -8,7 +8,6 @@ import {
   leaveGroupController,
   getGroupController,
   getAllGroupsController,
-  getGroupLastMessageController,
   getGroupMessagesController,
 } from "../controllers/groupController.js";
 
@@ -34,13 +33,6 @@ router.get("/get-all-groups", isLoggedIn, getAllGroupsController);
 
 // send group message
 router.post("/send-group-message-api", isLoggedIn, sendGroupMessageController);
-
-//get last message from a group
-router.get(
-  "/get-group-last-message/:gid",
-  isLoggedIn,
-  getGroupLastMessageController
-);
 
 //get 200 messages in a batch from a group
 router.get("/get-group-messages", isLoggedIn, getGroupMessagesController);

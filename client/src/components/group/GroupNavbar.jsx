@@ -1,44 +1,88 @@
-import React from "react";
+import React, { useState } from "react";
 import UserIcon from "../UserIcon";
-import { IoCallSharp, IoVideocam } from "react-icons/io5";
-import { useActiveChat } from "../../context/activeChatContext";
+import { useActiveGroup } from "../../context/activeGroupContext";
+import { IoExitSharp } from "react-icons/io5";
+import { MdManageAccounts } from "react-icons/md";
+import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
+import { useGroupDetailsArray } from "../../context/groupDetailsContext";
+import ManageMembersMenu from "../managegroupmembersmenu/ManageMembersMenu";
 
-const ChatNavbar = ({ callRoom, sendCall }) => {
-  const [activeChat, setActiveChat] = useActiveChat();
+const GroupNavbar = () => {
+  const [activeGroup, setActiveGroup] = useActiveGroup();
+  const [groupDetailsArray, setGroupDetailsArray] = useGroupDetailsArray();
+  const [show, setShow] = useState(false);
+
+  const manageGroupMembers = () => {
+    console.log("Manage group members");
+    setShow(true);
+  };
+  const exitGroup = async () => {
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_SERVER}/group/leave-group`,
+        {
+          group: activeGroup.group,
+        }
+      );
+      if (!data?.success) {
+        toast.error(data ? data.message : "Something went wrong!");
+        return;
+      }
+      const filteredGroups = groupDetailsArray.filter(
+        (group) => group._id !== activeGroup?.group
+      );
+      setGroupDetailsArray(filteredGroups);
+      setActiveGroup({
+        group: "",
+        name: "",
+        description: "",
+        admin: [],
+        members: [],
+        messages: [], //format {format:bool(F for file:T for text), sender:"", text:"", file:link, timeSent:Date, extension}
+        photo: "", //securl_url
+        user: "",
+        totalPages: 0,
+      });
+      toast.success("You left the group.");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <div className="chat-navbar">
-      {(!callRoom.room ||
-        callRoom.room != activeChat?.room ||
-        callRoom.type != "voice") &&
-        (activeChat?.photo ? (
+    <>
+      <Toaster />
+      <div className="chat-navbar">
+        {activeGroup?.photo ? (
           <img
-            src={activeChat?.photo}
+            src={activeGroup?.photo}
             className="chat-navbar-icon"
             alt="Unable to load profile picture"
           />
         ) : (
           <UserIcon classNameProp="chat-navbar-icon" />
-        ))}
-      <span>{activeChat?.username}</span>
-      {!callRoom.room && (
+        )}
+        <span>{activeGroup?.name}</span>
         <React.Fragment>
-          <IoCallSharp
+          <MdManageAccounts
+            className="chat-navbar-manage-members"
             onClick={() => {
-              sendCall("voice");
+              manageGroupMembers();
             }}
-            className="chat-navbar-phone"
           />
-          <IoVideocam
+
+          <IoExitSharp
+            className="chat-navbar-leave-group"
             onClick={() => {
-              sendCall("video");
+              exitGroup();
             }}
-            className="chat-navbar-videocall"
           />
         </React.Fragment>
-      )}
-    </div>
+        <ManageMembersMenu show={show} setShow={setShow} />
+      </div>
+    </>
   );
 };
 
-export default ChatNavbar;
+export default GroupNavbar;

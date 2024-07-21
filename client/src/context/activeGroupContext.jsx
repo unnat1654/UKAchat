@@ -10,6 +10,7 @@ const ActiveGroupProvider = ({ children }) => {
     members: [],
     messages: [], //format {format:bool(F for file:T for text), sender:"", text:"", file:link, timeSent:Date, extension}
     photo: "", //securl_url
+    user: "",
     totalPages: 0,
   });
 

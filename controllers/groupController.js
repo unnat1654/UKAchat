@@ -221,6 +221,16 @@ export const leaveGroupController = async (req, res) => {
         message: "Group not found",
       });
     }
+    if (
+      foundGroup.admin.length == 1 &&
+      foundGroup.members.length != 1 &&
+      foundGroup.admin.includes(user)
+    ) {
+      return res.status(202).send({
+        success: false,
+        message: "Single admin cannot leave before other members",
+      });
+    }
     if (!foundGroup.members.includes(user)) {
       return res.status(403).send({
         success: false,
@@ -276,6 +286,7 @@ export const getGroupController = async (req, res) => {
       success: true,
       message: "Group exists",
       group: groupAlready._id,
+      user,
     });
   } catch (error) {
     console.log(error);
@@ -291,10 +302,17 @@ export const getGroupController = async (req, res) => {
 export const getAllGroupsController = async (req, res) => {
   try {
     const user = req.user._id;
-    const groups = await userModel.findById(user).select("groups").populate({
-      path: "groups",
-      select: "_id name description members admin photo",
-    });
+    const groups = await userModel
+      .findById(user)
+      .select("groups")
+      .populate({
+        path: "groups",
+        select: "_id name description members admin photo",
+        populate: {
+          path: "chats",
+          options: { slice: -1 },
+        },
+      });
     if (!groups) {
       return res.status(201).send({
         success: true,
@@ -368,46 +386,6 @@ export const sendGroupMessageController = async (req, res) => {
   }
 };
 
-// GET /get-group-last-message/:gid
-export const getGroupLastMessageController = async (req, res) => {
-  try {
-    const { gid } = req.params;
-    const userId = req.user._id;
-
-    const { chats } = await groupModel.findById(gid, {
-      chats: { $slice: -1 },
-    });
-
-    let chat = null;
-    if (chats.length) {
-      chat = chats[0];
-    }
-    if (!chat) {
-      return res.status(200).send({
-        success: false,
-        message: "No Messages Found",
-      });
-    }
-    res.status(200).send({
-      success: true,
-      message: "Last message found successfully",
-      lastMessageInfo: {
-        sender: chat.sender,
-        ...(chat.text && { lastMessage: chat.text }),
-        ...(chat.media && !chat.text && { lastMessage: "File Shared" }),
-        timeSent: chat.timeSent,
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      success: false,
-      message: "Error while getting last message from group.",
-      error,
-    });
-  }
-};
-
 //GET  /get-group-messages?group=""&page=""&firstTime=""&lastTime=""
 export const getGroupMessagesController = async (req, res) => {
   const { _id } = req.user;
@@ -418,6 +396,7 @@ export const getGroupMessagesController = async (req, res) => {
       success: true,
       message: "No messages found",
       messages: [],
+      userId: _id,
     });
   }
   const firstTimeInNum = parseInt(req.query.firstTime); //oldest local message time
@@ -435,13 +414,13 @@ export const getGroupMessagesController = async (req, res) => {
     if (totalMessages == 0) {
       fetchfrom = 0;
       fetchTill = 0;
-      res.status(200).send({
+      return res.status(200).send({
         success: true,
         message: "No messages found",
         newMessagesCount,
         messages: [],
+        userId: _id,
       });
-      return;
     } else if (totalMessages < -(fromEndIndex + 1)) {
       fetchfrom = -totalMessages;
       fetchTill = totalMessages - (page - 1) * chatsPerPage;
@@ -488,6 +467,7 @@ export const getGroupMessagesController = async (req, res) => {
         newMessagesCount,
         messages: formatMessages,
         totalPages: Math.ceil(totalMessages / chatsPerPage),
+        userId: _id,
       });
     } else {
       return res.status(200).send({
@@ -495,6 +475,7 @@ export const getGroupMessagesController = async (req, res) => {
         message: "No messages found",
         newMessagesCount,
         messages: [],
+        userId: _id,
       });
     }
   } catch (error) {

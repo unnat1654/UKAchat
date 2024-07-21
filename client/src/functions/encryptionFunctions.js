@@ -3,12 +3,18 @@ export const getRoomSharedKey = (room) => {
   return userKeysObject[room].sharedKey;
 };
 
-export const saveUserRoomKey = async (room, userPrivateKey, contactPublicKey) => {
+export const saveUserRoomKey = async (
+  room,
+  userPrivateKey,
+  contactPublicKey
+) => {
   let sharedKey;
   if (contactPublicKey) {
     sharedKey = await deriveSharedkey(userPrivateKey, contactPublicKey);
   }
-  const userKeysObject = localStorage.getItem(`userKeys`) ? JSON.parse(localStorage.getItem(`userKeys`)) : {};
+  const userKeysObject = localStorage.getItem(`userKeys`)
+    ? JSON.parse(localStorage.getItem(`userKeys`))
+    : {};
   userKeysObject[room] = {
     privateKey: userPrivateKey,
     ...(contactPublicKey && { sharedKey }),
@@ -26,23 +32,32 @@ export const generateKeyPair = async () => {
       true,
       ["deriveKey"]
     );
-    const publicKey = await window.crypto.subtle.exportKey('jwk', generatedKey.publicKey);
-    const privateKey = await window.crypto.subtle.exportKey('jwk', generatedKey.privateKey);
+    const publicKey = await window.crypto.subtle.exportKey(
+      "jwk",
+      generatedKey.publicKey
+    );
+    const privateKey = await window.crypto.subtle.exportKey(
+      "jwk",
+      generatedKey.privateKey
+    );
 
-    return { publicKey: `${publicKey.x},${publicKey.y}`, privateKey: `${privateKey.x},${privateKey.y},${privateKey.d}` };
+    return {
+      publicKey: `${publicKey.x},${publicKey.y}`,
+      privateKey: `${privateKey.x},${privateKey.y},${privateKey.d}`,
+    };
   } catch (error) {
     console.log(error);
   }
 };
 
-const importPublicKey=async(publicKeyJWK)=>{
+const importPublicKey = async (publicKeyJWK) => {
   try {
     return await window.crypto.subtle.importKey(
-      'jwk',
+      "jwk",
       publicKeyJWK,
       {
-        name: 'ECDH',
-        namedCurve: 'P-384',
+        name: "ECDH",
+        namedCurve: "P-384",
       },
       true,
       []
@@ -51,14 +66,14 @@ const importPublicKey=async(publicKeyJWK)=>{
     console.log(error);
   }
 };
-const importPrivateKey=async(privateKeyJWK)=>{
+const importPrivateKey = async (privateKeyJWK) => {
   try {
     return await window.crypto.subtle.importKey(
-      'jwk',
+      "jwk",
       privateKeyJWK,
       {
-        name: 'ECDH',
-        namedCurve: 'P-384',
+        name: "ECDH",
+        namedCurve: "P-384",
       },
       true,
       ["deriveKey"]
@@ -71,14 +86,14 @@ const importPrivateKey=async(privateKeyJWK)=>{
 export const deriveSharedkey = async (privateKeyXYD, publicKeyXY) => {
   try {
     const [theirX, theirY] = publicKeyXY.split(",");
-    const [myX,myY,myD] = privateKeyXYD.split(",");
+    const [myX, myY, myD] = privateKeyXYD.split(",");
     const publicKeyJWK = {
       crv: "P-384",
       ext: true,
       key_ops: [],
       kty: "EC",
-      x:theirX,
-      y:theirY
+      x: theirX,
+      y: theirY,
     };
     const privateKeyJWK = {
       kty: "EC",
@@ -86,8 +101,8 @@ export const deriveSharedkey = async (privateKeyXYD, publicKeyXY) => {
       d: myD,
       ext: true,
       key_ops: ["deriveKey"],
-      x:myX,
-      y:myY
+      x: myX,
+      y: myY,
     };
 
     const publicKey = await importPublicKey(publicKeyJWK);
@@ -109,7 +124,7 @@ export const deriveSharedkey = async (privateKeyXYD, publicKeyXY) => {
     );
 
     // Export the derived key to a raw format
-    const rawKey = await window.crypto.subtle.exportKey('raw', derivedKey);
+    const rawKey = await window.crypto.subtle.exportKey("raw", derivedKey);
 
     // Convert the raw key to a base64 string
     return btoa(String.fromCharCode(...new Uint8Array(rawKey)));
@@ -118,16 +133,17 @@ export const deriveSharedkey = async (privateKeyXYD, publicKeyXY) => {
   }
 };
 
-
 export const encrypt = async (secretKey, message) => {
   const iv = window.crypto.getRandomValues(new Uint8Array(12));
 
   const encodedMessage = new TextEncoder().encode(message);
 
-  const rawKey = Uint8Array.from(atob(secretKey), c => c.charCodeAt(0)).buffer;
+  const rawKey = Uint8Array.from(atob(secretKey), (c) =>
+    c.charCodeAt(0)
+  ).buffer;
 
   const sharedKey = await window.crypto.subtle.importKey(
-    'raw',
+    "raw",
     rawKey,
     {
       name: "AES-GCM",
@@ -150,10 +166,11 @@ export const encrypt = async (secretKey, message) => {
 };
 
 export const decrypt = async (secretKey, iv, cipherText) => {
-
-  const rawKey = Uint8Array.from(atob(secretKey), c => c.charCodeAt(0)).buffer;
+  const rawKey = Uint8Array.from(atob(secretKey), (c) =>
+    c.charCodeAt(0)
+  ).buffer;
   const sharedKey = await window.crypto.subtle.importKey(
-    'raw',
+    "raw",
     rawKey,
     {
       name: "AES-GCM",
@@ -161,8 +178,10 @@ export const decrypt = async (secretKey, iv, cipherText) => {
     true,
     ["encrypt", "decrypt"]
   );
-  const decodedIv = Uint8Array.from(atob(iv), c => c.charCodeAt(0));
-  const decodedCipherText = Uint8Array.from(atob(cipherText), c => c.charCodeAt(0)).buffer;
+  const decodedIv = Uint8Array.from(atob(iv), (c) => c.charCodeAt(0));
+  const decodedCipherText = Uint8Array.from(atob(cipherText), (c) =>
+    c.charCodeAt(0)
+  ).buffer;
 
   const encodedMessage = await window.crypto.subtle.decrypt(
     {
