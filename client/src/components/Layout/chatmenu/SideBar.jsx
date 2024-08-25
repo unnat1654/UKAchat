@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import UserIcon from "../../UserIcon";
 import { Tooltip } from "antd";
-import { PiUsersThreeBold } from "react-icons/pi";
-import { MdOutlineGroupAdd } from "react-icons/md";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
 import { BsEnvelopePlus } from "react-icons/bs";
@@ -57,40 +55,6 @@ const SideBar = ({ sideBarTab, setSideBarTab, setShowInviteBox }) => {
               className={activeBtn == "invites" ? "active" : ""}
             >
               <BsEnvelopePlus />
-            </div>
-          </Tooltip>
-          <Tooltip
-            placement="right"
-            title={"Groups"}
-            trigger={"hover"}
-            arrow={{ pointAtCenter: true }}
-          >
-            <div
-              onClick={() => {
-                setSideBarTab("groups");
-                setActiveBtn("groups");
-                handleClick();
-              }}
-              className={activeBtn == "groups" ? "active" : ""}
-            >
-              <PiUsersThreeBold />
-            </div>
-          </Tooltip>
-          <Tooltip
-            placement="right"
-            title={"Create Group"}
-            trigger={"hover"}
-            arrow={{ pointAtCenter: true }}
-          >
-            <div
-              onClick={() => {
-                setSideBarTab("creategroup");
-                setActiveBtn("creategroup");
-                handleClick();
-              }}
-              className={activeBtn == "creategroup" ? "active" : ""}
-            >
-              <MdOutlineGroupAdd />
             </div>
           </Tooltip>
         </div>

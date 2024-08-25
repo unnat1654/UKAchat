@@ -56,14 +56,6 @@ const userSchema = new mongoose.Schema({
       type: String,
     },
   },
-  groups: {
-    type: [
-      {
-        type: mongoose.ObjectId,
-        ref: "groups",
-      },
-    ],
-  },
 });
 
 export default mongoose.model("users", userSchema, "users");
