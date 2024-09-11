@@ -1,3 +1,4 @@
+import { createServer } from "http";
 import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
@@ -11,6 +12,8 @@ import connectDB from "./config/db_config.js";
 import { socketModule } from "./config/socket_config.js";
 import socketEvents from "./controllers/socketController.js";
 import { v2 as cloudinary } from "cloudinary";
+import path from "path";
+import { fileURLToPath } from "url";
 
 cloudinary.config({
   cloud_name: "x5fsdgeq3",
@@ -20,16 +23,22 @@ cloudinary.config({
 
 export {cloudinary};
 
+//esmodule fix
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
 
 //configure env
 dotenv.config();
 
 //rest object
 const app = express();
-const httpServer = http.createServer(app);
+const httpServer = createServer(app);
 
 //middleware
 app.use(cors());
+app.use(express.static(path.join(__dirname, "./dist")));
 app.use(morgan("dev"));
 app.use(express.json({ limit: "50mb" }));
 app.use(
@@ -43,18 +52,18 @@ connectDB();
 socketModule.init(httpServer);
 socketEvents();
 
-//Welcome
-app.get("/home", (req, res) => {
-  res.send({
-    message: "Welcome to UKACHAT server",
-  });
-});
 
 //routes
 app.use("/api/v0/auth", authRoutes);
 app.use("/api/v0/contact", contactRoutes);
 app.use("/api/v0/message", messageRoutes);
 app.use("/api/v0/request", chatRequestRoutes);
+
+
+//client
+app.use("*", function (req, res) {
+  res.sendFile(path.join(__dirname, "./dist/index.html"));
+});
 
 //port
 const PORT = process.env.PORT || 8080;

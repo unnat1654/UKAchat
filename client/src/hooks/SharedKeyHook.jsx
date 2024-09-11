@@ -5,7 +5,7 @@ export const useSharedKey = (activeChat) => {
   const [sharedKey, setSharedKey] = useState("");
   useEffect(() => {
     if (activeChat?.room) {
-      setSharedKey(getRoomSharedKey(activeChat?.room));
+      setSharedKey(getRoomSharedKey(activeChat.room));
     }
   }, [activeChat?.room]);
   return sharedKey;

@@ -8,6 +8,7 @@
     "server": "nodemon server.js",
     "client": "npm run client --prefix ./client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "node server.js",
     "test": "jest"
   },
   "jest": {

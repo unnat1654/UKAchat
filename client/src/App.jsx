@@ -5,6 +5,7 @@ import Login from "./pages/auth/Login";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import UserInfo from "./pages/auth/UserInfo";
 import ProfilePictureUpload from "./pages/auth/ProfilePictureUpload";
+import CreateGroup from "./pages/CreateGroup";
 import { Beforeunload } from "react-beforeunload";
 import { useSocket } from "./context/socketContext";
 import { useAuth } from "./context/authContext";
@@ -34,6 +35,7 @@ function App() {
           path="/profile-picture-upload"
           element={<ProfilePictureUpload />}
         />
+        <Route path="/create-group" element={<CreateGroup />} />
       </Routes>
     </div>
     // </Beforeunload>

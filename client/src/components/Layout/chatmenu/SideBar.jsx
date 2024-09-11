@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import UserIcon from "../../UserIcon";
 import { Tooltip } from "antd";
+import { PiUsersThreeBold } from "react-icons/pi";
+import { MdOutlineGroupAdd } from "react-icons/md";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
 import { BsEnvelopePlus } from "react-icons/bs";
@@ -57,6 +59,7 @@ const SideBar = ({ sideBarTab, setSideBarTab, setShowInviteBox }) => {
               <BsEnvelopePlus />
             </div>
           </Tooltip>
+          
         </div>
         <div className="sidebar-lower-buttons">
           <MdOutlineSettings className="sidebar-lower-buttons-setting" />

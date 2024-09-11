@@ -1296,27 +1296,6 @@
   rotate: 10deg;
   color: #858585;
 }
-.chat-navbar .chat-navbar-manage-members {
-  margin-left: auto;
-  transition: all 0.5s;
-  font-size: calc(10px + 2vw);
-  cursor: pointer;
-}
-.chat-navbar .chat-navbar-manage-members:hover {
-  scale: 1.1;
-  color: #39916a;
-}
-.chat-navbar .chat-navbar-leave-group {
-  margin-left: calc(10px + 0.7vw);
-  margin-right: 5px;
-  transition: all 0.5s;
-  font-size: calc(10px + 2vw);
-  cursor: pointer;
-}
-.chat-navbar .chat-navbar-leave-group:hover {
-  scale: 1.1;
-  color: #858585;
-}
 
 .message-box {
   background-color: rgba(98, 126, 220, 0.299);
@@ -1351,17 +1330,6 @@
 }
 @media screen and (max-width: 480px) {
   .message-box .message-box-message {
-    margin: 10px 15px 30px 10px;
-  }
-}
-.message-box .message-box-sender {
-  color: white;
-  display: block;
-  margin: 0px 0px 50px 15px;
-  min-width: 60px;
-}
-@media screen and (max-width: 480px) {
-  .message-box .message-box-sender {
     margin: 10px 15px 30px 10px;
   }
 }

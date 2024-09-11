@@ -14,7 +14,7 @@ const SendInvite = ({ inviteId, contactName, setShowInviteBox }) => {
         `${import.meta.env.VITE_SERVER}/request/send-request`,
         {
           sentToId: inviteId,
-          senderPublicKey: JSON.stringify(userKeys.publicKey),
+          senderPublicKey: userKeys.publicKey,
           timeSent: Date.now(),
         }
       );

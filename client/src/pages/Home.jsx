@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import background from "../assets/Chill-Lofi-Background-Wallpaper-Full-HD-Free-Download-for-PC-Laptop-Macbook-231121-Wallpaperxyz.com-1.gif";
+import background from "../assets/aesthetic.gif";
 import ChattingSection from "../components/Layout/chatmenu/ChattingSection";
 import ChatMenu from "../components/Layout/chatmenu/ChatMenu";
 import SideBar from "../components/Layout/chatmenu/SideBar";
 import { ContactDetailsProvider } from "../context/ContactDetailsContext";
 import { saveAllOldMessages } from "../functions/localStorageFunction";
+import { GroupDetailsProvider } from "../context/groupDetailsContext";
 import { useOnlineUsers } from "../hooks/OnlineUsersHook";
 import { useSocket } from "../context/socketContext";
 import { useAuth } from "../context/authContext";
@@ -42,6 +43,7 @@ const Layout = () => {
     return () => window.removeEventListener("storage", backUpMessages);
   }, []);
   return (
+    <GroupDetailsProvider>
       <ContactDetailsProvider>
         <div className="layout">
           <div className="main">
@@ -56,19 +58,18 @@ const Layout = () => {
               useMyCall={[myCall, setMyCall]}
               onlineUsers={onlineUsers}
             />
-            {sideBarTab == "chats" && (
-              <ChattingSection
-                showInviteBox={showInviteBox}
-                setShowInviteBox={setShowInviteBox}
-                useMyCall={[myCall, setMyCall]}
-                onlineUsers={onlineUsers}
-              />
-            )}
+            <ChattingSection
+              showInviteBox={showInviteBox}
+              setShowInviteBox={setShowInviteBox}
+              useMyCall={[myCall, setMyCall]}
+              onlineUsers={onlineUsers}
+            />
           </div>
 
           <img src={background} alt="background" className="background" />
         </div>
       </ContactDetailsProvider>
+    </GroupDetailsProvider>
   );
 };
 

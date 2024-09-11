@@ -1,9 +1,6 @@
 import createClient from "ioredis";
 
-export const redisClient = new createClient({
-  port: process.env.REDIS_PORT,
-  host: process.env.REDIS_HOST,
-});
+export const redisClient = new createClient(process.env.REDIS_HOST);
 
 redisClient.on("connect", () => {
   console.log("Connected to redis server...");
