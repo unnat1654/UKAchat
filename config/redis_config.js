@@ -10,7 +10,6 @@ redisClient.on("ready", () => {
 });
 redisClient.on("error", (err) => {
   console.log(`${err.message}`.bgRed.black);
-  redisClient.quit();
 });
 redisClient.on("end", () => {
   console.log("Redis server disconnected".bgYellow.red);
