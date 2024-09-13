@@ -248,9 +248,9 @@ export const forgotPasswordController = async (req, res) => {
       });
     }
     const hashedPassword = hashPassword(new_password);
-    
+
     const updatedUser = await userModel.findByIdAndUpdate(
-      _id,
+      user._id,
       { password:  hashedPassword },
       { runValidators: true, new: true }
     );
