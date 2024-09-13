@@ -192,12 +192,6 @@ export const loginController = async (req, res) => {
         message: "user not found",
       });
     }
-    if (!user.verified) {
-      return res.status(403).send({
-        success: false,
-        message: "user not verified"
-      })
-    }
     if (!verifyPassword(password, user.password)) {
       return res.status(404).send({
         success: false,
@@ -254,18 +248,22 @@ export const forgotPasswordController = async (req, res) => {
       });
     }
     const hashedPassword = hashPassword(new_password);
-    const sentMail = await sendPasswordResetMail(email, user._id, hashedPassword);
-    if (!sentMail.success) {
-      return res.status(500).send({
+    
+    const updatedUser = await userModel.findByIdAndUpdate(
+      _id,
+      { password:  hashedPassword },
+      { runValidators: true, new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).send({
         success: false,
-        message: "Error while sending mail"
+        message: "User not found"
       });
     }
-    res.status(200).send({
+    return res.status(200).send({
       success: true,
-      message: "Reset password mail sent successfully"
-    })
-    return
+      message: "password changed successfully",
+    });
   } catch (error) {
     res.status(500).send({
       success:false,
