@@ -52,7 +52,8 @@ export const useSendMessages = (
         ...contactDetailsArray,
         detailsArray: getUpdatedArray(contactDetailsArray.detailsArray, room, {
           sent: false,
-          ...(text ? { text, iv }:{ file: "file shared"}),
+          ...(text ? { text, iv }:{}),
+          ...(file? { file: "file shared"}:{}),
           timeSent,
         }),
       });
@@ -162,7 +163,8 @@ export const useSendMessages = (
       ...contactDetailsArray,
       detailsArray: getUpdatedArray(contactDetailsArray.detailsArray, room, {
         sent: true,
-        ...(text ? { text, iv }:{ file: "file shared" }),
+        ...(text ? { text, iv }:{}),
+        ...(file? { file: "file shared"}:{}),
         timeSent,
       }),
     });

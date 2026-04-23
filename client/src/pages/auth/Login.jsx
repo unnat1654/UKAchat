@@ -37,7 +37,12 @@ const Login = () => {
         toast.success(data?.message);
         setAuth({ ...auth, user: data.user, token: data.token });
         localStorage.setItem("auth", JSON.stringify(data));
-        navigate(location?.state?.previousLink || "/");
+        const pendingInvite = localStorage.getItem("pendingInvite");
+        if (pendingInvite) {
+          navigate(`/invite/${pendingInvite}`);
+        } else {
+          navigate(location?.state?.previousLink || "/");
+        }
       } else {
         toast.error(data ? data.message : "Something went wrong!");
       }

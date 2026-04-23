@@ -3,13 +3,8 @@ import peer from "../services/peer";
 
 export const useCaller = (socket, useMyCall, auth, activeChat) => {
   const [myCall, setMyCall] = useMyCall;
-  const sendStreams = useCallback(() => {
-    if (!myCall.stream) return;
-    for (const track of myCall.stream?.getTracks()) {
-      peer.peer.addTrack(track, myCall.stream);
-    }
-  }, [myCall?.stream]);
   const stopStreams = useCallback(() => {
+    if (!myCall.stream) return;
     for (const track of myCall.stream?.getTracks()) {
       track.stop();
     }
@@ -17,60 +12,28 @@ export const useCaller = (socket, useMyCall, auth, activeChat) => {
 
   const handleCallAccepted = useCallback(
     async ({ room, ans }) => {
-      peer.setLocalDescription(ans);
-      console.log("Call Accepted");
+      await peer.setLocalDescription(ans);
       setMyCall((prev) => ({ ...prev, ringing: false, room }));
-      sendStreams();
     },
-    [sendStreams]
+    []
   );
   const handleCallDeclined = useCallback(async ({ room }) => {
+    peer.reset();
     setMyCall({ stream: "", ringing: false, room: "", type: "voice" });
-    console.log("call declined");
-  }, []);
-
-  const handleNegoNeeded = useCallback(async () => {
-    if (socket && activeChat && activeChat.room) {
-      const offer = await peer.getOffer();
-      socket.emit("peer-nego-needed", { room: activeChat?.room, offer });
-    }
-  }, [activeChat?.room, socket]);
-
-  useEffect(() => {
-    peer.peer.addEventListener("negotiationneeded", handleNegoNeeded);
-    return () => {
-      peer.peer.removeEventListener("negotiationneeded", handleNegoNeeded);
-    };
-  }, [handleNegoNeeded]);
-
-  const handleNegoNeedIncoming = useCallback(
-    async ({ room, offer }) => {
-      const ans = await peer.getAnswer(offer);
-      socket.emit("peer-nego-done", { room, ans });
-    },
-    [socket]
-  );
-
-  const handleNegoNeedFinal = useCallback(async (ans) => {
-    await peer.setLocalDescription(ans);
   }, []);
 
   const handleCallEnd = useCallback(() => {
-    console.log("other person cut the call");
     stopStreams();
+    peer.reset();
     setMyCall({ stream: "", ringing: false, room: "", type: "voice" });
-  }, [myCall]);
+  }, [stopStreams]);
 
   useEffect(() => {
     if (socket) {
-      socket.on("peer-nego-needed", handleNegoNeedIncoming);
-      socket.on("peer-nego-final", handleNegoNeedFinal);
       socket.on("call-accepted", handleCallAccepted);
       socket.on("call-declined", handleCallDeclined);
       socket.on("call-ended", handleCallEnd);
       return () => {
-        socket.off("peer-nego-needed", handleNegoNeedIncoming);
-        socket.off("peer-nego-final", handleNegoNeedFinal);
         socket.off("call-accepted", handleCallAccepted);
         socket.off("call-declined", handleCallDeclined);
         socket.off("call-ended", handleCallEnd);
@@ -78,8 +41,6 @@ export const useCaller = (socket, useMyCall, auth, activeChat) => {
     }
   }, [
     socket,
-    handleNegoNeedIncoming,
-    handleNegoNeedFinal,
     handleCallAccepted,
     handleCallDeclined,
     handleCallEnd,
@@ -94,10 +55,14 @@ export const useCaller = (socket, useMyCall, auth, activeChat) => {
       ) {
         return;
       } else {
+        peer.reset();
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
           ...(type === "video" && { video: true }),
         });
+        for (const track of stream.getTracks()) {
+          peer.peer.addTrack(track, stream);
+        }
         const offer = await peer.getOffer();
         socket.emit("send-call", {
           room: activeChat?.room,
@@ -113,13 +78,16 @@ export const useCaller = (socket, useMyCall, auth, activeChat) => {
   );
   const endCall = useCallback(() => {
     stopStreams();
-    setMyCall({ ringing: false, room: "", stream: "", type: "voice" });
-    if (!myCall.room) return;
-    console.log(JSON.stringify(myCall));
+    if (!myCall.room) {
+      peer.reset();
+      setMyCall({ stream: "", room: "", ringing: false, type: "voice" });
+      return;
+    }
     if (myCall.ringing) socket.emit("end-unreceived-call", myCall.room);
     if (!myCall.ringing) socket.emit("end-received-call", myCall.room);
-    setMyCall({ stream: "", room: "", ringing: false });
-  }, [socket, myCall]);
+    peer.reset();
+    setMyCall({ stream: "", room: "", ringing: false, type: "voice" });
+  }, [socket, myCall, stopStreams]);
 
   return { myCall, sendCall, endCall };
 };

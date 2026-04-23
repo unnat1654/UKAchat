@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
-import background from "../assets/aesthetic.gif";
+import { useWallpaper } from "../context/wallpaperContext";
 import ChattingSection from "../components/Layout/chatmenu/ChattingSection";
 import ChatMenu from "../components/Layout/chatmenu/ChatMenu";
 import SideBar from "../components/Layout/chatmenu/SideBar";
 import { ContactDetailsProvider } from "../context/ContactDetailsContext";
 import { saveAllOldMessages } from "../functions/localStorageFunction";
-import { GroupDetailsProvider } from "../context/groupDetailsContext";
 import { useOnlineUsers } from "../hooks/OnlineUsersHook";
 import { useSocket } from "../context/socketContext";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 const Layout = () => {
   const navigate = useNavigate();
+  const { wallpaper } = useWallpaper();
   const [sideBarTab, setSideBarTab] = useState("chats");
   const [myCall, setMyCall] = useState({
     stream: "",
@@ -43,8 +43,7 @@ const Layout = () => {
     return () => window.removeEventListener("storage", backUpMessages);
   }, []);
   return (
-    <GroupDetailsProvider>
-      <ContactDetailsProvider>
+    <ContactDetailsProvider>
         <div className="layout">
           <div className="main">
             <SideBar
@@ -66,10 +65,9 @@ const Layout = () => {
             />
           </div>
 
-          <img src={background} alt="background" className="background" />
+          <img src={wallpaper} alt="background" className="background" />
         </div>
-      </ContactDetailsProvider>
-    </GroupDetailsProvider>
+    </ContactDetailsProvider>
   );
 };
 

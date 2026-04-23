@@ -27,8 +27,7 @@ const Signup = () => {
       password.length >= 8 &&
       hasLowerStr(password) &&
       hasUpperStr(password) &&
-      password == reEnterPassword &&
-      userName.length > 6
+      password == reEnterPassword
     ) {
       navigate("/profile-info", {
         state: { username: userName, email: email, password: password },

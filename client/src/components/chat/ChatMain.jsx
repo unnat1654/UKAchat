@@ -153,7 +153,7 @@ const ChatMain = () => {
             size={"40px"}
           />
         )}
-        {activeChat?.messages?.length &&
+        {activeChat?.messages?.length > 0 &&
           activeChat?.messages?.map((m) => {
             let DateSent = new Date(m.timeSent).toLocaleDateString("en-GB");
             let showDateCondition = false;

@@ -6,17 +6,17 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/authContext.jsx";
 import { SocketProvider } from "./context/socketContext.jsx";
 import { ActiveChatProvider } from "./context/activeChatContext.jsx";
-import { ActiveGroupProvider } from "./context/activeGroupContext.jsx";
+import { WallpaperProvider } from "./context/wallpaperContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <SocketProvider>
     <BrowserRouter>
       <AuthProvider>
-        <ActiveGroupProvider>
-          <ActiveChatProvider>
-            <App />
+        <ActiveChatProvider>
+            <WallpaperProvider>
+              <App />
+            </WallpaperProvider>
           </ActiveChatProvider>
-        </ActiveGroupProvider>
       </AuthProvider>
     </BrowserRouter>
   </SocketProvider>

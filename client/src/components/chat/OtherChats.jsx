@@ -101,7 +101,7 @@ const OtherChats = ({
         )}
         <div className="otherchats-chat">
           <span className="otherchats-chat-name">{name}</span>
-          {lastMessage && (
+          {lastMessage && !searched ? (
             <span className="otherchats-chat-message">
               {lastMessage.sent && "You: "}
               {!lastTextMessage
@@ -109,7 +109,7 @@ const OtherChats = ({
                 : lastTextMessage?.slice(0, 20)}
               {lastTextMessage?.length > 20 ? "..." : ""}
             </span>
-          )}
+          ):(<></>)}
         </div>
         <div className="otherchats-info">
           <span className="otherchats-info-time">

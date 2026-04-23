@@ -25,23 +25,6 @@
       min-width: 95%;
     }
   }
-  #{&}-creategroup {
-    position: fixed;
-    bottom: 11%;
-    left: 27.5%;
-    font-size: 30px;
-    z-index: 1;
-    color: rgb(46, 46, 46);
-    background-color: #dc5385;
-    padding: 9px;
-    width: 60px;
-    height: 60px;
-    border-radius: 30px;
-    transition: all 0.5s 0.1s;
-    &:hover {
-      background-color: #f795b9;
-    }
-  }
   #{&}-allchats {
     overflow-y: scroll;
     /* width */

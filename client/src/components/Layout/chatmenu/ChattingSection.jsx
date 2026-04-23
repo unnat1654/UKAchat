@@ -62,7 +62,7 @@ const ChattingSection = ({ showInviteBox, setShowInviteBox, useMyCall,onlineUser
             sendCall={(type) => sendCall(type)}
           />
           {myCall.room && myCall.room === activeChat?.room ? (
-            <CallMain callType={myCall.type} endCall={endCall} />
+            <CallMain endCall={endCall} myCall={myCall} />
           ) : (
             <ChatMain />
           )}

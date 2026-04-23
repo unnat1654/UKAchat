@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useGroupDetailsArray } from "../context/groupDetailsContext";
 import { deriveSharedkey } from "../functions/encryptionFunctions";
 import { getRoomLSMessages } from "../functions/localStorageFunction";
 
@@ -13,7 +12,6 @@ export const useTabDetails = (
   onlineUsers
 ) => {
   const [invitesArray, setInvitesArray] = useState([]);
-  const [groupDetailsArray, setGroupDetailsArray] = useGroupDetailsArray();
 
   const handleSearch = async () => {
     try {
@@ -126,26 +124,11 @@ export const useTabDetails = (
     }
   };
 
-  const getGroupDetails = async () => {
-    try {
-      const groupDetails = await axios.get(
-        `${import.meta.env.VITE_SERVER}/group/get-all-groups`
-      );
-      console.log(groupDetails?.data.groups);
-      if (groupDetails?.data?.success) {
-        setGroupDetailsArray(groupDetails?.data?.groups);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     if (auth?.token) {
       getInvites();
       getContactDetails();
       fetchPublicKeys();
-      getGroupDetails();
     }
   }, [auth?.token, onlineUsers]);
 
@@ -158,9 +141,6 @@ export const useTabDetails = (
     }
     if (sideBarTab == "chats") {
       getContactDetails();
-    }
-    if (sideBarTab == "groups") {
-      getGroupDetails();
     }
   }, [sideBarTab]);
 
@@ -175,6 +155,5 @@ export const useTabDetails = (
     handleSearch,
     invitesArray,
     setInvitesArray,
-    groupDetailsArray,
   };
 };

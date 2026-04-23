@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import peer from "../services/peer";
-export const useIncomingCall = (socket,useMyCall) => {
+export const useIncomingCall = (socket, useMyCall) => {
   const [myCall, setMyCall] = useMyCall;
   const [callInfo, setCallInfo] = useState({
     room: "",
@@ -10,36 +10,30 @@ export const useIncomingCall = (socket,useMyCall) => {
     type: "voice",
   });
 
-  const sendStreams = useCallback(() => {
-    if(!myCall.stream) return;
-    for (const track of myCall.stream?.getTracks()) {
-      peer.peer.addTrack(track, myCall.stream);
-    }
-    console.log("sending Streams");
-  }, [myCall?.stream]);
-
   const acceptIncomingCall = useCallback(async () => {
-    try{
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      ...(callInfo?.type == "video" && { video: true }),
-    }); 
-    sendStreams();
-    const ans = await peer.getAnswer(callInfo.offer);
-    socket.emit("accept-call", { room: callInfo.room, ans });
-    setMyCall({room:callInfo.room,ringing:false,stream,type:callInfo.type});
-    setCallInfo({
-      room: "",
-      username: "",
-      photo: "",
-      offer: "",
-      type: "voice",
-    });
-    console.log("acceptIncomingCall function ran");
-  }catch(error){
-    console.log(error);
-  }
-  }, [socket,sendStreams,myCall]);
+    try {
+      peer.reset();
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        ...(callInfo?.type == "video" && { video: true }),
+      });
+      for (const track of stream.getTracks()) {
+        peer.peer.addTrack(track, stream);
+      }
+      const ans = await peer.getAnswer(callInfo.offer);
+      socket.emit("accept-call", { room: callInfo.room, ans });
+      setMyCall({ room: callInfo.room, ringing: false, stream, type: callInfo.type });
+      setCallInfo({
+        room: "",
+        username: "",
+        photo: "",
+        offer: "",
+        type: "voice",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, [socket, callInfo]);
 
   const declineIncomingCall = useCallback(async () => {
     socket.emit("decline-call", callInfo.room);
@@ -50,20 +44,16 @@ export const useIncomingCall = (socket,useMyCall) => {
       offer: "",
       type: "voice",
     });
-    console.log("declineIncomingCall function ran");
-  }, [socket]);
+  }, [socket, callInfo]);
 
   const handleIncomingCall = useCallback(
     async (info) => {
-      console.log("event recieved:incoming-call" + JSON.stringify(info));
-      //info={room,offer,username,photo,type:"voice"|"video"}
       if (callInfo.username != "") return;
       setCallInfo(info);
     },
-    [socket]
+    [socket, callInfo]
   );
   const handleIncomingCallEnd = useCallback((info) => {
-    console.log("event recieved:incoming-call-ended");
     setCallInfo({
       room: "",
       username: "",
@@ -79,9 +69,10 @@ export const useIncomingCall = (socket,useMyCall) => {
       socket.on("incoming-call-ended", handleIncomingCallEnd);
       return () => {
         socket.off("incoming-call", handleIncomingCall);
+        socket.off("incoming-call-ended", handleIncomingCallEnd);
       };
     }
   }, [socket, handleIncomingCall]);
 
-  return {callInfo,acceptIncomingCall,declineIncomingCall};
+  return { callInfo, acceptIncomingCall, declineIncomingCall };
 };

@@ -16,17 +16,14 @@
   border-radius: 10px;
   padding: 40px;
   max-width: 50vw;
-  width: -moz-fit-content;
   width: fit-content;
   margin: auto;
   background-color: rgba(255, 255, 255, 0.07);
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
 }
 @media screen and (min-width: 300px) and (max-width: 900px) {
   .signup {
-    width: -moz-fit-content;
     width: fit-content;
     max-width: none;
   }
@@ -83,15 +80,11 @@
   outline: none;
   color: #ffffff;
 }
-.signup .signup-form .form-input input::-moz-placeholder {
-  color: rgb(175, 175, 175);
-}
 .signup .signup-form .form-input input::placeholder {
   color: rgb(175, 175, 175);
 }
 .signup .signup-form .form-input input:-webkit-autofill,
 .signup .signup-form .form-input input:-webkit-autofill:focus {
-  -webkit-transition: background-color 600000s 0s, color 600000s 0s;
   transition: background-color 600000s 0s, color 600000s 0s;
 }
 .signup .signup-form .form-input input[data-autocompleted] {
@@ -168,17 +161,14 @@
   border-radius: 10px;
   padding: 40px;
   max-width: 50vw;
-  width: -moz-fit-content;
   width: fit-content;
   margin: auto;
   background-color: rgba(255, 255, 255, 0.07);
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
 }
 @media screen and (min-width: 300px) and (max-width: 900px) {
   .login {
-    width: -moz-fit-content;
     width: fit-content;
     max-width: none;
   }
@@ -231,9 +221,6 @@
   color: #d9d9d9;
   background-color: inherit;
 }
-.login .login-form .form-input input::-moz-placeholder {
-  color: rgb(175, 175, 175);
-}
 .login .login-form .form-input input::placeholder {
   color: rgb(175, 175, 175);
 }
@@ -247,7 +234,6 @@
 }
 .login .login-form .form-input input:-webkit-autofill,
 .login .login-form .form-input input:-webkit-autofill:focus {
-  -webkit-transition: background-color 600000s 0s, color 600000s 0s;
   transition: background-color 600000s 0s, color 600000s 0s;
 }
 .login .login-form .form-input input[data-autocompleted] {
@@ -308,17 +294,14 @@
   border-radius: 10px;
   padding: 40px;
   max-width: 50vw;
-  width: -moz-fit-content;
   width: fit-content;
   margin: auto;
   background-color: rgba(255, 255, 255, 0.07);
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
 }
 @media screen and (min-width: 300px) and (max-width: 900px) {
   .forpass {
-    width: -moz-fit-content;
     width: fit-content;
     max-width: none;
   }
@@ -369,9 +352,6 @@
   color: #d9d9d9;
   background-color: inherit;
 }
-.forpass .forpass-form .form-input input::-moz-placeholder {
-  color: rgb(175, 175, 175);
-}
 .forpass .forpass-form .form-input input::placeholder {
   color: rgb(175, 175, 175);
 }
@@ -381,7 +361,6 @@
 }
 .forpass .forpass-form .form-input input:-webkit-autofill,
 .forpass .forpass-form .form-input input:-webkit-autofill:focus {
-  -webkit-transition: background-color 600000s 0s, color 600000s 0s;
   transition: background-color 600000s 0s, color 600000s 0s;
 }
 .forpass .forpass-form .form-input input[data-autocompleted] {
@@ -444,7 +423,6 @@
   font-size: 30px;
   background-color: #38c585;
   color: white;
-  width: -moz-fit-content;
   width: fit-content;
   padding: 10px 13px 6px 12px;
   border-radius: 100%;
@@ -515,35 +493,6 @@
     background-position: 500px;
   }
 }
-.create-group {
-  width: 100vw;
-  height: 100vh;
-  background-color: red;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.create-group .create-group-form {
-  width: -moz-fit-content;
-  width: fit-content;
-  height: 50vh;
-  background-color: pink;
-}
-.create-group .create-group-form-icon {
-  color: green;
-}
-.create-group .create-group-form #icon {
-  display: none;
-}
-
-@keyframes shine {
-  0% {
-    background-position: 0;
-  }
-  100% {
-    background-position: 500px;
-  }
-}
 .chatmenu {
   height: 100%;
   background-color: rgba(84, 84, 84, 0.07);
@@ -559,9 +508,6 @@
   flex-direction: column;
   padding-block: 10px;
   overflow-y: scroll;
-  /* width */
-  /* Track */
-  /* Handle */
 }
 @media screen and (max-width: 1080px) {
   .chatmenu {
@@ -573,40 +519,26 @@
     min-width: 95%;
   }
 }
-.chatmenu .chatmenu-creategroup {
-  position: fixed;
-  bottom: 11%;
-  left: 27.5%;
-  font-size: 30px;
-  z-index: 1;
-  color: rgb(46, 46, 46);
-  background-color: #dc5385;
-  padding: 9px;
-  width: 60px;
-  height: 60px;
-  border-radius: 30px;
-  transition: all 0.5s 0.1s;
-}
-.chatmenu .chatmenu-creategroup:hover {
-  background-color: #f795b9;
-}
 .chatmenu .chatmenu-allchats {
   overflow-y: scroll;
   /* width */
-  /* Track */
-  /* Handle */
 }
 .chatmenu .chatmenu-allchats::-webkit-scrollbar {
   width: 7px;
   height: 0px;
 }
+.chatmenu .chatmenu-allchats {
+  /* Track */
+}
 .chatmenu .chatmenu-allchats::-webkit-scrollbar-track {
   background: rgba(241, 241, 241, 0);
+}
+.chatmenu .chatmenu-allchats {
+  /* Handle */
 }
 .chatmenu .chatmenu-allchats::-webkit-scrollbar-thumb {
   background: rgba(70, 70, 70, 0.4509803922);
   border-radius: 10px;
-  -webkit-transition: all 1s;
   transition: all 1s;
 }
 .chatmenu .chatmenu-allchats::-webkit-scrollbar-thumb:hover {
@@ -623,12 +555,9 @@
   color: rgb(234, 234, 234);
   background-color: rgba(249, 249, 249, 0.089);
   min-width: 60%;
-  min-height: -moz-max-content;
   min-height: max-content;
-  max-width: -moz-max-content;
   max-width: max-content;
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   transition: all 0.5s;
   border: solid rgba(155, 155, 155, 0.263);
   border-width: 0px 1px 1px 0px;
@@ -649,9 +578,6 @@
 .chatmenu .chatmenu-search-bar input:focus {
   outline: none;
 }
-.chatmenu .chatmenu-search-bar input::-moz-placeholder {
-  color: rgb(207, 207, 207);
-}
 .chatmenu .chatmenu-search-bar input::placeholder {
   color: rgb(207, 207, 207);
 }
@@ -661,17 +587,25 @@
 .chatmenu .chatmenu-search-bar:focus-within {
   background-color: rgba(32, 32, 32, 0.014);
 }
+.chatmenu {
+  /* width */
+}
 .chatmenu::-webkit-scrollbar {
   width: 7px;
   height: 0px;
 }
+.chatmenu {
+  /* Track */
+}
 .chatmenu::-webkit-scrollbar-track {
   background: rgba(241, 241, 241, 0);
+}
+.chatmenu {
+  /* Handle */
 }
 .chatmenu::-webkit-scrollbar-thumb {
   background: rgba(136, 136, 136, 0.7803921569);
   border-radius: 10px;
-  -webkit-transition: all 1s;
   transition: all 1s;
 }
 .chatmenu::-webkit-scrollbar-thumb:hover {
@@ -686,14 +620,12 @@
   margin: 10px 15px;
   border-radius: 5px;
   background-color: rgba(112, 108, 218, 0.043);
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   color: rgb(215, 215, 215);
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   padding: 1% 5%;
   flex-shrink: 0;
   transition: all 1s;
-  min-width: -moz-fit-content;
   min-width: fit-content;
 }
 .otherchats:hover {
@@ -757,14 +689,12 @@
   margin: 10px 15px;
   border-radius: 5px;
   background-color: rgba(112, 108, 218, 0.043);
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   color: rgb(215, 215, 215);
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   padding: 1% 5%;
   flex-shrink: 0;
   transition: all 1s;
-  min-width: -moz-fit-content;
   min-width: fit-content;
 }
 .invites:hover {
@@ -814,8 +744,7 @@
   position: absolute;
   bottom: 15px;
   left: 80px;
-  -webkit-backdrop-filter: blur(5px);
-          backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
   border-radius: 8px;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -924,6 +853,102 @@
   }
 }
 
+.qr-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.qr-modal {
+  position: relative;
+  background: rgba(40, 40, 40, 0.45);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+  border-radius: 16px;
+  padding: 30px 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 90vw;
+  color: #d7d7d7;
+  font-family: "poppins";
+}
+.qr-modal .qr-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 24px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+}
+.qr-modal .qr-modal-close:hover {
+  color: white;
+}
+.qr-modal .qr-modal-title {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.85);
+}
+.qr-modal .qr-modal-qr {
+  padding: 15px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.qr-modal .qr-modal-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+  max-width: 260px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+}
+.qr-modal .qr-modal-link-text {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.qr-modal .qr-modal-copy {
+  font-size: 18px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+  flex-shrink: 0;
+}
+.qr-modal .qr-modal-copy:hover {
+  color: white;
+}
+
+.invite-page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: rgba(30, 30, 30, 0.4);
+  backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.85);
+  font-family: "poppins";
+  font-size: 20px;
+}
+
 @keyframes shine {
   0% {
     background-position: 0;
@@ -936,8 +961,7 @@
   width: 100%;
   height: 100%;
   position: relative;
-  -webkit-backdrop-filter: blur(5px);
-          backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
   color: rgba(61, 61, 61, 0.55);
 }
 .callmain * {
@@ -993,6 +1017,71 @@
   color: rgba(0, 0, 0, 0.543);
   scale: 1.05;
 }
+.callmain .callmain-video-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.callmain .callmain-remote-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.callmain .callmain-remote-placeholder {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.callmain .callmain-local-video {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 180px;
+  height: 135px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.08), inset 0 0 8px rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+  z-index: 2;
+}
+.callmain .callmain-video-toggle-icon {
+  position: absolute;
+  transform: translateX(-50%) translateY(50%);
+  bottom: 35%;
+  left: 50%;
+  font-size: 60px;
+  background: radial-gradient(circle, rgb(120, 200, 255) 0%, rgb(40, 90, 150) 98%);
+  border-radius: 50%;
+  padding: 15px;
+  z-index: 3;
+}
+.callmain .callmain-video-toggle-icon:hover {
+  background: radial-gradient(circle, rgba(120, 200, 255, 0.5) 0%, rgba(40, 90, 150, 0.5) 98%);
+  color: rgba(0, 0, 0, 0.543);
+  scale: 1.05;
+}
+.callmain .callmain-icon-off {
+  background: radial-gradient(circle, rgb(180, 180, 180) 0%, rgb(90, 90, 90) 98%) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+.callmain .callmain-user-mute-icon,
+.callmain .callmain-cut-call-icon,
+.callmain .callmain-mute-call-icon,
+.callmain .callmain-video-toggle-icon {
+  z-index: 3;
+  cursor: pointer;
+}
 .callmain .callmain-mute-call-icon {
   position: absolute;
   transform: translateX(50%) translateY(50%);
@@ -1017,15 +1106,13 @@
 .incoming-call {
   margin: 10px auto;
   width: 90%;
-  height: -moz-max-content;
   height: max-content;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   gap: 10px;
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   background-color: rgba(215, 215, 215, 0.1137254902);
   padding: 20px;
   border-radius: 10px;
@@ -1033,7 +1120,6 @@
 }
 .incoming-call .incoming-call-photo {
   width: 30%;
-  height: -moz-max-content;
   height: max-content;
   border-radius: 100%;
 }
@@ -1088,25 +1174,30 @@
   flex-direction: column;
   height: 88%;
   overflow-y: scroll;
-  /* width */
-  /* Track */
-  /* Handle */
 }
 @media screen and (max-width: 480px) {
   .chatmain .chatmain-messages {
     height: 90%;
   }
 }
+.chatmain .chatmain-messages {
+  /* width */
+}
 .chatmain .chatmain-messages::-webkit-scrollbar {
   width: 7px;
+}
+.chatmain .chatmain-messages {
+  /* Track */
 }
 .chatmain .chatmain-messages::-webkit-scrollbar-track {
   background: rgba(241, 241, 241, 0);
 }
+.chatmain .chatmain-messages {
+  /* Handle */
+}
 .chatmain .chatmain-messages::-webkit-scrollbar-thumb {
   background: rgba(136, 136, 136, 0.7803921569);
   border-radius: 10px;
-  -webkit-transition: all 1s;
   transition: all 1s;
 }
 .chatmain .chatmain-messages::-webkit-scrollbar-thumb:hover {
@@ -1116,8 +1207,7 @@
   width: 100%;
   height: 12%;
   background-color: rgba(126, 126, 126, 0.068);
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   font-size: calc(20px + 0.5vw);
   padding: 10px;
   display: flex;
@@ -1140,8 +1230,7 @@
   color: rgb(163, 163, 163);
 }
 .chatmain .chatmain-sender > *:nth-child(1) span {
-  -webkit-backdrop-filter: blur(40px);
-          backdrop-filter: blur(40px);
+  backdrop-filter: blur(40px);
   background-color: rgba(215, 215, 215, 0.4431372549);
   padding: 0px 5px;
   border-radius: 10px;
@@ -1175,10 +1264,6 @@
 .chatmain .chatmain-sender input:focus {
   outline: none;
 }
-.chatmain .chatmain-sender input::-moz-placeholder {
-  color: rgb(207, 207, 207);
-  font-size: calc(10px + 0.4vw);
-}
 .chatmain .chatmain-sender input::placeholder {
   color: rgb(207, 207, 207);
   font-size: calc(10px + 0.4vw);
@@ -1209,7 +1294,6 @@
 }
 .chattingsection {
   height: 100%;
-  width: -moz-min-content;
   width: min-content;
   background-color: rgba(84, 84, 84, 0.07);
   flex-grow: 20;
@@ -1237,8 +1321,7 @@
   height: 13%;
   width: 100%;
   flex-shrink: 0;
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   padding: 10px 30px 10px 40px;
   font-size: calc(25px + 0.5vw);
   color: rgb(234, 234, 234);
@@ -1256,13 +1339,11 @@
   font-size: calc(15px + 1vw);
   margin-left: 5%;
   margin-right: 20px;
-  min-width: -moz-fit-content;
   min-width: fit-content;
   color: #ffffff;
   background: rgb(252, 252, 252);
   background: linear-gradient(29deg, rgb(203, 203, 203) 35%, rgb(255, 255, 255) 50%, rgb(193, 193, 193) 65%);
-  -webkit-background-clip: text;
-          background-clip: text;
+  background-clip: text;
   background-repeat: none;
   background-position: 0;
   -webkit-text-fill-color: transparent;
@@ -1300,15 +1381,12 @@
 .message-box {
   background-color: rgba(98, 126, 220, 0.299);
   min-width: 10%;
-  width: -moz-fit-content;
   width: fit-content;
-  height: -moz-fit-content;
   height: fit-content;
   max-width: 50%;
   max-height: 90%;
   border-radius: 25px;
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   font-family: poppins;
   position: relative;
   margin: 15px;
@@ -1413,11 +1491,9 @@
   margin: 0px auto;
   font-size: calc(9px + 0.5vw);
   font-family: poppins;
-  width: -moz-fit-content;
   width: fit-content;
   letter-spacing: 1px;
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   background-color: rgba(100, 100, 100, 0.322);
   color: rgba(215, 215, 215, 0.694);
   padding: 0.5vw 10px;
@@ -1428,8 +1504,7 @@
 .sendinvitebox {
   width: 100%;
   height: 100%;
-  -webkit-backdrop-filter: blur(20px);
-          backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   text-align: center;
   display: flex;
   justify-content: center;
@@ -1486,8 +1561,7 @@
   display: flex;
   flex-direction: column;
   background-color: rgba(84, 84, 84, 0.07);
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 @media screen and (max-width: 1080px) {
   .sidebar {
@@ -1531,19 +1605,46 @@
   font-size: calc(20px + 0.5vw);
   margin-block: 5px;
 }
-.sidebar .sidebar-lower-buttons-setting {
-  transition: rotate 10s, color 2s, font-size 5s;
-  margin-bottom: 20px;
-  color: rgba(183, 183, 183, 0.274);
+.sidebar .sidebar-lower-buttons-wallpaper {
+  height: calc(25px + 1vw);
+  width: calc(25px + 1vw);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.08), inset 0 0 8px rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgba(183, 183, 183, 0.6);
+  transition: border-color 0.3s, box-shadow 0.3s, color 0.3s;
+  margin-bottom: 10px;
 }
-.sidebar .sidebar-lower-buttons-setting:hover {
-  rotate: 360deg;
-  color: rgba(255, 255, 255, 0.824);
+.sidebar .sidebar-lower-buttons-wallpaper:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.15), inset 0 0 10px rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
 }
 .sidebar .sidebar-lower-buttons-icon {
   height: calc(25px + 1vw);
   width: calc(25px + 1vw);
-  border-radius: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.08), inset 0 0 8px rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.sidebar .sidebar-lower-buttons-icon:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.15), inset 0 0 10px rgba(255, 255, 255, 0.06);
+}
+.sidebar .sidebar-lower-buttons-icon-img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 * {
@@ -1564,4 +1665,6 @@
   position: absolute;
   top: 0;
   z-index: -1;
-}/*# sourceMappingURL=main.css.map */
+}
+
+/*# sourceMappingURL=main.css.map */

@@ -1,0 +1,24 @@
+services:
+  app:
+    build: .
+    container_name: chat-app
+    ports:
+      - "${PORT}:6970"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: my-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

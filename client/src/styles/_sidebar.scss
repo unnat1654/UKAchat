@@ -51,19 +51,46 @@
       font-size: calc(20px + 0.5vw);
       margin-block: 5px;
     }
-    &-setting {
-      transition: rotate 10s, color 2s, font-size 5s;
-      margin-bottom: 20px;
-      color: rgba(183, 183, 183, 0.274);
+    &-wallpaper {
+      height: calc(25px + 1vw);
+      width: calc(25px + 1vw);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.08), inset 0 0 8px rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: rgba(183, 183, 183, 0.6);
+      transition: border-color 0.3s, box-shadow 0.3s, color 0.3s;
+      margin-bottom: 10px;
       &:hover {
-        rotate: 360deg;
-        color: rgba(255, 255, 255, 0.824);
+        border-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 0 0 14px rgba(255, 255, 255, 0.15), inset 0 0 10px rgba(255, 255, 255, 0.06);
+        color: rgba(255, 255, 255, 0.85);
       }
     }
     &-icon {
       height: calc(25px + 1vw);
       width: calc(25px + 1vw);
-      border-radius: 100%;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.08), inset 0 0 8px rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 0 0 14px rgba(255, 255, 255, 0.15), inset 0 0 10px rgba(255, 255, 255, 0.06);
+      }
+      &-img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+      }
     }
   }
 }
