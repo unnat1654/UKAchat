@@ -6,9 +6,6 @@
   "type": "module",
   "scripts": {
     "server": "nodemon server.js",
-    "build": "npm install && npm --prefix ../client install",
-    "client": "npm  --prefix ../client run client",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "start": "node server.js",
     "test": "jest"
   },

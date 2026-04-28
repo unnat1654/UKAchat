@@ -1,0 +1,32 @@
+{
+  "name": "ukachat",
+  "version": "1.0.0",
+  "description": "Privacy-first glassmorphic chat platform with end-to-end encryption, WebRTC calls, and QR-based invites.",
+  "main": "index.js",
+  "scripts": {
+    "build-client": "npm --prefix ./client run build",
+    "install-all": "npm --prefix ./server install && npm --prefix ./client install",
+    "server": "npm --prefix ./server run server",
+    "client": "npm --prefix ./client run client",
+    "dev": "npm --prefix ./server exec -- concurrently -n server,client -c blue,green \"npm --prefix ./server run server\" \"npm --prefix ./client run client\"",
+    "start": "npm --prefix ./server start",
+    "docker": "docker-compose up --build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unnat1654/UKAchat.git"
+  },
+  "keywords": [
+    "chat",
+    "e2e-encryption",
+    "webrtc",
+    "socket.io",
+    "glassmorphic"
+  ],
+  "author": "Unnat Kumar Agarwal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/unnat1654/UKAchat/issues"
+  },
+  "homepage": "https://github.com/unnat1654/UKAchat#readme"
+}

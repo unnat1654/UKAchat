@@ -1,11 +1,11 @@
 services:
   app:
-    build: .
+    build: ./server
     container_name: chat-app
     ports:
       - "${PORT}:6970"
     env_file:
-      - .env
+      - ./server/.env
     depends_on:
       - redis
     networks:

@@ -4,7 +4,7 @@ import { Tooltip } from "antd";
 import { PiUsersThreeBold } from "react-icons/pi";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { BsEnvelopePlus } from "react-icons/bs";
-import { LuImages } from "react-icons/lu";
+import { LuWallpaper } from "react-icons/lu";
 import { useAuth } from "../../../context/authContext";
 import { useWallpaper } from "../../../context/wallpaperContext";
 import LogoutMenu from "../../logoutmenu/LogoutMenu";
@@ -73,7 +73,7 @@ const SideBar = ({ sideBarTab, setSideBarTab, setShowInviteBox }) => {
               className="sidebar-lower-buttons-wallpaper"
               onClick={cycleWallpaper}
             >
-              <LuImages />
+              <LuWallpaper />
             </div>
           </Tooltip>
           <div className="sidebar-lower-buttons-icon" onClick={handleMouseEnter}>

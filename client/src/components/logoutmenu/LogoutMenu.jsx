@@ -228,7 +228,13 @@ const LogoutMenu = ({ show, setShow }) => {
               <LuX className="qr-modal-close" onClick={handleCloseQr} />
               <p className="qr-modal-title">Your One-Time Invite</p>
               <div className="qr-modal-qr">
-                <QRCodeSVG value={qrModal.url} size={220} level="M" />
+                <QRCodeSVG
+                  value={qrModal.url}
+                  size={220}
+                  level="M"
+                  bgColor="transparent"
+                  fgColor="#1a1a1f"
+                />
               </div>
               <div className="qr-modal-link">
                 <span className="qr-modal-link-text">{qrModal.url}</span>
