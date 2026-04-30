@@ -94,13 +94,13 @@ export const signUpController = async (req, res) => {
       publicId = public_id;
       secureUrl = secure_url;
     }
-    const mailStatus = await sendEmailVerificationMail(email);
-    if (!mailStatus.success) {
-      return res.status(500).send({
-        success: false,
-        message: "Error while sending verfication email, try again"
-      })
-    }
+    // const mailStatus = await sendEmailVerificationMail(email);
+    // if (!mailStatus.success) {
+    //   return res.status(500).send({
+    //     success: false,
+    //     message: "Error while sending verfication email, try again"
+    //   })
+    // }
     const user = new userModel({
       username,
       email,

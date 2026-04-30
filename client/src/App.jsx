@@ -9,6 +9,7 @@ import Invite from "./pages/Invite";
 import { Beforeunload } from "react-beforeunload";
 import { useSocket } from "./context/socketContext";
 import { useAuth } from "./context/authContext";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const socket = useSocket();
@@ -25,6 +26,7 @@ function App() {
   return (
     // <Beforeunload onBeforeunload={handleBeforeUnload}>
     <div>
+      <Toaster />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />

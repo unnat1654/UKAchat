@@ -52,7 +52,7 @@ app.use("/api/v0/request", chatRequestRoutes);
 //port
 
 //run listen
-httpServer.listen(8080, () => {
+httpServer.listen(process.env.PORT,"0.0.0.0", () => {
   console.log(
     `Server running on port ${process.env.PORT} in ${process.env.DEV_MODE}`
       .bgCyan.white

@@ -24,7 +24,7 @@
 
 UKAchat is an invite-only chat application engineered with strong privacy guarantees, modern glassmorphic aesthetics, and real-time communication at its core. Every conversation is end-to-end encrypted using ECDH key exchange, every friend connection is gated by an explicit invite (link or QR), and every message or call is routed through a Redis-backed, Socket.IO-powered low-latency transport layer.
 
-> The design anticipated Apple's glassmorphic direction — translucent surfaces, blurred backdrops, subtle glass borders, and fluid reactivity — long before it became the industry trend.
+> We did glassmorphism design before Apple — translucent surfaces, blurred backdrops, subtle glass borders, and fluid reactivity.
 
 ---
 

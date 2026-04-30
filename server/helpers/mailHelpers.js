@@ -16,7 +16,7 @@ const transporter = createTransport({
 
 export const sendEmailVerificationMail = async (eMail) => {
     const token = JWT.sign({ email:eMail }, process.env.HELPER_JWT_SECRET);
-    const link=`http://localhost:8080/api/v0/auth/verify-email/${token}`;
+    const link=`${process.env.HOSTED_URL}/api/v0/auth/verify-email/${token}`;
     const mailOptions = {
         from: {
             name: "UKAchat",
